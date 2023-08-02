@@ -1,0 +1,10 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "database": "\\\\wsl.localhost\\Ubuntu-18.04\\home\\ssmm0498\\zone01\\forum\\data\\sql\\forum.db",
+            "name": "forum"
+        }
+    ]
+}

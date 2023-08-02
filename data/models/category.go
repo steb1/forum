@@ -1,0 +1,58 @@
+package models
+
+import (
+	"database/sql"
+
+	_ "github.com/mattn/go-sqlite3"
+)
+
+type Category struct {
+	ID           string
+	Name         string
+	CreateDate   string
+	ModifiedDate string
+}
+
+type CategoryRepository struct {
+	db *sql.DB
+}
+
+func NewCategoryRepository(db *sql.DB) *CategoryRepository {
+	return &CategoryRepository{
+		db: db,
+	}
+}
+
+// Create a new category in the database
+func (cr *CategoryRepository) CreateCategory(category *Category) error {
+	_, err := cr.db.Exec("INSERT INTO category (id, name, createDate, modifiedDate) VALUES (?, ?, ?, ?)",
+		category.ID, category.Name, category.CreateDate, category.ModifiedDate)
+	return err
+}
+
+// Get a category by ID from the database
+func (cr *CategoryRepository) GetCategoryByID(categoryID string) (*Category, error) {
+	var category Category
+	row := cr.db.QueryRow("SELECT id, name, createDate, modifiedDate FROM category WHERE id = ?", categoryID)
+	err := row.Scan(&category.ID, &category.Name, &category.CreateDate, &category.ModifiedDate)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil // Category not found
+		}
+		return nil, err
+	}
+	return &category, nil
+}
+
+// Update a category in the database
+func (cr *CategoryRepository) UpdateCategory(category *Category) error {
+	_, err := cr.db.Exec("UPDATE category SET name = ?, createDate = ?, modifiedDate = ? WHERE id = ?",
+		category.Name, category.CreateDate, category.ModifiedDate, category.ID)
+	return err
+}
+
+// Delete a category from the database
+func (cr *CategoryRepository) DeleteCategory(categoryID string) error {
+	_, err := cr.db.Exec("DELETE FROM category WHERE id = ?", categoryID)
+	return err
+}

@@ -1,7 +1,7 @@
 ### Todo List for "forum" Project:
 1.  [x] Set up the project structure and create necessary folders (models, handlers, etc.).
 2.  [x] Implement SQLite database functionality using the "sqlite3" package.
-3.  [ ] Implement all models.
+3.  [x] Implement all models.
 4.  [ ] Implement user registration and login functionality.
    -    [ ] Validate and store user credentials in the database.
    -    [ ] Implement login sessions using cookies with expiration dates.
