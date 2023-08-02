@@ -1,0 +1,52 @@
+### Todo List for "forum" Project:
+1.  [x] Set up the project structure and create necessary folders (models, handlers, etc.).
+2.  [ ] Implement SQLite database functionality using the "sqlite3" package.
+3.  [ ] Implement user registration and login functionality.
+   -    [ ] Validate and store user credentials in the database.
+   -    [ ] Implement login sessions using cookies with expiration dates.
+   -    [ ] Optionally, use UUID for session management (Bonus task).
+4.  [ ] Implement post and comment creation functionality.
+   -    [ ] Associate categories with posts.
+   -    [ ] Allow non-registered users to view posts and comments.
+5.  [ ] Implement liking and disliking of posts and comments.
+   -    [ ] Update the number of likes and dislikes for each post and comment.
+6.  [ ] Implement the filtering mechanism for posts:
+   -    [ ] Filtering by categories.
+   -    [ ] Filtering by created posts (for registered users).
+   -    [ ] Filtering by liked posts (for registered users).
+7.  [ ] Dockerize the forum application.
+8.  [ ] Handle website errors and HTTP status.
+9.  [ ] Write unit test files for testing the functionality of the application.
+
+### Todo List for "authentication" Project:
+1.  [ ] Implement authentication using at least two authentication providers (e.g., Google, GitHub).
+2.  [ ] Set up authentication routes for registering and logging in.
+3.  [ ] Implement OAuth2.0 authentication flow for each authentication provider.
+4.  [ ] Handle user registration using the chosen authentication providers.
+5.  [ ] Set up sessions and cookies for authenticated users.
+6.  [ ] Implement logout functionality to end user sessions.
+
+### Todo List for "forum-image-upload" Project:
+1.  [ ] Allow registered users to create posts with images.
+2.  [ ] Validate image types (JPEG, PNG, GIF) and size (maximum 20 MB).
+3.  [ ] Handle image upload and storage on the server.
+4.  [ ] Display the associated image when viewing the post.
+
+### Todo List for "security" Project:
+1.  [ ] Implement HTTPS protocol using an SSL certificate.
+   -    [ ] Generate SSL certificates or use Certificate Authorities (CA's).
+   -    [ ] Set up encrypted connections.
+2.  [ ] Implement Rate Limiting to prevent abuse and DoS attacks.
+3.  [ ] Encrypt client passwords and optionally encrypt the database.
+4.  [ ] Test sessions and cookies for security vulnerabilities.
+
+### Todo List for "forum-moderation" Project:
+1.  [ ] Implement a moderation system based on access levels.
+2.  [ ] Define user types (Guests, Users, Moderators, Administrators).
+3.  [ ] Implement functions for each user type, such as post/comment deletion, reporting, and category management.
+4.  [ ] Allow users to request the Moderator role from an Admin.
+
+### Todo List for "forum-advanced-features" Project:
+1.  [ ] Implement notifications for users when their posts are liked/disliked or commented.
+2.  [ ] Create an activity page to track user activity (created posts, likes, dislikes, comments).
+3.  [ ] Implement Edit/Remove functionality for posts and comments.
