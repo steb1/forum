@@ -1,3 +1,4 @@
+
 @startuml "user-class-diagram"
 skinparam shadowing false
 skinparam monochrome true
@@ -84,29 +85,29 @@ frame "cl: Class Diagram - User" {
         modifiedDate: DATE
     }
 
-    ' enum RATE {
-    '     NONE
-    '     LIKE
-    '     DISLIKE
-    ' }
+    enum RATE {
+        NONE
+        LIKE
+        DISLIKE
+    }
 
-    ' enum TYPE {
-    '     COMMENT
-    '     POST
-    ' }
+    enum TYPE {
+        COMMENT
+        POST
+    }
 
-    ' enum ROLE {
-    '     ADMIN
-    '     MODERATOR
-    '     USER
-    ' }
+    enum ROLE {
+        ADMIN
+        MODERATOR
+        USER
+    }
 
-    ' enum CAUSE {
-    '     IRRELEVANT
-    '     OBSCENE
-    '     ILLEGAL
-    '     INSULTING
-    ' }
+    enum CAUSE {
+        IRRELEVANT
+        OBSCENE
+        ILLEGAL
+        INSULTING
+    }
 
     user -up- view
     user -up- comment
