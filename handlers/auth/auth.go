@@ -118,7 +118,7 @@ func SigninHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db, _ := sql.Open("sqlite3", "C:Users\\louis\\Documents\\forum\\data\\sql\\forum.db")
+	db, _ := sql.Open("sqlite3", "data\\sql\\forum.db")
 
 	email := r.FormValue("mail")
 	username := r.FormValue("username")
