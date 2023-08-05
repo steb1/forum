@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package lib
 
 import (
@@ -25,3 +26,6 @@ func Isregistered(data []models.User, email, password string) (string , bool) {
 
 	return password, false
 }
+=======
+package lib
+>>>>>>> a9177fda9e3f23b174d76b3c19ecef1552ec19a4
