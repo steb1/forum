@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"log"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -54,6 +55,46 @@ func (ur *UserRepository) GetUserByID(userID string) (*User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+// Select All users
+
+func (ur *UserRepository) SelectAllUsers() ([]User, error) {
+	var user []User
+	row, err := ur.db.Query("SELECT * FROM user")
+	if err != nil {
+		log.Fatal(err)
+	}
+	for row.Next() {
+		var ID string
+		var Email string
+		var Username string
+		var Password string
+		var AvatarUrl string
+		var Type ROLE
+		var Token string
+		var TokenExpirationDate string
+		
+		err = row.Scan(&ID, &Email, &Username, &Password, &AvatarUrl, &Type, &Token, &TokenExpirationDate)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		var tab = User {
+			ID : ID,
+			Email: Email,
+			Username: Username,
+			Password: Password,
+			AvatarURL: AvatarUrl,
+			Type: Type,
+			Token: Token,
+			TokenExpirationDate: TokenExpirationDate,
+		}
+
+		user = append(user, tab)
+	}	
+	return user, nil
 }
 
 // Update a user in the database

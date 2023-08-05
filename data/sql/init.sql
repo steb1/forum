@@ -12,6 +12,11 @@ CREATE TABLE user (
     tokenExpirationDate DATE
 );
 
+CREATE TABLE session (
+    sessionID  VARCHAR PRIMARY KEY,
+    ExpirationDate Date
+);
+
 -- Table for 'post'
 CREATE TABLE post (
     id VARCHAR PRIMARY KEY,
