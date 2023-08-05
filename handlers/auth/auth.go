@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package auth
 
 import (
@@ -204,6 +203,3 @@ func SigninHandler(w http.ResponseWriter, r *http.Request) {
 // func (s session) isExpired() bool {
 // 	return s.expiry.Before(time.Now())
 // }
-=======
-package handler
->>>>>>> a9177fda9e3f23b174d76b3c19ecef1552ec19a4

@@ -3,11 +3,7 @@
         {
             "previewLimit": 50,
             "driver": "SQLite",
-<<<<<<< HEAD
             "database": "C:Users\\louis\\Documents\\forum\\data\\sql\\forum.db",
-=======
-            "database": "C:\\Users\\LENOVO\\Desktop\\goodforum\\forum\\data\\sql\\forum.db",
->>>>>>> a9177fda9e3f23b174d76b3c19ecef1552ec19a4
             "name": "forum"
         }
     ],
