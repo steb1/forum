@@ -1,0 +1,296 @@
+package main
+
+import (
+	"database/sql"
+	"fmt"
+	"log"
+
+	_ "github.com/mattn/go-sqlite3"
+)
+
+type User struct {
+	ID                  string
+	Username            string
+	Email               string
+	Password            string
+	AvatarURL           string
+	Type                ROLE
+	Token               string
+	TokenExpirationDate string
+}
+
+type ROLE int
+
+const (
+	RoleAdmin     ROLE = 0
+	RoleModerator ROLE = 1
+	RoleUser      ROLE = 2
+)
+
+type UserRepository struct {
+	db *sql.DB
+}
+
+func NewUserRepository(db *sql.DB) *UserRepository {
+	return &UserRepository{
+		db: db,
+	}
+}
+
+// Create a new user in the database
+func (ur *UserRepository) CreateUser(user *User) error {
+	_, err := ur.db.Exec("INSERT INTO user (id, username, email, password, avatarURL, type, token, tokenExpirationDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+		user.ID, user.Username, user.Email, user.Password, user.AvatarURL, user.Type, user.Token, user.TokenExpirationDate)
+	return err
+}
+
+// Get a user by ID from the database
+func (ur *UserRepository) GetUserByID(userID string) (*User, error) {
+	var user User
+	row := ur.db.QueryRow("SELECT id, username, email, password, avatarURL, type, token, tokenExpirationDate FROM user WHERE id = ?", userID)
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.AvatarURL, &user.Type, &user.Token, &user.TokenExpirationDate)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil // User not found
+		}
+		return nil, err
+	}
+	return &user, nil
+}
+
+// Update a user in the database
+func (ur *UserRepository) UpdateUser(user *User) error {
+	_, err := ur.db.Exec("UPDATE user SET username = ?, email = ?, password = ?, avatarURL = ?, type = ?, token = ?, tokenExpirationDate = ? WHERE id = ?",
+		user.Username, user.Email, user.Password, user.AvatarURL, user.Type, user.Token, user.TokenExpirationDate, user.ID)
+	return err
+}
+
+// Delete a user from the database
+func (ur *UserRepository) DeleteUser(userID string) error {
+	_, err := ur.db.Exec("DELETE FROM user WHERE id = ?", userID)
+	return err
+}
+
+func init()  {
+	db, err := sql.Open("sqlite3", "./data/sql/forum.db")
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	defer db.Close()
+	userRepo := NewUserRepository(db)
+	userRepo := NewUserRepository(db)
+	userRepo := NewUserRepository(db)
+	userRepo := NewUserRepository(db)
+}
+
+var (
+	userRepo UserRepository
+	userRepo UserRepository
+	userRepo UserRepository
+)
+
+// Example usage:
+func main() {
+
+
+	// Create a new user
+	newUser := &User{
+		ID:                  "1asd234opioasd56asdf789",
+		Username:            "john_doe",
+		Email:               "john.doe@example.com",
+		Password:            "password123",
+		AvatarURL:           "https://example.com/avatar.jpg",
+		Type:                RoleUser,
+		Token:               "sometoken",
+		TokenExpirationDate: "2023-01-01",
+	}
+
+	err = userRepo.CreateUser(newUser)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	// Get a user by ID
+	user, err := userRepo.GetUserByID("1asd234opioasd56asdf789")
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	if user != nil {
+		fmt.Printf("User found: %+v\n", user)
+	} else {
+		fmt.Println("User not found.")
+		return
+	}
+
+	// Update the user
+	user.Username = "john_doe_updated"
+	err = userRepo.UpdateUser(user)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	// Delete the user
+	err = userRepo.DeleteUser("1asd234opioasd56asdf789")
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+}
+
+type User struct {
+    ID       int
+    Username string
+    Password string
+}
+
+var users = map[int]User{
+    1: {ID: 1, Username: "user1", Password: hashPassword("password1")},
+    2: {ID: 2, Username: "user2", Password: hashPassword("password2")},
+}
+
+func hashPassword(password string) string {
+    hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+    return string(hashedPassword)
+}
+
+func verifyPassword(hashedPassword, password string) bool {
+    return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password)) == nil
+}
+
+func loginHandler(w http.ResponseWriter, r *http.Request) {
+    // Parse form data
+    r.ParseForm()
+    username := r.FormValue("username")
+    password := r.FormValue("password")
+
+    // Find the user by username (you should use a database in a real-world application)
+    var user *User
+    for _, u := range users {
+        if u.Username == username {
+            user = &u
+            break
+        }
+    }
+
+    if user == nil || !verifyPassword(user.Password, password) {
+        http.Error(w, "Invalid credentials", http.StatusUnauthorized)
+        return
+    }
+
+    // Create a session
+    sessionToken := generateRandomToken()
+    sessions[sessionToken] = user.ID
+
+    // Set the session token in a cookie
+    cookie := http.Cookie{
+        Name:     "session",
+        Value:    sessionToken,
+        HttpOnly: true,
+    }
+    http.SetCookie(w, &cookie)
+
+    http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+}
+
+func authMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        sessionCookie, err := r.Cookie("session")
+        if err != nil {
+            http.Redirect(w, r, "/login", http.StatusSeeOther)
+            return
+        }
+
+        // Verify the session token (you should check against a database in a real-world application)
+        userID, ok := sessions[sessionCookie.Value]
+        if !ok {
+            http.Redirect(w, r, "/login", http.StatusSeeOther)
+            return
+        }
+
+        // Attach the user ID to the request context for use in subsequent handlers
+        ctx := context.WithValue(r.Context(), "userID", userID)
+        r = r.WithContext(ctx)
+
+        next.ServeHTTP(w, r)
+    })
+}
+
+func dashboardHandler(w http.ResponseWriter, r *http.Request) {
+    userID := r.Context().Value("userID").(int)
+    user := users[userID]
+
+    // Render the dashboard page with user data
+    // ...
+}
+
+func main() {
+    // Initialize the session map
+    sessions = make(map[string]int)
+
+    http.HandleFunc("/login", loginHandler)
+    http.HandleFunc("/dashboard", authMiddleware(dashboardHandler))
+    // Add more authenticated routes as needed
+
+    log.Println("Server started on :8080")
+    log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+var sessions sync.Map
+
+type session struct {
+	username string
+	expiry   time.Time
+}
+
+func (s session) isExpired() bool {
+	return s.expiry.Before(time.Now())
+}
+
+func ValidSession(r *http.Request) (string, bool) {
+	c, err := r.Cookie("session_token")
+	if err == nil {
+		if val, ok := sessions.Load(c.Value); ok {
+			return val.(session).username, ok
+		}
+	}
+	return "", false
+}
+
+func NewSessionToken(w http.ResponseWriter, username string) {
+	sessionToken := uuid.NewV4()
+	deleteSameUser(username)
+	expiresAt := time.Now().Add(2 * time.Hour)
+	sessions.Store(sessionToken.String(), session{username, expiresAt})
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_token",
+		Value:    sessionToken.String(),
+		Path:     "/",
+		HttpOnly: true,
+		Expires:  expiresAt,
+	})
+}
+
+func deleteSameUser(username string) {
+	sessions.Range(func(key, value interface{}) bool {
+		if username == value.(session).username {
+			sessions.Delete(key)
+		}
+		return true
+	})
+}
+
+func DeleteExpiredSessions() {
+	for {
+		sessions.Range(func(key, value interface{}) bool {
+			if value.(session).isExpired() {
+				sessions.Delete(key)
+			}
+			return true
+		})
+		time.Sleep(5 * time.Second)
+	}
+}
