@@ -47,6 +47,32 @@ func (cr *CommentRepository) GetCommentByID(commentID string) (*Comment, error) 
 	return &comment, nil
 }
 
+// Get all comments from database
+func (cr *CommentRepository) GetAllComments() ([]*Comment, error) {
+	var comments []*Comment
+
+	rows, err := cr.db.Query("SELECT id, text, authorID, postID, parentID, createDate, modifiedDate FROM comment")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var comment Comment
+		err := rows.Scan(&comment.ID, &comment.Text, &comment.AuthorID, &comment.PostID, &comment.ParentID, &comment.CreateDate, &comment.ModifiedDate)
+		if err != nil {
+			return nil, err
+		}
+		comments = append(comments, &comment)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return comments, nil
+}
+
 // Update a comment in the database
 func (cr *CommentRepository) UpdateComment(comment *Comment) error {
 	_, err := cr.db.Exec("UPDATE comment SET text = ?, authorID = ?, postID = ?, parentID = ?, createDate = ?, modifiedDate = ? WHERE id = ?",
