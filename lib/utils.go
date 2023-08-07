@@ -60,6 +60,7 @@ func RenderPage(basePath, pagePath string, data any, res http.ResponseWriter) {
 	} else {
 		tpl.Execute(res, data)
 	}
+}
 
 func CheckUsers(data []models.User, Email, Username string) bool {
 	for _, val := range data {

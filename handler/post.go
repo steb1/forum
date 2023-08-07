@@ -1,4 +1,4 @@
-package user
+package handler
 
 import (
 	"database/sql"
@@ -87,6 +87,89 @@ func Post(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(catStruct)
 			models.NewCategoryRepository(db).CreateCategory(&catStruct)
 		}
+
+	} else {
+		fmt.Println("Method not allowed")
+	}
+}
+
+func AllPosts(w http.ResponseWriter, r *http.Request) {
+	db, err := sql.Open("sqlite3", "./data/sql/forum.db")
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	defer db.Close()
+
+	var PostsAndComments = make(map[models.Post]models.Comment)
+	if r.Method == "GET" {
+		err := r.ParseForm()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		// Structposts := []models.Post{}
+		posts, err := models.NewPostRepository(db).GetAllPosts()
+		comments, err := models.NewCommentRepository(db).GetAllComments()
+		if err != nil {
+			fmt.Println("error DB")
+			return
+		}
+		for i := 0; i < len(posts); i++ {
+			for j := 0; j < len(comments); j++ {
+				if posts[i].ID == comments[j].PostID {
+					PostsAndComments[*posts[i]] = *comments[j]
+				}
+			}
+		}
+
+		fmt.Println(PostsAndComments)
+
+	} else {
+		fmt.Println("Method not allowed")
+	}
+}
+
+func Comment(w http.ResponseWriter, r *http.Request) {
+	db, err := sql.Open("sqlite3", "./data/sql/forum.db")
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	defer db.Close()
+
+	if r.Method == "POST" {
+		err := r.ParseForm()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		text := r.FormValue("text")
+		fmt.Printf("Comment : %s\n", text)
+
+		u := uuid.New()
+		fmt.Print("UUID = ")
+		fmt.Println(u.String())
+		creationDate := time.Now().Format("2006-01-02")
+		modifDate := time.Now().Format("2006-01-02")
+		fmt.Printf("creationDate : %s\n", creationDate)
+		fmt.Printf("modifDate : %s\n", modifDate)
+		// authorID, parentID, postID : to do with front TRICK
+		authorID := "cdjndjd"
+		parentID := "fdinjff"
+		postID := "3356e5b9-57c9-4c1f-b67c-7e485f66eab9"
+		commentStruct := models.Comment{
+			ID:           u.String(),
+			Text:         text,
+			AuthorID:     authorID,
+			PostID:       postID,
+			ParentID:     parentID,
+			CreateDate:   creationDate,
+			ModifiedDate: modifDate}
+
+		models.NewCommentRepository(db).CreateComment(&commentStruct)
+		//task to do : format date -> only day-month-year
 
 	} else {
 		fmt.Println("Method not allowed")

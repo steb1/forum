@@ -17,12 +17,12 @@ import (
 const tokenExpiration = time.Hour
 
 type Token struct {
-    UserID uuid.UUID `json:"user_id"`
-	Username string `json:"username"`
-    ExpiresAt int64 `json:"exp"`
+	UserID    uuid.UUID `json:"user_id"`
+	Username  string    `json:"username"`
+	ExpiresAt int64     `json:"exp"`
 }
 
-func SignupHandler (w http.ResponseWriter, r *http.Request) {
+func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil { //Verifier que le formulaire est bien structure
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
 		return
@@ -53,25 +53,24 @@ func SignupHandler (w http.ResponseWriter, r *http.Request) {
 		ID, err := uuid.NewV4()
 
 		if err != nil {
-		log.Fatalf("failed to generate UUID: %v", err)
+			log.Fatalf("failed to generate UUID: %v", err)
 		}
 
 		// Prepared Statement
 		stmt, err := db.Prepare("INSERT INTO user (ID, username, email, password, avatarURL, type, token, tokenExpirationDate) VALUES(?, ?, ?, ?, ?, ?, ?, ?)")
 
-
-		defer db.Close() 
+		defer db.Close()
 
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		defer stmt.Close() 
+		defer stmt.Close()
 
 		// Créer un nouveau jeton
 		token := models.Token{
-			UserID: ID.String(),
-			Username: username,
+			UserID:    ID.String(),
+			Username:  username,
 			ExpiresAt: time.Now().Add(tokenExpiration * 2).Unix(),
 		}
 
@@ -88,12 +87,11 @@ func SignupHandler (w http.ResponseWriter, r *http.Request) {
 		cookie := http.Cookie{}
 		cookie.Name = username
 		cookie.Value = ID.String()
-		cookie.Expires = time.Now().Add( 2 * time.Hour)
+		cookie.Expires = time.Now().Add(2 * time.Hour)
 		cookie.Secure = true
 		cookie.HttpOnly = true
 		http.SetCookie(w, &cookie)
 
-		
 		// Renvoyer le jeton encodé dans la réponse
 
 		w.Header().Set("Content-Type", "application/json")
@@ -102,7 +100,6 @@ func SignupHandler (w http.ResponseWriter, r *http.Request) {
 		////////////////////////////////////////////////////////
 
 		_, err = stmt.Exec(ID, email, username, password, avatarURL, Type, token.UserID, token.ExpiresAt)
-
 
 		fmt.Println("Success")
 	} else {
@@ -130,8 +127,7 @@ func SigninHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-
-	 ID, exists := lib.Isregistered(data, email, password)
+	ID, exists := lib.Isregistered(data, email, password)
 
 	if !exists {
 		fmt.Println("failed")
@@ -139,50 +135,47 @@ func SigninHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Créer un nouveau jeton
-		token := models.Token{
-			UserID: ID,
-			Username: username,
-			ExpiresAt: time.Now().Add(tokenExpiration * 2).Unix(),
-		}
+	token := models.Token{
+		UserID:    ID,
+		Username:  username,
+		ExpiresAt: time.Now().Add(tokenExpiration * 2).Unix(),
+	}
 
-		// Encodage du jeton au format JSON
-		tokenJson, err := json.Marshal(token)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+	// Encodage du jeton au format JSON
+	tokenJson, err := json.Marshal(token)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-		////////////////////////////////////////////////////////////////////
-		// Set cookie
+	////////////////////////////////////////////////////////////////////
+	// Set cookie
 
-		cookie := http.Cookie{}
-		cookie.Name = username
-		cookie.Value = ID
-		cookie.Expires = time.Now().Add( 2 * time.Hour)
-		cookie.Secure = true
-		cookie.HttpOnly = true
-		http.SetCookie(w, &cookie)
+	cookie := http.Cookie{}
+	cookie.Name = username
+	cookie.Value = ID
+	cookie.Expires = time.Now().Add(2 * time.Hour)
+	cookie.Secure = true
+	cookie.HttpOnly = true
+	http.SetCookie(w, &cookie)
 
+	// UPDATE CLIENT TOKEN
 
-		// UPDATE CLIENT TOKEN
+	stmt, err := db.Prepare("UPDATE user SET tokenExpirationDate = ? WHERE id = ?")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
 
-		stmt, err := db.Prepare("UPDATE user SET tokenExpirationDate = ? WHERE id = ?")
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer stmt.Close()
+	_, err = stmt.Exec(token.ExpiresAt, ID)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-		_, err = stmt.Exec(token.ExpiresAt, ID)
-		if err != nil {
-			log.Fatal(err)
-		}
+	// Renvoyer le jeton encodé dans la réponse
 
-		
-		// Renvoyer le jeton encodé dans la réponse
-
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(tokenJson)
-
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(tokenJson)
 
 	t, err := template.ParseFiles("templates\\user\\user.html")
 	fmt.Println("signin success")

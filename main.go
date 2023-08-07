@@ -3,8 +3,7 @@ package main
 import (
 	"fmt"
 	"forum/handler"
-	"forum/handlers/auth"
-	"forum/handlers/user"
+	"forum/handler/auth"
 	"forum/lib"
 	"log"
 	"net/http"
@@ -24,9 +23,9 @@ func main() {
 	http.HandleFunc("/Signup", auth.SignupHandler)
 	http.HandleFunc("/Signin", auth.SigninHandler)
 
-	http.HandleFunc("/post", user.Post)
-	http.HandleFunc("/comment", user.Comment)
-	http.HandleFunc("/posts", user.AllPosts)
+	http.HandleFunc("/post", handler.Post)
+	http.HandleFunc("/comment", handler.Comment)
+	http.HandleFunc("/posts", handler.AllPosts)
 
 	log.Println("Server started and running on", PORT)
 	log.Println(ADDRESS + PORT)
