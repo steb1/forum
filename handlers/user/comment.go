@@ -38,7 +38,7 @@ func Comment(w http.ResponseWriter, r *http.Request) {
 		// authorID, parentID, postID : to do with front TRICK
 		authorID := "cdjndjd"
 		parentID := "fdinjff"
-		postID := "djnnjdd"
+		postID := "3356e5b9-57c9-4c1f-b67c-7e485f66eab9"
 		commentStruct := models.Comment{
 			ID:           u.String(),
 			Text:         text,

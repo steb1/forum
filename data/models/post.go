@@ -48,6 +48,33 @@ func (pr *PostRepository) GetPostByID(postID string) (*Post, error) {
 	return &post, nil
 }
 
+// Get all posts from databse
+func (pr *PostRepository) GetAllPosts() ([]*Post, error) {
+	var posts []*Post
+
+	rows, err := pr.db.Query("SELECT id, title, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var post Post
+		err := rows.Scan(&post.ID, &post.Title, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, &post)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return posts, nil
+}
+
+
 // Update a post in the database
 func (pr *PostRepository) UpdatePost(post *Post) error {
 	_, err := pr.db.Exec("UPDATE post SET title = ?, description = ?, imageURL = ?, authorID = ?, isEdited = ?, createDate = ?, modifiedDate = ? WHERE id = ?",
