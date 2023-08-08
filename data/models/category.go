@@ -2,7 +2,9 @@ package models
 
 import (
 	"database/sql"
+	"log"
 
+	uuid "github.com/gofrs/uuid"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -25,7 +27,12 @@ func NewCategoryRepository(db *sql.DB) *CategoryRepository {
 
 // Create a new category in the database
 func (cr *CategoryRepository) CreateCategory(category *Category) error {
-	_, err := cr.db.Exec("INSERT INTO category (id, name, createDate, modifiedDate) VALUES (?, ?, ?, ?)",
+	ID, err := uuid.NewV4()
+	if err != nil {
+		log.Fatalf("❌ Failed to generate UUID: %v", err)
+	}
+	category.ID = ID.String()
+	_, err = cr.db.Exec("INSERT INTO category (id, name, createDate, modifiedDate) VALUES (?, ?, ?, ?)",
 		category.ID, category.Name, category.CreateDate, category.ModifiedDate)
 	return err
 }

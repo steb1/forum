@@ -2,7 +2,9 @@ package models
 
 import (
 	"database/sql"
+	"log"
 
+	uuid "github.com/gofrs/uuid"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -28,7 +30,12 @@ func NewReportRepository(db *sql.DB) *ReportRepository {
 
 // Create a new report in the database
 func (rr *ReportRepository) CreateReport(report *Report) error {
-	_, err := rr.db.Exec("INSERT INTO report (id, authorID, reportedID, cause, type, createDate, modifiedDate) VALUES (?, ?, ?, ?, ?, ?, ?)",
+	ID, err := uuid.NewV4()
+	if err != nil {
+		log.Fatalf("❌ Failed to generate UUID: %v", err)
+	}
+	report.ID = ID.String()
+	_, err = rr.db.Exec("INSERT INTO report (id, authorID, reportedID, cause, type, createDate, modifiedDate) VALUES (?, ?, ?, ?, ?, ?, ?)",
 		report.ID, report.AuthorID, report.ReportedID, report.Cause, report.Type, report.CreateDate, report.ModifiedDate)
 	return err
 }

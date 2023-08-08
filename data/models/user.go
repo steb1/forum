@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 
+	uuid "github.com/gofrs/uuid"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -38,7 +39,12 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 
 // Create a new user in the database
 func (ur *UserRepository) CreateUser(user *User) error {
-	_, err := ur.db.Exec("INSERT INTO user (id, username, email, password, avatarURL, role, token, tokenExpirationDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+	ID, err := uuid.NewV4()
+	if err != nil {
+		log.Fatalf("❌ Failed to generate UUID: %v", err)
+	}
+	user.ID = ID.String()
+	_, err = ur.db.Exec("INSERT INTO user (id, username, email, password, avatarURL, role, token, tokenExpirationDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 		user.ID, user.Username, user.Email, user.Password, user.AvatarURL, user.Role, user.Token, user.TokenExpirationDate)
 	return err
 }

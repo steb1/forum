@@ -2,7 +2,9 @@ package models
 
 import (
 	"database/sql"
+	"log"
 
+	uuid "github.com/gofrs/uuid"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -28,7 +30,12 @@ func NewCommentRepository(db *sql.DB) *CommentRepository {
 
 // Create a new comment in the database
 func (cr *CommentRepository) CreateComment(comment *Comment) error {
-	_, err := cr.db.Exec("INSERT INTO comment (id, text, authorID, postID, parentID, createDate, modifiedDate) VALUES (?, ?, ?, ?, ?, ?, ?)",
+	ID, err := uuid.NewV4()
+	if err != nil {
+		log.Fatalf("❌ Failed to generate UUID: %v", err)
+	}
+	comment.ID = ID.String()
+	_, err = cr.db.Exec("INSERT INTO comment (id, text, authorID, postID, parentID, createDate, modifiedDate) VALUES (?, ?, ?, ?, ?, ?, ?)",
 		comment.ID, comment.Text, comment.AuthorID, comment.PostID, comment.ParentID, comment.CreateDate, comment.ModifiedDate)
 	return err
 }

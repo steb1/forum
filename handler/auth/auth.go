@@ -11,8 +11,6 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-const tokenExpiration = time.Hour
-
 type Token struct {
 	UserID    uuid.UUID `json:"user_id"`
 	Username  string    `json:"username"`
@@ -37,34 +35,26 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 		user.Role = models.RoleUser
 
 		if _, exist := models.UserRepo.IsExisted(user.Email); !exist {
-			// TODO: Move uuid creation directly on the create model method
-			ID, err := uuid.NewV4()
-			if err != nil {
-				log.Fatalf("❌ Failed to generate UUID: %v", err)
-			}
-			user.ID = ID.String()
-
-			token := models.Token{
-				UserID:    ID.String(),
-				Username:  user.Username,
-				ExpiresAt: time.Now().Add(tokenExpiration * 2),
-			}
-
-			// tokenJson, err := json.Marshal(token)
-			// if err != nil {
-			// 	http.Error(res, err.Error(), http.StatusInternalServerError)
-			// 	return
-			// }
-
-			user.TokenExpirationDate = token.ExpiresAt.Format("2006-01-02 15:04:05")
-			err = models.UserRepo.CreateUser(&user)
+			err := models.UserRepo.CreateUser(&user)
 			if err != nil {
 				log.Fatalf("❌ Failed to created account %v", err)
 			}
 
+			token := models.Token{
+				UserID:    user.ID,
+				Username:  user.Username,
+				ExpiresAt: time.Now().Add(time.Hour * 2),
+			}
+
+			user.TokenExpirationDate = token.ExpiresAt.Format("2006-01-02 15:04:05")
+			err = models.UserRepo.UpdateUser(&user)
+			if err != nil {
+				log.Fatal(err)
+			}
+
 			cookie := http.Cookie{}
 			cookie.Name = user.Username
-			cookie.Value = ID.String()
+			cookie.Value = user.ID
 			cookie.Expires = time.Now().Add(2 * time.Hour)
 			cookie.Secure = true
 			cookie.HttpOnly = true
@@ -116,14 +106,8 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 				token := models.Token{
 					UserID:    user.ID,
 					Username:  user.Username,
-					ExpiresAt: time.Now().Add(tokenExpiration * 2),
+					ExpiresAt: time.Now().Add(time.Hour * 2),
 				}
-
-				// tokenJson, err := json.Marshal(token)
-				// if err != nil {
-				// 	http.Error(res, err.Error(), http.StatusInternalServerError)
-				// 	return
-				// }
 
 				cookie := http.Cookie{}
 				cookie.Name = token.Username

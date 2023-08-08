@@ -2,7 +2,9 @@ package models
 
 import (
 	"database/sql"
+	"log"
 
+	uuid "github.com/gofrs/uuid"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -26,7 +28,12 @@ func NewViewRepository(db *sql.DB) *ViewRepository {
 
 // Create a new view in the database
 func (vr *ViewRepository) CreateView(view *View) error {
-	_, err := vr.db.Exec("INSERT INTO view (id, isBookmarked, rate, authorID, postID) VALUES (?, ?, ?, ?, ?)",
+	ID, err := uuid.NewV4()
+	if err != nil {
+		log.Fatalf("❌ Failed to generate UUID: %v", err)
+	}
+	view.ID = ID.String()
+	_, err = vr.db.Exec("INSERT INTO view (id, isBookmarked, rate, authorID, postID) VALUES (?, ?, ?, ?, ?)",
 		view.ID, view.IsBookmarked, view.Rate, view.AuthorID, view.PostID)
 	return err
 }

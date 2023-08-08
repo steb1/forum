@@ -2,7 +2,9 @@ package models
 
 import (
 	"database/sql"
+	"log"
 
+	uuid "github.com/gofrs/uuid"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -29,7 +31,12 @@ func NewPostRepository(db *sql.DB) *PostRepository {
 
 // Create a new post in the database
 func (pr *PostRepository) CreatePost(post *Post) error {
-	_, err := pr.db.Exec("INSERT INTO post (id, title, description, imageURL, authorID, isEdited, createDate, modifiedDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+	ID, err := uuid.NewV4()
+	if err != nil {
+		log.Fatalf("❌ Failed to generate UUID: %v", err)
+	}
+	post.ID = ID.String()
+	_, err = pr.db.Exec("INSERT INTO post (id, title, description, imageURL, authorID, isEdited, createDate, modifiedDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 		post.ID, post.Title, post.Description, post.ImageURL, post.AuthorID, post.IsEdited, post.CreateDate, post.ModifiedDate)
 	return err
 }
@@ -73,7 +80,6 @@ func (pr *PostRepository) GetAllPosts() ([]*Post, error) {
 
 	return posts, nil
 }
-
 
 // Update a post in the database
 func (pr *PostRepository) UpdatePost(post *Post) error {
