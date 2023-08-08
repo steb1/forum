@@ -6,9 +6,9 @@ import (
 )
 
 var (
-	db *sql.DB
-	UserRepo = NewUserRepository(db)
-	PostRepo = NewPostRepository(db)
+	db       *sql.DB
+	UserRepo *UserRepository
+	PostRepo *PostRepository
 )
 
 func init() {
@@ -20,5 +20,7 @@ func init() {
 	if err = db.Ping(); err != nil {
 		log.Fatal("❌ Connection to the database is dead")
 	}
-	defer db.Close()
+	UserRepo = NewUserRepository(db)
+	PostRepo = NewPostRepository(db)
+	log.Println("✅ Database init with success")
 }

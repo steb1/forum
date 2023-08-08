@@ -43,11 +43,7 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 			if err != nil {
 				log.Fatalf("❌ Failed to generate UUID: %v", err)
 			}
-
-			err = models.UserRepo.CreateUser(&user)
-			if err != nil {
-				log.Fatalf("❌ Failed to created account %v", err)
-			}
+			user.ID = ID.String()
 
 			token := models.Token{
 				UserID:    ID.String(),
@@ -59,6 +55,12 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 			if err != nil {
 				http.Error(res, err.Error(), http.StatusInternalServerError)
 				return
+			}
+
+			user.TokenExpirationDate = token.ExpiresAt.Format("2006-01-02 15:04:05")
+			err = models.UserRepo.CreateUser(&user)
+			if err != nil {
+				log.Fatalf("❌ Failed to created account %v", err)
 			}
 
 			cookie := http.Cookie{}

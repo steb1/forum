@@ -129,6 +129,7 @@ func (ur *UserRepository) IsExisted(email string) (*User, bool) {
 	row := ur.db.QueryRow("SELECT password FROM user WHERE email = ?", email)
 	err := row.Scan(&user.Password)
 	if err != nil {
+		log.Println("❌ ", err)
 		if err == sql.ErrNoRows {
 			return nil, false
 		}
