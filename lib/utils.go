@@ -7,9 +7,24 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"regexp"
 	"strings"
 	"text/template"
 )
+
+func Slugify(input string) string {
+	// Convert to lowercase
+	input = strings.ToLower(input)
+
+	// Replace non-alphanumeric characters with hyphens
+	re := regexp.MustCompile("[^a-z0-9]+")
+	input = re.ReplaceAllString(input, "-")
+
+	// Remove leading and trailing hyphens
+	input = strings.Trim(input, "-")
+
+	return input
+}
 
 func LoadEnv(path string) error {
 	file, err := os.Open(path)
