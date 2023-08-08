@@ -3,13 +3,16 @@ package lib
 import (
 	"bufio"
 	"fmt"
+	"forum/data/models"
+	"io"
 	"log"
 	"net/http"
 	"os"
 	"path"
 	"strings"
 	"text/template"
-	"forum/data/models"
+
+	"github.com/google/uuid"
 )
 
 func LoadEnv(path string) error {
@@ -73,7 +76,7 @@ func CheckUsers(data []models.User, Email, Username string) bool {
 	return true
 }
 
-func Isregistered(data []models.User, email, password string) (string , bool) {
+func Isregistered(data []models.User, email, password string) (string, bool) {
 	for _, val := range data {
 		//fmt.Println(val.ID)
 		if val.Email == email && val.Password == password {
@@ -82,4 +85,30 @@ func Isregistered(data []models.User, email, password string) (string , bool) {
 	}
 
 	return password, false
+}
+
+// func GenerateImageUrl(url io.Reader) string {
+// 	u := uuid.New()
+// 	time := time.Now().Format("2006-01-02 14:24:24")
+
+//		return u.String() + time
+//	}
+func UploadImage(r *http.Request) string {
+	image, header, err := r.FormFile("image")
+	uploads := "/uploads/"
+	u := uuid.New()
+	imageURL := uploads + u.String() + header.Filename
+	file, err := os.Create(imageURL)
+	if err != nil {
+		fmt.Println("Erreur lors de la création du fichier :", err)
+		return ""
+	}
+	defer file.Close()
+	_, err = io.Copy(file, image)
+	if err != nil {
+		fmt.Println("Erreur lors de la copie des données :", err)
+		return ""
+	}
+
+	return imageURL
 }
