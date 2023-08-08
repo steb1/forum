@@ -1,4 +1,4 @@
-{{define "title"}} | Sign Up{{end}}
+{{define "title"}} | Sign In{{end}}
 
 {{define "content"}}
 <section class="row center">
@@ -9,7 +9,7 @@
             </path>
         </svg>
     </div>
-    <h1 class="mb-0 ml-1">01-Forum</h1>
+    <h1 class="mb-0 ml-1">Tookapic</h1>
 </section>
 <section class="wfull center">
     <section class="w1-3 col">
@@ -57,20 +57,11 @@
             <img class="avatar big" src="./img/avatar.3.jpeg" alt="" srcset="">
         </div>
         <p>Join these and 10,465 other photographers</p>
-        <form action="/sign-up" method="post" class="wfull mt-1">
-            <input placeholder="Email address" type="email" name="username" id="">
-            <input placeholder="Username" type="text" name="email" id="">
-            <input class="mb-1" placeholder="Password (min. 8 characters)" type="password" name="password" id="">
-            <div class="row center">
-                <input id="terms" type="checkbox"><label class="ml-1" for="terms">I agree to <a href="#">Terms &
-                        Conditions</a></label>
-            </div>
-            <div class="row center">
-                <input id="news" type="checkbox"><label class="ml-1" for="news">I want to receive the
-                    newsletter</label>
-            </div>
-            <button class="wfull mb-1 mt-1">Sign Up</button>
-            <p>Already a member? <a href="/sign-in-page">Sign In</a></p>
+        <form action="/sign-in" method="post" class="wfull mt-1">
+            <input placeholder="Email address" type="email" name="email" id="">
+            <input class="mb-1" placeholder="Password" type="password" name="password" id="">
+            <button class="wfull mb-1 mt-1">Sign In</button>
+            <p>New to 01-Forum ? <a href="/sign-up-page">Go signing up</a></p>
         </form>
     </section>
 </section>

@@ -46,7 +46,7 @@ func (ur *UserRepository) CreateUser(user *User) error {
 // Get a user by ID from the database
 func (ur *UserRepository) GetUserByID(userID string) (*User, error) {
 	var user User
-	row := ur.db.QueryRow("SELECT id, username, email, password, avatarURL, type, token, tokenExpirationDate FROM user WHERE id = ?", userID)
+	row := ur.db.QueryRow("SELECT id, username, email, password, avatarURL, role, token, tokenExpirationDate FROM user WHERE id = ?", userID)
 	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.AvatarURL, &user.Role, &user.Token, &user.TokenExpirationDate)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -60,7 +60,7 @@ func (ur *UserRepository) GetUserByID(userID string) (*User, error) {
 // Get a user by email from the database
 func (ur *UserRepository) GetUserByEmail(email string) (*User, error) {
 	var user User
-	row := ur.db.QueryRow("SELECT id, username, email, password, avatarURL, type, token, tokenExpirationDate FROM user WHERE email = ?", email)
+	row := ur.db.QueryRow("SELECT id, username, email, password, avatarURL, role, token, tokenExpirationDate FROM user WHERE email = ?", email)
 	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.AvatarURL, &user.Role, &user.Token, &user.TokenExpirationDate)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -84,11 +84,11 @@ func (ur *UserRepository) SelectAllUsers() ([]User, error) {
 		var Username string
 		var Password string
 		var AvatarUrl string
-		var Type ROLE
+		var Role ROLE
 		var Token string
 		var TokenExpirationDate string
 
-		err = row.Scan(&ID, &Email, &Username, &Password, &AvatarUrl, &Type, &Token, &TokenExpirationDate)
+		err = row.Scan(&ID, &Email, &Username, &Password, &AvatarUrl, &Role, &Token, &TokenExpirationDate)
 
 		if err != nil {
 			log.Fatal(err)
@@ -100,7 +100,7 @@ func (ur *UserRepository) SelectAllUsers() ([]User, error) {
 			Username:            Username,
 			Password:            Password,
 			AvatarURL:           AvatarUrl,
-			Role:                Type,
+			Role:                Role,
 			Token:               Token,
 			TokenExpirationDate: TokenExpirationDate,
 		}
@@ -112,7 +112,7 @@ func (ur *UserRepository) SelectAllUsers() ([]User, error) {
 
 // Update a user in the database
 func (ur *UserRepository) UpdateUser(user *User) error {
-	_, err := ur.db.Exec("UPDATE user SET username = ?, email = ?, password = ?, avatarURL = ?, type = ?, token = ?, tokenExpirationDate = ? WHERE id = ?",
+	_, err := ur.db.Exec("UPDATE user SET username = ?, email = ?, password = ?, avatarURL = ?, role = ?, token = ?, tokenExpirationDate = ? WHERE id = ?",
 		user.Username, user.Email, user.Password, user.AvatarURL, user.Role, user.Token, user.TokenExpirationDate, user.ID)
 	return err
 }

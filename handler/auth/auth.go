@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"encoding/json"
 	"fmt"
 	"forum/data/models"
 	"forum/lib"
@@ -51,11 +50,11 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 				ExpiresAt: time.Now().Add(tokenExpiration * 2),
 			}
 
-			tokenJson, err := json.Marshal(token)
-			if err != nil {
-				http.Error(res, err.Error(), http.StatusInternalServerError)
-				return
-			}
+			// tokenJson, err := json.Marshal(token)
+			// if err != nil {
+			// 	http.Error(res, err.Error(), http.StatusInternalServerError)
+			// 	return
+			// }
 
 			user.TokenExpirationDate = token.ExpiresAt.Format("2006-01-02 15:04:05")
 			err = models.UserRepo.CreateUser(&user)
@@ -71,9 +70,10 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 			cookie.HttpOnly = true
 			http.SetCookie(res, &cookie)
 
-			res.Header().Set("Content-Type", "application/json")
-			res.Write(tokenJson)
+			basePath := "base"
+			pagePath := "index"
 
+			lib.RenderPage(basePath, pagePath, token, res)
 			log.Println("✅ Account created with success")
 		} else {
 			fmt.Println("❌ User already exist")
@@ -99,8 +99,7 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 		user := models.User{}
-		email := req.FormValue("mail")
-		username := req.FormValue("username")
+		email := req.FormValue("email")
 		password := req.FormValue("password")
 
 		if _user, exist := models.UserRepo.IsExisted(email); exist {
@@ -109,19 +108,22 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 				return
 			} else {
 				_user, err := models.UserRepo.GetUserByEmail(email)
+				if err != nil {
+					log.Println("❌ ", err)
+				}
 				user = *_user
 
 				token := models.Token{
 					UserID:    user.ID,
-					Username:  username,
+					Username:  user.Username,
 					ExpiresAt: time.Now().Add(tokenExpiration * 2),
 				}
 
-				tokenJson, err := json.Marshal(token)
-				if err != nil {
-					http.Error(res, err.Error(), http.StatusInternalServerError)
-					return
-				}
+				// tokenJson, err := json.Marshal(token)
+				// if err != nil {
+				// 	http.Error(res, err.Error(), http.StatusInternalServerError)
+				// 	return
+				// }
 
 				cookie := http.Cookie{}
 				cookie.Name = token.Username
@@ -137,9 +139,6 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 					log.Fatal(err)
 				}
 
-				res.Header().Set("Content-Type", "application/json")
-				res.Write(tokenJson)
-
 				basePath := "base"
 				pagePath := "index"
 
@@ -147,7 +146,7 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 				log.Println("✅ Sign in with success")
 			}
 		} else {
-			log.Println("❌ User with the give email don't exist")
+			log.Println("❌ User with the given email don't exist")
 			return
 		}
 	}
