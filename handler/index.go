@@ -12,6 +12,6 @@ func Index(res http.ResponseWriter, req *http.Request) {
 		pagePath := "index"
 
 		lib.RenderPage(basePath, pagePath, nil, res)
-		log.Println("✅ Map page get with success")
+		log.Println("✅ Home page get with success")
 	}
 }

@@ -1,12 +1,10 @@
 package auth
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"forum/data/models"
 	"forum/lib"
-	"html/template"
 	"log"
 	"net/http"
 	"time"
@@ -22,177 +20,143 @@ type Token struct {
 	ExpiresAt int64     `json:"exp"`
 }
 
-func SignupHandler(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil { //Verifier que le formulaire est bien structure
-		fmt.Fprintf(w, "ParseForm() err: %v", err)
-		return
-	}
-
-	////////////////////////////////////////////////////////////////
-
-	email := r.FormValue("mail")
-	username := r.FormValue("username")
-	password := r.FormValue("password")
-	avatarURL := "assets/img/community.webp"
-	Type := 3
-
-	//////////////////////////////////////////////////////////////////
-
-	db, _ := sql.Open("sqlite3", "./data/sql/forum.db")
-
-	data, err := models.NewUserRepository(db).SelectAllUsers()
-
-	if err != nil {
-		return
-	}
-
-	ok := lib.CheckUsers(data, email, username)
-
-	if ok {
-		// Create a Version 4 UUID.
-		ID, err := uuid.NewV4()
-
-		if err != nil {
-			log.Fatalf("failed to generate UUID: %v", err)
-		}
-
-		// Prepared Statement
-		stmt, err := db.Prepare("INSERT INTO user (ID, username, email, password, avatarURL, type, token, tokenExpirationDate) VALUES(?, ?, ?, ?, ?, ?, ?, ?)")
-
-		defer db.Close()
-
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		defer stmt.Close()
-
-		// Créer un nouveau jeton
-		token := models.Token{
-			UserID:    ID.String(),
-			Username:  username,
-			ExpiresAt: time.Now().Add(tokenExpiration * 2).Unix(),
-		}
-
-		// Encodage du jeton au format JSON
-		tokenJson, err := json.Marshal(token)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+func SignUp(res http.ResponseWriter, req *http.Request) {
+	if lib.ValidateRequest(req, res, "/sign-up", http.MethodPost) {
+		if err := req.ParseForm(); err != nil {
+			fmt.Fprintf(res, "❌ On Signing Up %v", err)
 			return
 		}
+		user := models.User{}
+		user.Email = req.FormValue("email")
+		user.Username = req.FormValue("username")
 
-		////////////////////////////////////////////////////////////////////
-		// Set cookie
+		// TODO: Hash the password
+		user.Password = req.FormValue("password")
 
-		cookie := http.Cookie{}
-		cookie.Name = username
-		cookie.Value = ID.String()
-		cookie.Expires = time.Now().Add(2 * time.Hour)
-		cookie.Secure = true
-		cookie.HttpOnly = true
-		http.SetCookie(w, &cookie)
+		// TODO: Handle the avatar upload
+		user.AvatarURL = "assets/img/community.webp"
+		user.Role = models.RoleUser
 
-		// Renvoyer le jeton encodé dans la réponse
+		if _, exist := models.UserRepo.IsExisted(user.Email); !exist {
+			// TODO: Move uuid creation directly on the create model method
+			ID, err := uuid.NewV4()
+			if err != nil {
+				log.Fatalf("❌ Failed to generate UUID: %v", err)
+			}
 
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(tokenJson)
+			err = models.UserRepo.CreateUser(&user)
+			if err != nil {
+				log.Fatalf("❌ Failed to created account %v", err)
+			}
 
-		////////////////////////////////////////////////////////
+			token := models.Token{
+				UserID:    ID.String(),
+				Username:  user.Username,
+				ExpiresAt: time.Now().Add(tokenExpiration * 2),
+			}
 
-		_, err = stmt.Exec(ID, email, username, password, avatarURL, Type, token.UserID, token.ExpiresAt)
+			tokenJson, err := json.Marshal(token)
+			if err != nil {
+				http.Error(res, err.Error(), http.StatusInternalServerError)
+				return
+			}
 
-		fmt.Println("Success")
-	} else {
-		fmt.Println("Failed")
-		return
+			cookie := http.Cookie{}
+			cookie.Name = user.Username
+			cookie.Value = ID.String()
+			cookie.Expires = time.Now().Add(2 * time.Hour)
+			cookie.Secure = true
+			cookie.HttpOnly = true
+			http.SetCookie(res, &cookie)
+
+			res.Header().Set("Content-Type", "application/json")
+			res.Write(tokenJson)
+
+			log.Println("✅ Account created with success")
+		} else {
+			fmt.Println("❌ User already exist")
+			return
+		}
 	}
 }
 
-func SigninHandler(w http.ResponseWriter, r *http.Request) {
+func SignUpPage(res http.ResponseWriter, req *http.Request) {
+	if lib.ValidateRequest(req, res, "/sign-up-page", http.MethodGet) {
+		basePath := "base"
+		pagePath := "sign-up"
 
-	if err := r.ParseForm(); err != nil { //Verifier que le formulaire est bien structure
-		fmt.Fprintf(w, "ParseForm() err: %v", err)
-		return
+		lib.RenderPage(basePath, pagePath, nil, res)
+		log.Println("✅ Register page get with success")
 	}
-
-	db, _ := sql.Open("sqlite3", "data\\sql\\forum.db")
-
-	email := r.FormValue("mail")
-	username := r.FormValue("username")
-	password := r.FormValue("password")
-
-	data, err := models.NewUserRepository(db).SelectAllUsers()
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	ID, exists := lib.Isregistered(data, email, password)
-
-	if !exists {
-		fmt.Println("failed")
-		return
-	}
-
-	// Créer un nouveau jeton
-	token := models.Token{
-		UserID:    ID,
-		Username:  username,
-		ExpiresAt: time.Now().Add(tokenExpiration * 2).Unix(),
-	}
-
-	// Encodage du jeton au format JSON
-	tokenJson, err := json.Marshal(token)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	////////////////////////////////////////////////////////////////////
-	// Set cookie
-
-	cookie := http.Cookie{}
-	cookie.Name = username
-	cookie.Value = ID
-	cookie.Expires = time.Now().Add(2 * time.Hour)
-	cookie.Secure = true
-	cookie.HttpOnly = true
-	http.SetCookie(w, &cookie)
-
-	// UPDATE CLIENT TOKEN
-
-	stmt, err := db.Prepare("UPDATE user SET tokenExpirationDate = ? WHERE id = ?")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer stmt.Close()
-
-	_, err = stmt.Exec(token.ExpiresAt, ID)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Renvoyer le jeton encodé dans la réponse
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(tokenJson)
-
-	t, err := template.ParseFiles("templates\\user\\user.html")
-	fmt.Println("signin success")
-
-	t.Execute(w, ID)
 }
 
-// // this map stores the users sessions. For larger scale applications, you can use a database or cache for this purpose
-// var sessions = map[string]session{}
+func SignIn(res http.ResponseWriter, req *http.Request) {
+	if lib.ValidateRequest(req, res, "/sign-in", http.MethodPost) {
+		if err := req.ParseForm(); err != nil {
+			fmt.Fprintf(res, "❌ On Signing In %v", err)
+			return
+		}
+		user := models.User{}
+		email := req.FormValue("mail")
+		username := req.FormValue("username")
+		password := req.FormValue("password")
 
-// // each session contains the username of the user and the time at which it expires
-// type session struct {
-// 	username string
-// 	expiry   time.Time
-// }
+		if _user, exist := models.UserRepo.IsExisted(email); exist {
+			if _user.Password != password {
+				log.Println("❌ Password given is wrong")
+				return
+			} else {
+				_user, err := models.UserRepo.GetUserByEmail(email)
+				user = *_user
 
-// // we'll use this method later to determine if the session has expired
-// func (s session) isExpired() bool {
-// 	return s.expiry.Before(time.Now())
-// }
+				token := models.Token{
+					UserID:    user.ID,
+					Username:  username,
+					ExpiresAt: time.Now().Add(tokenExpiration * 2),
+				}
+
+				tokenJson, err := json.Marshal(token)
+				if err != nil {
+					http.Error(res, err.Error(), http.StatusInternalServerError)
+					return
+				}
+
+				cookie := http.Cookie{}
+				cookie.Name = token.Username
+				cookie.Value = token.UserID
+				cookie.Expires = token.ExpiresAt
+				cookie.Secure = true
+				cookie.HttpOnly = true
+				http.SetCookie(res, &cookie)
+				user.TokenExpirationDate = token.ExpiresAt.Format("2006-01-02 15:04:05")
+
+				err = models.UserRepo.UpdateUser(&user)
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				res.Header().Set("Content-Type", "application/json")
+				res.Write(tokenJson)
+
+				basePath := "base"
+				pagePath := "index"
+
+				lib.RenderPage(basePath, pagePath, token, res)
+				log.Println("✅ Sign in with success")
+			}
+		} else {
+			log.Println("❌ User with the give email don't exist")
+			return
+		}
+	}
+}
+
+func SignInPage(res http.ResponseWriter, req *http.Request) {
+	if lib.ValidateRequest(req, res, "/sign-in-page", http.MethodGet) {
+		basePath := "base"
+		pagePath := "sign-in"
+
+		lib.RenderPage(basePath, pagePath, nil, res)
+		log.Println("✅ Login page get with success")
+	}
+}

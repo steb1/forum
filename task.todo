@@ -29,9 +29,10 @@
 
 ### Todo List for "forum-image-upload" Project:
 1.  [ ] Allow registered users to create posts with images.
-2.  [ ] Validate image types (JPEG, PNG, GIF) and size (maximum 20 MB).
-3.  [ ] Handle image upload and storage on the server.
-4.  [ ] Display the associated image when viewing the post.
+2.  [ ] Allow users to have profile's avatar.
+3.  [ ] Validate image types (JPEG, PNG, GIF) and size (maximum 20 MB).
+4.  [ ] Handle image upload and storage on the server.
+5.  [ ] Display the associated image when viewing the post.
 
 ### Todo List for "security" Project:
 1.  [ ] Implement HTTPS protocol using an SSL certificate.

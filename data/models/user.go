@@ -13,7 +13,7 @@ type User struct {
 	Email               string
 	Password            string
 	AvatarURL           string
-	Type                ROLE
+	Role                ROLE
 	Token               string
 	TokenExpirationDate string
 }
@@ -38,8 +38,8 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 
 // Create a new user in the database
 func (ur *UserRepository) CreateUser(user *User) error {
-	_, err := ur.db.Exec("INSERT INTO user (id, username, email, password, avatarURL, type, token, tokenExpirationDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-		user.ID, user.Username, user.Email, user.Password, user.AvatarURL, user.Type, user.Token, user.TokenExpirationDate)
+	_, err := ur.db.Exec("INSERT INTO user (id, username, email, password, avatarURL, role, token, tokenExpirationDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+		user.ID, user.Username, user.Email, user.Password, user.AvatarURL, user.Role, user.Token, user.TokenExpirationDate)
 	return err
 }
 
@@ -47,7 +47,21 @@ func (ur *UserRepository) CreateUser(user *User) error {
 func (ur *UserRepository) GetUserByID(userID string) (*User, error) {
 	var user User
 	row := ur.db.QueryRow("SELECT id, username, email, password, avatarURL, type, token, tokenExpirationDate FROM user WHERE id = ?", userID)
-	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.AvatarURL, &user.Type, &user.Token, &user.TokenExpirationDate)
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.AvatarURL, &user.Role, &user.Token, &user.TokenExpirationDate)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil // User not found
+		}
+		return nil, err
+	}
+	return &user, nil
+}
+
+// Get a user by email from the database
+func (ur *UserRepository) GetUserByEmail(email string) (*User, error) {
+	var user User
+	row := ur.db.QueryRow("SELECT id, username, email, password, avatarURL, type, token, tokenExpirationDate FROM user WHERE email = ?", email)
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.AvatarURL, &user.Role, &user.Token, &user.TokenExpirationDate)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil // User not found
@@ -58,7 +72,6 @@ func (ur *UserRepository) GetUserByID(userID string) (*User, error) {
 }
 
 // Select All users
-
 func (ur *UserRepository) SelectAllUsers() ([]User, error) {
 	var user []User
 	row, err := ur.db.Query("SELECT * FROM user")
@@ -74,33 +87,33 @@ func (ur *UserRepository) SelectAllUsers() ([]User, error) {
 		var Type ROLE
 		var Token string
 		var TokenExpirationDate string
-		
+
 		err = row.Scan(&ID, &Email, &Username, &Password, &AvatarUrl, &Type, &Token, &TokenExpirationDate)
 
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		var tab = User {
-			ID : ID,
-			Email: Email,
-			Username: Username,
-			Password: Password,
-			AvatarURL: AvatarUrl,
-			Type: Type,
-			Token: Token,
+		var tab = User{
+			ID:                  ID,
+			Email:               Email,
+			Username:            Username,
+			Password:            Password,
+			AvatarURL:           AvatarUrl,
+			Role:                Type,
+			Token:               Token,
 			TokenExpirationDate: TokenExpirationDate,
 		}
 
 		user = append(user, tab)
-	}	
+	}
 	return user, nil
 }
 
 // Update a user in the database
 func (ur *UserRepository) UpdateUser(user *User) error {
 	_, err := ur.db.Exec("UPDATE user SET username = ?, email = ?, password = ?, avatarURL = ?, type = ?, token = ?, tokenExpirationDate = ? WHERE id = ?",
-		user.Username, user.Email, user.Password, user.AvatarURL, user.Type, user.Token, user.TokenExpirationDate, user.ID)
+		user.Username, user.Email, user.Password, user.AvatarURL, user.Role, user.Token, user.TokenExpirationDate, user.ID)
 	return err
 }
 
@@ -108,4 +121,18 @@ func (ur *UserRepository) UpdateUser(user *User) error {
 func (ur *UserRepository) DeleteUser(userID string) error {
 	_, err := ur.db.Exec("DELETE FROM user WHERE id = ?", userID)
 	return err
+}
+
+// Check if user exists
+func (ur *UserRepository) IsExisted(email string) (*User, bool) {
+	var user User
+	row := ur.db.QueryRow("SELECT password FROM user WHERE email = ?", email)
+	err := row.Scan(&user.Password)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, false
+		}
+		return nil, false
+	}
+	return &user, true
 }

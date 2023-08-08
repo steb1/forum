@@ -7,7 +7,7 @@ CREATE TABLE user (
     email VARCHAR,
     password TEXT,
     avatarURL VARCHAR,
-    type VARCHAR,
+    role VARCHAR,
     token TEXT,
     tokenExpirationDate DATE
 );
@@ -105,51 +105,3 @@ CREATE TABLE category (
     createDate DATE,
     modifiedDate DATE
 );
-
--- Enum for 'RATE'
-CREATE TABLE RATE (
-    id INTEGER PRIMARY KEY,
-    value VARCHAR
-);
-
--- Enum values for 'RATE'
-INSERT INTO RATE (id, value) VALUES
-    (1, 'NONE'),
-    (2, 'LIKE'),
-    (3, 'DISLIKE');
-
--- Enum for 'TYPE'
-CREATE TABLE TYPE (
-    id INTEGER PRIMARY KEY,
-    value VARCHAR
-);
-
--- Enum values for 'TYPE'
-INSERT INTO TYPE (id, value) VALUES
-    (1, 'COMMENT'),
-    (2, 'POST');
-
--- Enum for 'ROLE'
-CREATE TABLE ROLE (
-    id INTEGER PRIMARY KEY,
-    value VARCHAR
-);
-
--- Enum values for 'ROLE'
-INSERT INTO ROLE (id, value) VALUES
-    (1, 'ADMIN'),
-    (2, 'MODERATOR'),
-    (3, 'USER');
-
--- Enum for 'CAUSE'
-CREATE TABLE CAUSE (
-    id INTEGER PRIMARY KEY,
-    value VARCHAR
-);
-
--- Enum values for 'CAUSE'
-INSERT INTO CAUSE (id, value) VALUES
-    (1, 'IRRELEVANT'),
-    (2, 'OBSCENE'),
-    (3, 'ILLEGAL'),
-    (4, 'INSULTING');

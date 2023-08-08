@@ -9,7 +9,6 @@ import (
 	"path"
 	"strings"
 	"text/template"
-	"forum/data/models"
 )
 
 func LoadEnv(path string) error {
@@ -60,26 +59,4 @@ func RenderPage(basePath, pagePath string, data any, res http.ResponseWriter) {
 	} else {
 		tpl.Execute(res, data)
 	}
-}
-
-func CheckUsers(data []models.User, Email, Username string) bool {
-	for _, val := range data {
-		//fmt.Println(val.ID)
-		if val.Email == Email || val.Username == Username {
-			return false
-		}
-	}
-
-	return true
-}
-
-func Isregistered(data []models.User, email, password string) (string , bool) {
-	for _, val := range data {
-		//fmt.Println(val.ID)
-		if val.Email == email && val.Password == password {
-			return val.ID, true
-		}
-	}
-
-	return password, false
 }

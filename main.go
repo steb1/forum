@@ -20,8 +20,10 @@ func main() {
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("./assets/img/"))))
 
 	http.HandleFunc("/", handler.Index)
-	http.HandleFunc("/Signup", auth.SignupHandler)
-	http.HandleFunc("/Signin", auth.SigninHandler)
+	http.HandleFunc("/sign-up", auth.SignUp)
+	http.HandleFunc("/sign-up-page", auth.SignUpPage)
+	http.HandleFunc("/sign-in", auth.SignIn)
+	http.HandleFunc("/sign-in-page", auth.SignInPage)
 
 	http.HandleFunc("/post", handler.Post)
 	http.HandleFunc("/comment", handler.Comment)
@@ -29,9 +31,7 @@ func main() {
 
 	log.Println("Server started and running on", PORT)
 	log.Println(ADDRESS + PORT)
-
-	fmt.Printf("Starting server at port 8080\nhttp://localhost:8080/\n")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	if err := http.ListenAndServe(PORT, nil); err != nil {
 		log.Fatal(err)
 	}
 }
