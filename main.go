@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"forum/handler"
+	"forum/handler/auth"
 	"forum/lib"
 	"log"
 	"net/http"
@@ -28,6 +29,8 @@ func main() {
 	// http.HandleFunc("/post", handler.Post)
 	// http.HandleFunc("/comment", handler.Comment)
 	// http.HandleFunc("/posts", handler.AllPosts)
+
+	go lib.DeleteExpiredSessions()
 
 	log.Println("Server started and running on", PORT)
 	log.Println(ADDRESS + PORT)

@@ -6,16 +6,7 @@ import (
 	"forum/lib"
 	"log"
 	"net/http"
-	"time"
-
-	"github.com/gofrs/uuid"
 )
-
-type Token struct {
-	UserID    uuid.UUID `json:"user_id"`
-	Username  string    `json:"username"`
-	ExpiresAt int64     `json:"exp"`
-}
 
 func SignUp(res http.ResponseWriter, req *http.Request) {
 	if lib.ValidateRequest(req, res, "/sign-up", http.MethodPost) {
@@ -40,30 +31,9 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 				log.Fatalf("❌ Failed to created account %v", err)
 			}
 
-			token := models.Token{
-				UserID:    user.ID,
-				Username:  user.Username,
-				ExpiresAt: time.Now().Add(time.Hour * 2),
-			}
+			lib.NewSessionToken(res, user.ID, user.Username)
 
-			user.TokenExpirationDate = token.ExpiresAt.Format("2006-01-02 15:04:05")
-			err = models.UserRepo.UpdateUser(&user)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			cookie := http.Cookie{}
-			cookie.Name = user.Username
-			cookie.Value = user.ID
-			cookie.Expires = time.Now().Add(2 * time.Hour)
-			cookie.Secure = true
-			cookie.HttpOnly = true
-			http.SetCookie(res, &cookie)
-
-			basePath := "base"
-			pagePath := "index"
-
-			lib.RenderPage(basePath, pagePath, token, res)
+			http.Redirect(res, req, "/", http.StatusSeeOther)
 			log.Println("✅ Account created with success")
 		} else {
 			fmt.Println("❌ User already exist")
@@ -103,30 +73,9 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 				}
 				user = *_user
 
-				token := models.Token{
-					UserID:    user.ID,
-					Username:  user.Username,
-					ExpiresAt: time.Now().Add(time.Hour * 2),
-				}
+				lib.NewSessionToken(res, user.ID, user.Username)
 
-				cookie := http.Cookie{}
-				cookie.Name = token.Username
-				cookie.Value = token.UserID
-				cookie.Expires = token.ExpiresAt
-				cookie.Secure = true
-				cookie.HttpOnly = true
-				http.SetCookie(res, &cookie)
-				user.TokenExpirationDate = token.ExpiresAt.Format("2006-01-02 15:04:05")
-
-				err = models.UserRepo.UpdateUser(&user)
-				if err != nil {
-					log.Fatal(err)
-				}
-
-				basePath := "base"
-				pagePath := "index"
-
-				lib.RenderPage(basePath, pagePath, token, res)
+				http.Redirect(res, req, "/", http.StatusSeeOther)
 				log.Println("✅ Sign in with success")
 			}
 		} else {
