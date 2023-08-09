@@ -20,23 +20,9 @@
     </div>
 </section>
 <section class="space-between shadow mb-1">
-    <img src="/img/avatar.1.jpeg" class="avatar big">
-    <img src="/img/banner.2.jpg" class="avatar big">
-    <img src="/img/avatar.2.jpeg" class="avatar big">
-    <img src="/img/avatar.8.jpg" class="avatar big">
-    <img src="/img/avatar.3.jpeg" class="avatar big">
-    <img src="/img/avatar.4.jpeg" class="avatar big">
-    <img src="/img/banner.1.jpg" class="avatar big">
-    <img src="/img/avatar.5.jpg" class="avatar big">
-    <img src="/img/banner.4.jpg" class="avatar big">
-    <img src="/img/avatar.6.jpg" class="avatar big">
-    <img src="/img/banner.1.jpg" class="avatar big">
-    <img src="/img/avatar.7.jpg" class="avatar big">
-    <img src="/img/avatar.8.jpg" class="avatar big">
-    <img src="/img/banner.4.jpg" class="avatar big">
-    <img src="/img/avatar.9.jpg" class="avatar big">
-    <img src="/img/banner.3.jpg" class="avatar big">
-    <img src="/img/avatar.10.jpg" class="avatar big">
+    {{range .RandomUsers}}
+    <img src="{{ .AvatarURL }}" class="avatar big">
+    {{end}}
 </section>
 <section class="mt-1">
     <section class="col w2-3 mr-1">

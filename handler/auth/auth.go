@@ -8,6 +8,11 @@ import (
 	"net/http"
 )
 
+type SignPageData struct {
+	IsLoggedIn bool
+	RandomUsers []models.User
+}
+
 func SignUp(res http.ResponseWriter, req *http.Request) {
 	if lib.ValidateRequest(req, res, "/sign-up", http.MethodPost) {
 		if err := req.ParseForm(); err != nil {
@@ -27,7 +32,7 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 		// TODO: Handle the avatar upload
 		avatarURL := lib.UploadImage(req)
 		if avatarURL == "" {
-			avatarURL = "/uploads/avatar.1.jpeg"
+			avatarURL = models.DEFAULT_AVATAR
 		}
 		user.AvatarURL = avatarURL
 		user.Role = models.RoleUser
@@ -54,7 +59,17 @@ func SignUpPage(res http.ResponseWriter, req *http.Request) {
 		basePath := "base"
 		pagePath := "sign-up"
 
-		lib.RenderPage(basePath, pagePath, nil, res)
+		randomUsers, err := models.UserRepo.SelectRandomUsers(15)
+		if err != nil {
+			log.Println("❌ Can't get 15 random users in the database")
+		}
+
+		signPageData := SignPageData{
+			IsLoggedIn:  false,
+			RandomUsers: randomUsers,
+		}
+
+		lib.RenderPage(basePath, pagePath, signPageData, res)
 		log.Println("✅ Register page get with success")
 	}
 }
@@ -96,7 +111,17 @@ func SignInPage(res http.ResponseWriter, req *http.Request) {
 		basePath := "base"
 		pagePath := "sign-in"
 
-		lib.RenderPage(basePath, pagePath, nil, res)
+		randomUsers, err := models.UserRepo.SelectRandomUsers(15)
+		if err != nil {
+			log.Println("❌ Can't get 15 random users in the database")
+		}
+
+		signPageData := SignPageData{
+			IsLoggedIn:  false,
+			RandomUsers: randomUsers,
+		}
+
+		lib.RenderPage(basePath, pagePath, signPageData, res)
 		log.Println("✅ Login page get with success")
 	}
 }

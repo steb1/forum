@@ -42,19 +42,9 @@
     <section class="w1-2 col ml-1">
         <h1>Join Tookapic</h1>
         <div class="avatars ml-1 mt-1 mb-1">
-            <img class="avatar big" src="./img/avatar.1.jpeg" alt="" srcset="">
-            <img class="avatar big" src="./img/avatar.2.jpeg" alt="" srcset="">
-            <img class="avatar big" src="./img/avatar.3.jpeg" alt="" srcset="">
-            <img class="avatar big" src="./img/avatar.4.jpeg" alt="" srcset="">
-            <img class="avatar big" src="./img/avatar.5.jpg" alt="" srcset="">
-            <img class="avatar big" src="./img/avatar.6.jpg" alt="" srcset="">
-            <img class="avatar big" src="./img/avatar.7.jpg" alt="" srcset="">
-            <img class="avatar big" src="./img/avatar.8.jpg" alt="" srcset="">
-            <img class="avatar big" src="./img/avatar.9.jpg" alt="" srcset="">
-            <img class="avatar big" src="./img/avatar.10.jpg" alt="" srcset="">
-            <img class="avatar big" src="./img/avatar.1.jpeg" alt="" srcset="">
-            <img class="avatar big" src="./img/avatar.2.jpeg" alt="" srcset="">
-            <img class="avatar big" src="./img/avatar.3.jpeg" alt="" srcset="">
+            {{range .RandomUsers}}
+            <img class="avatar big" src="{{ .AvatarURL }}" alt="" srcset="">
+            {{end}}
         </div>
         <p>Join these and 10,465 other photographers</p>
         <form action="/sign-in" method="post" class="wfull mt-1">

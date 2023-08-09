@@ -13,6 +13,7 @@ type EditUserPageData struct {
 }
 
 func EditUser(res http.ResponseWriter, req *http.Request) {
+	//TODO: Return http error
 	if lib.ValidateRequest(req, res, "/edit-user", http.MethodPost) {
 		// Check if the user is logged in
 		currentUser := lib.GetUserFromSession(req)

@@ -9,6 +9,7 @@ import (
 
 type HomePageData struct {
 	IsLoggedIn  bool
+	RandomUsers []models.User
 	CurrentUser models.User
 }
 
@@ -19,10 +20,15 @@ func Index(res http.ResponseWriter, req *http.Request) {
 
 		isSessionOpen := lib.ValidSession(req)
 		user := lib.GetUserFromSession(req)
+		randomUsers, err := models.UserRepo.SelectRandomUsers(17)
+		if err != nil {
+			log.Println("❌ Can't get 17 random users in the database")
+		}
 
 		homePageData := HomePageData{
 			IsLoggedIn:  isSessionOpen,
 			CurrentUser: *user,
+			RandomUsers: randomUsers,
 		}
 
 		lib.RenderPage(basePath, pagePath, homePageData, res)

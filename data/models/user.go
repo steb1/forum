@@ -19,6 +19,8 @@ type User struct {
 	TokenExpirationDate string
 }
 
+var DEFAULT_AVATAR = "/uploads/avatar.1.jpeg"
+
 type ROLE int
 
 const (
@@ -114,6 +116,50 @@ func (ur *UserRepository) SelectAllUsers() ([]User, error) {
 		user = append(user, tab)
 	}
 	return user, nil
+}
+
+// Select 17 random users from the database
+func (ur *UserRepository) SelectRandomUsers(count int) ([]User, error) {
+	var users []User
+	query := "SELECT * FROM user ORDER BY RANDOM() LIMIT ?"
+	rows, err := ur.db.Query(query, count)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var user User
+		err := rows.Scan(
+			&user.ID,
+			&user.Email,
+			&user.Username,
+			&user.Password,
+			&user.AvatarURL,
+			&user.Role,
+			&user.Token,
+			&user.TokenExpirationDate,
+		)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	if len(users) < count {
+		rest := count - len(users)
+		for i := 0; i < rest; i++ {
+			users = append(users, User{
+				AvatarURL: DEFAULT_AVATAR,
+			})
+		}
+	}
+
+	return users, nil
 }
 
 // Update a user in the database
