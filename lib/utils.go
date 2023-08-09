@@ -8,12 +8,15 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"text/template"
 
-	"github.com/google/uuid"
+	"github.com/gofrs/uuid"
 )
+
+var maxSize int64 = 20 * 1024 * 1024
 
 func Slugify(input string) string {
 	input = strings.ToLower(input)
@@ -75,14 +78,30 @@ func RenderPage(basePath, pagePath string, data any, res http.ResponseWriter) {
 }
 
 func UploadImage(r *http.Request) string {
+	err := r.ParseMultipartForm(32 << 20) // 32 MB limit
+	if err != nil {
+		log.Println("❌ Unable to parse form")
+		return ""
+	}
 	image, header, err := r.FormFile("image")
 	if err != nil {
 		log.Println("❌ Request doesn't contain image")
 		return ""
 	}
+	defer image.Close()
+
+	if header.Size > maxSize {
+		log.Println("❌ File size exceeds limit")
+		return ""
+	}
+
+	if !isValidFileType(header.Header.Get("Content-Type")) {
+		log.Println("❌ Invalid file type")
+		return ""
+	}
+
 	uploads := "/uploads/"
-	u := uuid.New()
-	imageURL := uploads + u.String() + header.Filename
+	imageURL := uploads + generateUniqueFilename(header.Filename)
 	file, err := os.Create(imageURL)
 	if err != nil {
 		fmt.Println("❌ Error when creating the file", err)
@@ -96,4 +115,22 @@ func UploadImage(r *http.Request) string {
 	}
 
 	return imageURL
+}
+
+func generateUniqueFilename(filename string) string {
+	ext := filepath.Ext(filename)
+	randomName, err := uuid.NewV4()
+	if err != nil {
+		log.Fatalf("❌ Failed to generate UUID: %v", err)
+	}
+	newFilename := randomName.String() + ext
+	return newFilename
+}
+
+func isValidFileType(contentType string) bool {
+	switch contentType {
+	case "image/jpeg", "image/png", "image/gif":
+		return true
+	}
+	return false
 }
