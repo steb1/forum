@@ -1,13 +1,15 @@
 package handler
 
 import (
+	"forum/data/models"
 	"forum/lib"
 	"log"
 	"net/http"
 )
 
-type HomePage struct {
-	IsLoggedIn bool
+type HomePageData struct {
+	IsLoggedIn  bool
+	CurrentUser models.User
 }
 
 func Index(res http.ResponseWriter, req *http.Request) {
@@ -16,12 +18,14 @@ func Index(res http.ResponseWriter, req *http.Request) {
 		pagePath := "index"
 
 		isSessionOpen := lib.ValidSession(req)
+		user := lib.GetUserFromSession(req)
 
-		home := HomePage{
+		homePageData := HomePageData{
 			IsLoggedIn: isSessionOpen,
+			CurrentUser: *user,
 		}
 
-		lib.RenderPage(basePath, pagePath, home, res)
+		lib.RenderPage(basePath, pagePath, homePageData, res)
 		log.Println("✅ Home page get with success")
 	}
 }

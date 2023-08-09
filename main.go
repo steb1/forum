@@ -18,7 +18,7 @@ func main() {
 
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("./assets/styles/"))))
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("./assets/img/"))))
-	http.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("./assets/uploads/"))))
+	http.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads/"))))
 
 	http.HandleFunc("/", handler.Index)
 	http.HandleFunc("/sign-up", auth.SignUp)

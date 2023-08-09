@@ -81,18 +81,22 @@ func RenderPage(basePath, pagePath string, data any, res http.ResponseWriter) {
 
 func UploadImage(r *http.Request) string {
 	image, header, err := r.FormFile("image")
+	if err != nil {
+		log.Println("❌ Request doesn't contain image")
+		return ""
+	}
 	uploads := "/uploads/"
 	u := uuid.New()
 	imageURL := uploads + u.String() + header.Filename
 	file, err := os.Create(imageURL)
 	if err != nil {
-		fmt.Println("Erreur lors de la création du fichier :", err)
+		fmt.Println("❌ Error when creating the file", err)
 		return ""
 	}
 	defer file.Close()
 	_, err = io.Copy(file, image)
 	if err != nil {
-		fmt.Println("Erreur lors de la copie des données :", err)
+		fmt.Println("❌ Error when copying data", err)
 		return ""
 	}
 

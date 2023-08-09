@@ -22,7 +22,11 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 		user.Password = req.FormValue("password")
 
 		// TODO: Handle the avatar upload
-		user.AvatarURL = "assets/img/community.webp"
+		avatarURL := lib.UploadImage(req)
+		if avatarURL == "" {
+			avatarURL =  "/uploads/avatar.1.jpeg"
+		}
+		user.AvatarURL = avatarURL
 		user.Role = models.RoleUser
 
 		if _, exist := models.UserRepo.IsExisted(user.Email); !exist {

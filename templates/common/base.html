@@ -41,7 +41,7 @@
             </svg>
         </a>
         <button>Upload</button>
-        <img class="avatar" src="./img/avatar.1.jpeg" alt="">
+        <img class="avatar" src="{{ .CurrentUser.AvatarURL }}" alt="">
         {{else}}
         <a href="/sign-in-page" class="btn alt">Sign In</a>
         <a href="/sign-up-page" class="btn">Sign Up</a>
