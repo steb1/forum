@@ -366,6 +366,11 @@ img.avatar.big {
     height: 54px;
 }
 
+img.avatar.bigger {
+    width: 94px;
+    height: 94px;
+}
+
 img.avatar.small {
     width: 28px;
     height: 28px;
@@ -391,6 +396,12 @@ img.avatar.small {
     width: 59px;
     height: 59px;
 }
+
+.avatars img.avatar.bigger {
+    width: 69px;
+    height: 69px;
+}
+
 
 div.new {
     position: relative;

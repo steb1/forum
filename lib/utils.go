@@ -78,11 +78,6 @@ func RenderPage(basePath, pagePath string, data any, res http.ResponseWriter) {
 }
 
 func UploadImage(r *http.Request) string {
-	err := r.ParseMultipartForm(32 << 20) // 32 MB limit
-	if err != nil {
-		log.Println("❌ Unable to parse form")
-		return ""
-	}
 	image, header, err := r.FormFile("image")
 	if err != nil {
 		log.Println("❌ Request doesn't contain image")

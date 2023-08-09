@@ -45,7 +45,9 @@
             </svg>
         </a>
         <button>Upload</button>
-        <img class="avatar" src="{{ .CurrentUser.AvatarURL }}" alt="">
+        <a href="/edit-user-page">
+            <img class="avatar" src="{{ .CurrentUser.AvatarURL }}" alt="">
+        </a>
         <a href="/logout" class="icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path
