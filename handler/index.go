@@ -6,12 +6,22 @@ import (
 	"net/http"
 )
 
+type HomePage struct {
+	IsLoggedIn bool
+}
+
 func Index(res http.ResponseWriter, req *http.Request) {
 	if lib.ValidateRequest(req, res, "/", http.MethodGet) {
 		basePath := "base"
 		pagePath := "index"
 
-		lib.RenderPage(basePath, pagePath, nil, res)
+		isSessionOpen := lib.ValidSession(req)
+
+		home := HomePage{
+			IsLoggedIn: isSessionOpen,
+		}
+
+		lib.RenderPage(basePath, pagePath, home, res)
 		log.Println("✅ Home page get with success")
 	}
 }

@@ -25,8 +25,27 @@
             <a href="#">Features</a>
         </nav>
         <input type="search" name="" id="" placeholder="Search...">
+        {{if .IsLoggedIn}}
+        <a href="#" class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path
+                    d="M6.45455 19L2 22.5V4C2 3.44772 2.44772 3 3 3H21C21.5523 3 22 3.44772 22 4V18C22 18.5523 21.5523 19 21 19H6.45455ZM7 10V12H9V10H7ZM11 10V12H13V10H11ZM15 10V12H17V10H15Z">
+                </path>
+            </svg>
+        </a>
+        <a href="#" class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path
+                    d="M20 17H22V19H2V17H4V10C4 5.58172 7.58172 2 12 2C16.4183 2 20 5.58172 20 10V17ZM9 21H15V23H9V21Z">
+                </path>
+            </svg>
+        </a>
+        <button>Upload</button>
+        <img class="avatar" src="./img/avatar.1.jpeg" alt="">
+        {{else}}
         <a href="/sign-in-page" class="btn alt">Sign In</a>
         <a href="/sign-up-page" class="btn">Sign Up</a>
+        {{end}}
     </header>
     <main>
         {{template "content" .}}
