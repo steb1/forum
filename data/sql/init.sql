@@ -1,7 +1,7 @@
 -- SQL schema for user-class-diagram
 
 -- Table for 'user'
-CREATE TABLE user (
+CREATE TABLE IF NOT EXISTS "user" (
     id VARCHAR PRIMARY KEY,
     username VARCHAR,
     email VARCHAR,
@@ -12,13 +12,13 @@ CREATE TABLE user (
     tokenExpirationDate DATE
 );
 
-CREATE TABLE session (
+CREATE TABLE IF NOT EXISTS "session" (
     sessionID  VARCHAR PRIMARY KEY,
     ExpirationDate Date
 );
 
 -- Table for 'post'
-CREATE TABLE post (
+CREATE TABLE IF NOT EXISTS "post" (
     id VARCHAR PRIMARY KEY,
     title VARCHAR,
     description VARCHAR,
@@ -31,7 +31,7 @@ CREATE TABLE post (
 );
 
 -- Table for 'report'
-CREATE TABLE report (
+CREATE TABLE IF NOT EXISTS "report" (
     id VARCHAR PRIMARY KEY,
     authorID VARCHAR,
     reportedID VARCHAR,
@@ -44,7 +44,7 @@ CREATE TABLE report (
 );
 
 -- Table for 'response'
-CREATE TABLE response (
+CREATE TABLE IF NOT EXISTS "response" (
     id VARCHAR PRIMARY KEY,
     authorID VARCHAR,
     reportID VARCHAR,
@@ -56,7 +56,7 @@ CREATE TABLE response (
 );
 
 -- Table for 'view'
-CREATE TABLE view (
+CREATE TABLE IF NOT EXISTS "view" (
     id VARCHAR PRIMARY KEY,
     isBookmarked BOOLEAN,
     rate VARCHAR,
@@ -67,7 +67,7 @@ CREATE TABLE view (
 );
 
 -- Table for 'comment_like'
-CREATE TABLE comment_like (
+CREATE TABLE IF NOT EXISTS "comment_like" (
     id VARCHAR PRIMARY KEY,
     authorID VARCHAR,
     commentID VARCHAR,
@@ -76,7 +76,7 @@ CREATE TABLE comment_like (
 );
 
 -- Table for 'comment'
-CREATE TABLE comment (
+CREATE TABLE IF NOT EXISTS "comment" (
     id VARCHAR PRIMARY KEY,
     text VARCHAR,
     authorID VARCHAR,
@@ -90,7 +90,7 @@ CREATE TABLE comment (
 );
 
 -- Table for 'post_category'
-CREATE TABLE post_category (
+CREATE TABLE IF NOT EXISTS "post_category" (
     id VARCHAR PRIMARY KEY,
     categoryID VARCHAR,
     postID VARCHAR,
@@ -99,7 +99,7 @@ CREATE TABLE post_category (
 );
 
 -- Table for 'category'
-CREATE TABLE category (
+CREATE TABLE IF NOT EXISTS "category" (
     id VARCHAR PRIMARY KEY,
     name VARCHAR,
     createDate DATE,
