@@ -16,14 +16,9 @@ import (
 )
 
 func Slugify(input string) string {
-	// Convert to lowercase
 	input = strings.ToLower(input)
-
-	// Replace non-alphanumeric characters with hyphens
 	re := regexp.MustCompile("[^a-z0-9]+")
 	input = re.ReplaceAllString(input, "-")
-
-	// Remove leading and trailing hyphens
 	input = strings.Trim(input, "-")
 
 	return input
@@ -49,7 +44,7 @@ func LoadEnv(path string) error {
 }
 
 func ValidateRequest(req *http.Request, res http.ResponseWriter, url, method string) bool {
-	if strings.Contains(url, "*") && path.Dir(url) == path.Dir(req.URL.Path) {
+	if path.Dir(url) == path.Dir(req.URL.Path) {
 		return true
 	}
 
