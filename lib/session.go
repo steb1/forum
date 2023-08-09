@@ -10,7 +10,7 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-var sessions sync.Map
+var AllSessions sync.Map
 
 type Session struct {
 	UserID   string    `json:"user_id"`
@@ -25,7 +25,7 @@ func (s Session) isExpired() bool {
 func ValidSession(req *http.Request) bool {
 	cookie, err := req.Cookie("auth_session")
 	if err == nil {
-		if _, ok := sessions.Load(cookie.Value); ok {
+		if _, ok := AllSessions.Load(cookie.Value); ok {
 			return ok
 		}
 	}
@@ -36,7 +36,7 @@ func GetUserFromSession(req *http.Request) *models.User {
 	user := models.User{}
 	cookie, err := req.Cookie("auth_session")
 	if err == nil {
-		if session, ok := sessions.Load(cookie.Value); ok {
+		if session, ok := AllSessions.Load(cookie.Value); ok {
 			_user, err := models.UserRepo.GetUserByID(session.(Session).UserID)
 			if err != nil {
 				log.Println("❌ ", err)
@@ -54,7 +54,7 @@ func NewSessionToken(res http.ResponseWriter, UserID, Username string) {
 	}
 	deleteSessionIfExist(Username)
 	ExpireAt := time.Now().Add(2 * time.Hour)
-	sessions.Store(sessionToken.String(), Session{UserID, Username, ExpireAt})
+	AllSessions.Store(sessionToken.String(), Session{UserID, Username, ExpireAt})
 	http.SetCookie(res, &http.Cookie{
 		Name:     "auth_session",
 		Value:    sessionToken.String(),
@@ -64,9 +64,9 @@ func NewSessionToken(res http.ResponseWriter, UserID, Username string) {
 }
 
 func deleteSessionIfExist(username string) {
-	sessions.Range(func(key, value interface{}) bool {
+	AllSessions.Range(func(key, value interface{}) bool {
 		if username == value.(Session).Username {
-			sessions.Delete(key)
+			AllSessions.Delete(key)
 		}
 		return true
 	})
@@ -74,9 +74,9 @@ func deleteSessionIfExist(username string) {
 
 func DeleteExpiredSessions() {
 	for {
-		sessions.Range(func(key, value interface{}) bool {
+		AllSessions.Range(func(key, value interface{}) bool {
 			if value.(Session).isExpired() {
-				sessions.Delete(key)
+				AllSessions.Delete(key)
 			}
 			return true
 		})
@@ -89,6 +89,6 @@ func DeleteSession(req *http.Request) bool {
 	if err != nil {
 		return false
 	}
-	sessions.Delete(cookie.Value)
+	AllSessions.Delete(cookie.Value)
 	return true
 }
