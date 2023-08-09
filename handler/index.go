@@ -21,7 +21,7 @@ func Index(res http.ResponseWriter, req *http.Request) {
 		user := lib.GetUserFromSession(req)
 
 		homePageData := HomePageData{
-			IsLoggedIn: isSessionOpen,
+			IsLoggedIn:  isSessionOpen,
 			CurrentUser: *user,
 		}
 

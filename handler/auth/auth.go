@@ -18,13 +18,16 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 		user.Email = req.FormValue("email")
 		user.Username = req.FormValue("username")
 
-		// TODO: Hash the password
-		user.Password = req.FormValue("password")
+		_password, err := lib.HashPassword(req.FormValue("password"))
+		if err != nil {
+			log.Fatalf("❌ Failed to generate UUID: %v", err)
+		}
+		user.Password = _password
 
 		// TODO: Handle the avatar upload
 		avatarURL := lib.UploadImage(req)
 		if avatarURL == "" {
-			avatarURL =  "/uploads/avatar.1.jpeg"
+			avatarURL = "/uploads/avatar.1.jpeg"
 		}
 		user.AvatarURL = avatarURL
 		user.Role = models.RoleUser
@@ -67,9 +70,8 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 		password := req.FormValue("password")
 
 		if _user, exist := models.UserRepo.IsExisted(email); exist {
-			if _user.Password != password {
+			if !lib.IsPasswordsMatch(_user.Password, password) {
 				log.Println("❌ Password given is wrong")
-				return
 			} else {
 				_user, err := models.UserRepo.GetUserByEmail(email)
 				if err != nil {
