@@ -100,3 +100,14 @@ func SignInPage(res http.ResponseWriter, req *http.Request) {
 		log.Println("✅ Login page get with success")
 	}
 }
+
+func Logout(res http.ResponseWriter, req *http.Request) {
+	if lib.ValidateRequest(req, res, "/logout", http.MethodGet) {
+		if ok := lib.DeleteSession(req); ok {
+			http.Redirect(res, req, "/", http.StatusSeeOther)
+			log.Println("✅ Logout done with success")
+		} else {
+			log.Println("❌ Logout failure")
+		}
+	}
+}

@@ -6,7 +6,7 @@
    -    [x] Validate and store user credentials in the database.
    -    [x] Implement login sessions using cookies with expiration dates.
    -    [x] Optionally, use UUID for session management (Bonus task).
-   -    [ ] Implement logout
+   -    [x] Implement logout
 5.  [ ] Implement post and comment creation functionality.
    -    [ ] Associate categories with posts.
    -    [ ] Allow non-registered users to view posts and comments.

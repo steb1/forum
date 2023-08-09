@@ -25,6 +25,7 @@ func main() {
 	http.HandleFunc("/sign-up-page", auth.SignUpPage)
 	http.HandleFunc("/sign-in", auth.SignIn)
 	http.HandleFunc("/sign-in-page", auth.SignInPage)
+	http.HandleFunc("/logout", auth.Logout)
 
 	// http.HandleFunc("/post", handler.Post)
 	// http.HandleFunc("/comment", handler.Comment)

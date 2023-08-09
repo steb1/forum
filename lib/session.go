@@ -83,3 +83,12 @@ func DeleteExpiredSessions() {
 		time.Sleep(10 * time.Second)
 	}
 }
+
+func DeleteSession(req *http.Request) bool {
+	cookie, err := req.Cookie("auth_session")
+	if err != nil {
+		return false
+	}
+	sessions.Delete(cookie.Value)
+	return true
+}

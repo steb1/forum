@@ -20,9 +20,13 @@
                     </path>
                 </svg>
             </div>
+            {{if .IsLoggedIn}}
             <a href="#">Browser</a>
             <a href="#">About</a>
-            <a href="#">Features</a>
+            {{else}}
+            <a href="#">Trending</a>
+            <a href="#">Discover</a>
+            {{end}}
         </nav>
         <input type="search" name="" id="" placeholder="Search...">
         {{if .IsLoggedIn}}
@@ -42,6 +46,13 @@
         </a>
         <button>Upload</button>
         <img class="avatar" src="{{ .CurrentUser.AvatarURL }}" alt="">
+        <a href="/logout" class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path
+                    d="M5 22C4.44772 22 4 21.5523 4 21V3C4 2.44772 4.44772 2 5 2H19C19.5523 2 20 2.44772 20 3V21C20 21.5523 19.5523 22 19 22H5ZM15 16L20 12L15 8V11H9V13H15V16Z"
+                    fill="rgba(0,0,0,1)"></path>
+            </svg>
+        </a>
         {{else}}
         <a href="/sign-in-page" class="btn alt">Sign In</a>
         <a href="/sign-up-page" class="btn">Sign Up</a>
