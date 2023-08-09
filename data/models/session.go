@@ -1,7 +1,6 @@
-package lib
+package models
 
 import (
-	"forum/data/models"
 	"log"
 	"net/http"
 	"sync"
@@ -32,12 +31,12 @@ func ValidSession(req *http.Request) bool {
 	return false
 }
 
-func GetUserFromSession(req *http.Request) *models.User {
-	user := models.User{}
+func GetUserFromSession(req *http.Request) *User {
+	user := User{}
 	cookie, err := req.Cookie("auth_session")
 	if err == nil {
 		if session, ok := AllSessions.Load(cookie.Value); ok {
-			_user, err := models.UserRepo.GetUserByID(session.(Session).UserID)
+			_user, err := UserRepo.GetUserByID(session.(Session).UserID)
 			if err != nil {
 				log.Println("❌ ", err)
 			}

@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"forum/lib"
+	"forum/data/models"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -11,7 +11,7 @@ import (
 func TestValidSession_Valid(t *testing.T) {
 	// Create a valid session
 	sessionToken := "valid_token"
-	lib.AllSessions.Store(sessionToken, lib.Session{
+	models.AllSessions.Store(sessionToken, models.Session{
 		UserID:   "user123",
 		Username: "testuser",
 		ExpireAt: time.Now().Add(1 * time.Hour),
@@ -24,7 +24,7 @@ func TestValidSession_Valid(t *testing.T) {
 		Value: sessionToken,
 	})
 
-	valid := lib.ValidSession(req)
+	valid := models.ValidSession(req)
 	if !valid {
 		t.Errorf("Expected session to be valid, but it wasn't")
 	}
@@ -33,7 +33,7 @@ func TestValidSession_Valid(t *testing.T) {
 func TestValidSession_Expired(t *testing.T) {
 	// Create an expired session
 	sessionToken := "expired_token"
-	lib.AllSessions.Store(sessionToken, lib.Session{
+	models.AllSessions.Store(sessionToken, models.Session{
 		UserID:   "user123",
 		Username: "testuser",
 		ExpireAt: time.Now().Add(-1 * time.Hour), // Expired
@@ -46,7 +46,7 @@ func TestValidSession_Expired(t *testing.T) {
 		Value: sessionToken,
 	})
 
-	valid := lib.ValidSession(req)
+	valid := models.ValidSession(req)
 	if valid {
 		t.Errorf("Expected session to be expired, but it wasn't")
 	}
@@ -57,7 +57,7 @@ func TestNewSessionToken(t *testing.T) {
 	UserID := "user123"
 	Username := "testuser"
 
-	lib.NewSessionToken(res, UserID, Username)
+	models.NewSessionToken(res, UserID, Username)
 
 	// Get the set cookie from the response recorder
 	setCookie := res.Header().Get("Set-Cookie")
@@ -74,7 +74,7 @@ func TestNewSessionToken(t *testing.T) {
 func TestDeleteSession(t *testing.T) {
 	// Create a session
 	sessionToken := "session_to_delete"
-	lib.AllSessions.Store(sessionToken, lib.Session{
+	models.AllSessions.Store(sessionToken, models.Session{
 		UserID:   "user123",
 		Username: "testuser",
 		ExpireAt: time.Now().Add(1 * time.Hour),
@@ -87,13 +87,13 @@ func TestDeleteSession(t *testing.T) {
 		Value: sessionToken,
 	})
 
-	deleted := lib.DeleteSession(req)
+	deleted := models.DeleteSession(req)
 	if !deleted {
 		t.Errorf("Expected session to be deleted, but it wasn't")
 	}
 
 	// Ensure the session was removed from the sessions map
-	_, exists := lib.AllSessions.Load(sessionToken)
+	_, exists := models.AllSessions.Load(sessionToken)
 	if exists {
 		t.Errorf("Expected session to be deleted from sessions map, but it still exists")
 	}
@@ -102,7 +102,7 @@ func TestDeleteSession(t *testing.T) {
 func TestDeleteExpiredSessions(t *testing.T) {
 	// Create an expired session
 	expiredSessionToken := "expired_session"
-	lib.AllSessions.Store(expiredSessionToken, lib.Session{
+	models.AllSessions.Store(expiredSessionToken, models.Session{
 		UserID:   "user123",
 		Username: "testuser",
 		ExpireAt: time.Now().Add(-1 * time.Hour), // Expired
@@ -110,26 +110,26 @@ func TestDeleteExpiredSessions(t *testing.T) {
 
 	// Create a valid session
 	validSessionToken := "valid_session"
-	lib.AllSessions.Store(validSessionToken, lib.Session{
+	models.AllSessions.Store(validSessionToken, models.Session{
 		UserID:   "user456",
 		Username: "anotheruser",
 		ExpireAt: time.Now().Add(1 * time.Second),
 	})
 
 	// Run the DeleteExpiredSessions function
-	go lib.DeleteExpiredSessions()
+	go models.DeleteExpiredSessions()
 
 	// Sleep for a short while to allow the goroutine to run
 	time.Sleep(2 * time.Second)
 
 	// Ensure the expired session was deleted
-	_, exists := lib.AllSessions.Load(expiredSessionToken)
+	_, exists := models.AllSessions.Load(expiredSessionToken)
 	if exists {
 		t.Errorf("Expected expired session to be deleted, but it still exists")
 	}
 
 	// Ensure the valid session is retained
-	_, exists = lib.AllSessions.Load(validSessionToken)
+	_, exists = models.AllSessions.Load(validSessionToken)
 	if !exists {
 		t.Errorf("Expected valid session to be retained, but it was deleted")
 	}

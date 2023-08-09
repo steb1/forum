@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"forum/lib"
 	"log"
 	"os"
 )
@@ -13,7 +14,8 @@ var (
 )
 
 func init() {
-	d, err := sql.Open("sqlite3", "./data/sql/forum.db")
+	lib.LoadEnv(".env")
+	d, err := sql.Open("sqlite3", os.Getenv("DATABASE"))
 	if err != nil {
 		log.Fatal("❌ Couldn't open the database")
 	}

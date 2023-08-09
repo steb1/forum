@@ -9,7 +9,7 @@ import (
 )
 
 type SignPageData struct {
-	IsLoggedIn bool
+	IsLoggedIn  bool
 	RandomUsers []models.User
 }
 
@@ -43,7 +43,7 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 				log.Fatalf("❌ Failed to created account %v", err)
 			}
 
-			lib.NewSessionToken(res, user.ID, user.Username)
+			models.NewSessionToken(res, user.ID, user.Username)
 
 			http.Redirect(res, req, "/", http.StatusSeeOther)
 			log.Println("✅ Account created with success")
@@ -94,7 +94,7 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 				}
 				user = *_user
 
-				lib.NewSessionToken(res, user.ID, user.Username)
+				models.NewSessionToken(res, user.ID, user.Username)
 
 				http.Redirect(res, req, "/", http.StatusSeeOther)
 				log.Println("✅ Sign in with success")
@@ -128,7 +128,7 @@ func SignInPage(res http.ResponseWriter, req *http.Request) {
 
 func Logout(res http.ResponseWriter, req *http.Request) {
 	if lib.ValidateRequest(req, res, "/logout", http.MethodGet) {
-		if ok := lib.DeleteSession(req); ok {
+		if ok := models.DeleteSession(req); ok {
 			http.Redirect(res, req, "/", http.StatusSeeOther)
 			log.Println("✅ Logout done with success")
 		} else {

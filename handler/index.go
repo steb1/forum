@@ -18,8 +18,8 @@ func Index(res http.ResponseWriter, req *http.Request) {
 		basePath := "base"
 		pagePath := "index"
 
-		isSessionOpen := lib.ValidSession(req)
-		user := lib.GetUserFromSession(req)
+		isSessionOpen := models.ValidSession(req)
+		user := models.GetUserFromSession(req)
 		randomUsers, err := models.UserRepo.SelectRandomUsers(17)
 		if err != nil {
 			log.Println("❌ Can't get 17 random users in the database")

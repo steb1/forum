@@ -16,7 +16,7 @@ func EditUser(res http.ResponseWriter, req *http.Request) {
 	//TODO: Return http error
 	if lib.ValidateRequest(req, res, "/edit-user", http.MethodPost) {
 		// Check if the user is logged in
-		currentUser := lib.GetUserFromSession(req)
+		currentUser := models.GetUserFromSession(req)
 		if currentUser == nil || currentUser.ID == "" {
 			http.Redirect(res, req, "/", http.StatusSeeOther)
 			return
@@ -53,8 +53,8 @@ func EditUserPage(res http.ResponseWriter, req *http.Request) {
 		basePath := "base"
 		pagePath := "edit-user"
 
-		isSessionOpen := lib.ValidSession(req)
-		user := lib.GetUserFromSession(req)
+		isSessionOpen := models.ValidSession(req)
+		user := models.GetUserFromSession(req)
 
 		editUserPageData := EditUserPageData{
 			IsLoggedIn:  isSessionOpen,

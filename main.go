@@ -1,19 +1,16 @@
 package main
 
 import (
-	"fmt"
+	"forum/data/models"
 	"forum/handler"
 	"forum/handler/auth"
-	"forum/lib"
 	"log"
 	"net/http"
 	"os"
 )
 
 func main() {
-	lib.LoadEnv(".env")
-	port := os.Getenv("PORT")
-	PORT := fmt.Sprintf(":%v", port)
+	PORT := ":" + os.Getenv("PORT")
 	ADDRESS := os.Getenv("ADDRESS")
 
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("./assets/styles/"))))
@@ -34,7 +31,7 @@ func main() {
 	// http.HandleFunc("/comment", handler.Comment)
 	// http.HandleFunc("/posts", handler.AllPosts)
 
-	go lib.DeleteExpiredSessions()
+	go models.DeleteExpiredSessions()
 
 	log.Println("Server started and running on", PORT)
 	log.Println(ADDRESS + PORT)
