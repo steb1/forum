@@ -3,6 +3,7 @@ package lib
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -10,6 +11,8 @@ import (
 	"regexp"
 	"strings"
 	"text/template"
+
+	"github.com/google/uuid"
 )
 
 func Slugify(input string) string {
@@ -74,4 +77,24 @@ func RenderPage(basePath, pagePath string, data any, res http.ResponseWriter) {
 	} else {
 		tpl.Execute(res, data)
 	}
+}
+
+func UploadImage(r *http.Request) string {
+	image, header, err := r.FormFile("image")
+	uploads := "/uploads/"
+	u := uuid.New()
+	imageURL := uploads + u.String() + header.Filename
+	file, err := os.Create(imageURL)
+	if err != nil {
+		fmt.Println("Erreur lors de la création du fichier :", err)
+		return ""
+	}
+	defer file.Close()
+	_, err = io.Copy(file, image)
+	if err != nil {
+		fmt.Println("Erreur lors de la copie des données :", err)
+		return ""
+	}
+
+	return imageURL
 }

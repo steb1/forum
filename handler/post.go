@@ -9,9 +9,15 @@ import (
 	"time"
 
 	"forum/data/models"
+	"forum/lib"
 
 	"github.com/google/uuid"
 )
+
+func Upload(w http.ResponseWriter, r *http.Request) {
+	// lib.UploadImage(r)
+	w.Write([]byte(lib.UploadImage(r)))
+}
 
 func Post(w http.ResponseWriter, r *http.Request) {
 
