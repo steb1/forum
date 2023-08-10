@@ -8,6 +8,15 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+type PostItem struct {
+	ID                string
+	Title             string
+	AuthorName        string
+	LastEditionDate   string
+	NumberOfComments  int
+	ListOfCommentator []string
+}
+
 type Post struct {
 	ID           string
 	Title        string
@@ -79,6 +88,18 @@ func (pr *PostRepository) GetAllPosts() ([]*Post, error) {
 	}
 
 	return posts, nil
+}
+
+// Get the number of posts in the database
+func (pr *PostRepository) GetNumberOfPosts() int {
+	var numberOfPosts int
+
+	row := pr.db.QueryRow("SELECT count(id) FROM post")
+	err := row.Scan(&numberOfPosts)
+	if err != nil {
+		return 0
+	}
+	return 0
 }
 
 // Update a post in the database
