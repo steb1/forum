@@ -15,8 +15,6 @@ type User struct {
 	Password            string
 	AvatarURL           string
 	Role                ROLE
-	Token               string
-	TokenExpirationDate string
 }
 
 var DEFAULT_AVATAR = "/uploads/avatar.1.jpeg"
@@ -46,16 +44,16 @@ func (ur *UserRepository) CreateUser(user *User) error {
 		log.Fatalf("❌ Failed to generate UUID: %v", err)
 	}
 	user.ID = ID.String()
-	_, err = ur.db.Exec("INSERT INTO user (id, username, email, password, avatarURL, role, token, tokenExpirationDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-		user.ID, user.Username, user.Email, user.Password, user.AvatarURL, user.Role, user.Token, user.TokenExpirationDate)
+	_, err = ur.db.Exec("INSERT INTO user (id, username, email, password, avatarURL, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+		user.ID, user.Username, user.Email, user.Password, user.AvatarURL, user.Role)
 	return err
 }
 
 // Get a user by ID from the database
 func (ur *UserRepository) GetUserByID(userID string) (*User, error) {
 	var user User
-	row := ur.db.QueryRow("SELECT id, username, email, password, avatarURL, role, token, tokenExpirationDate FROM user WHERE id = ?", userID)
-	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.AvatarURL, &user.Role, &user.Token, &user.TokenExpirationDate)
+	row := ur.db.QueryRow("SELECT id, username, email, password, avatarURL, role FROM user WHERE id = ?", userID)
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.AvatarURL, &user.Role)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil // User not found
@@ -68,8 +66,8 @@ func (ur *UserRepository) GetUserByID(userID string) (*User, error) {
 // Get a user by email from the database
 func (ur *UserRepository) GetUserByEmail(email string) (*User, error) {
 	var user User
-	row := ur.db.QueryRow("SELECT id, username, email, password, avatarURL, role, token, tokenExpirationDate FROM user WHERE email = ?", email)
-	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.AvatarURL, &user.Role, &user.Token, &user.TokenExpirationDate)
+	row := ur.db.QueryRow("SELECT id, username, email, password, avatarURL, role FROM user WHERE email = ?", email)
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.AvatarURL, &user.Role)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil // User not found
@@ -109,8 +107,6 @@ func (ur *UserRepository) SelectAllUsers() ([]User, error) {
 			Password:            Password,
 			AvatarURL:           AvatarUrl,
 			Role:                Role,
-			Token:               Token,
-			TokenExpirationDate: TokenExpirationDate,
 		}
 
 		user = append(user, tab)
@@ -137,8 +133,6 @@ func (ur *UserRepository) SelectRandomUsers(count int) ([]User, error) {
 			&user.Password,
 			&user.AvatarURL,
 			&user.Role,
-			&user.Token,
-			&user.TokenExpirationDate,
 		)
 		if err != nil {
 			return nil, err
@@ -165,7 +159,7 @@ func (ur *UserRepository) SelectRandomUsers(count int) ([]User, error) {
 // Update a user in the database
 func (ur *UserRepository) UpdateUser(user *User) error {
 	_, err := ur.db.Exec("UPDATE user SET username = ?, email = ?, password = ?, avatarURL = ?, role = ?, token = ?, tokenExpirationDate = ? WHERE id = ?",
-		user.Username, user.Email, user.Password, user.AvatarURL, user.Role, user.Token, user.TokenExpirationDate, user.ID)
+		user.Username, user.Email, user.Password, user.AvatarURL, user.Role, user.ID)
 	return err
 }
 
