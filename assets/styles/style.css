@@ -13,13 +13,17 @@ a {
 }
 
 form:not(.blank) textarea,
-form:not(.blank) input:not([type=checkbox]):not([type=radio]) {
+form:not(.blank) input:not([type=checkbox]):not([type=radio]):not([type=file]) {
     width: 100%;
     font-size: 1rem;
     padding: .75rem 1rem;
     border-radius: .5rem;
     border: 1px solid #697d9b;
     background-color: #eef3f8;
+}
+
+form input[type=file] {
+    display: none;
 }
 
 form .row,
@@ -29,27 +33,27 @@ form input {
 }
 
 .block textarea,
-.block form:not(.blank) input:not([type=checkbox]):not([type=radio]) {
+.block form:not(.blank) input:not([type=checkbox]):not([type=radio]):not([type=file]) {
     background: white;
 }
 
 form.blank textarea,
 form.blank textarea:focus,
-form.blank input:not([type=checkbox]):not([type=radio]):focus,
-form.blank input:not([type=checkbox]):not([type=radio]) {
+form.blank input:not([type=checkbox]):not([type=radio]):not([type=file]):focus,
+form.blank input:not([type=checkbox]):not([type=radio]):not([type=file]) {
     border: none;
     outline: none;
 }
 
 form.blank textarea,
-form.blank input:not([type=checkbox]):not([type=radio]) {
+form.blank input:not([type=checkbox]):not([type=radio]):not([type=file]) {
     width: 100%;
     font-size: 1rem;
     padding: .75rem 1rem;
 }
 
-form.blank input.title:not([type=checkbox]):not([type=radio]),
-form.blank input.title:not([type=checkbox]):not([type=radio])::placeholder {
+form.blank input.title:not([type=checkbox]):not([type=radio]):not([type=file]),
+form.blank input.title:not([type=checkbox]):not([type=radio]):not([type=file])::placeholder {
     font-weight: bold;
     color: black;
 }
@@ -100,12 +104,13 @@ p {
     margin-bottom: 0.5rem;
 }
 
-p.black {
-    color: black;
-}
-
 p.big {
     font-size: 1.25rem;
+}
+
+p.small {
+    margin-top: .5rem;
+    font-size: .9rem;
 }
 
 form,
@@ -118,6 +123,10 @@ div {
 form {
     margin: 1rem 0;
     flex-direction: column;
+}
+
+form label {
+    margin-bottom: 0.5rem;
 }
 
 body {
@@ -176,9 +185,9 @@ main {
     align-items: center;
     justify-content: flex-start;
     flex-direction: column;
-    margin-top: 4%;
+    margin-top: 3%;
     width: 100%;
-    min-height: 100vh;
+    min-height: 82.5vh;
 }
 
 section {
@@ -351,7 +360,7 @@ article.post h1 {
 }
 
 img.avatar {
-    border-radius: 54px;
+    border-radius: 99px;
     width: 36px;
     height: 36px;
     object-fit: cover;
@@ -401,7 +410,6 @@ img.avatar.small {
     width: 69px;
     height: 69px;
 }
-
 
 div.new {
     position: relative;
@@ -585,6 +593,10 @@ button.red {
 button.green {
     background-color: #14b97a !important;
     color: white !important;
+}
+
+.black {
+    color: black;
 }
 
 .block {

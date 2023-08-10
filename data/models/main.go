@@ -11,6 +11,8 @@ var (
 	db       *sql.DB
 	UserRepo *UserRepository
 	PostRepo *PostRepository
+	CommentRepo *CommentRepository
+	CategoryRepo *CategoryRepository
 )
 
 func init() {
@@ -35,5 +37,8 @@ func init() {
 
 	UserRepo = NewUserRepository(db)
 	PostRepo = NewPostRepository(db)
+	CommentRepo = NewCommentRepository(db)
+	CategoryRepo = NewCategoryRepository(db)
+
 	log.Println("✅ Database init with success")
 }
