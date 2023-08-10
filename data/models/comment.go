@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"log"
+	"strconv"
 
 	uuid "github.com/gofrs/uuid"
 	_ "github.com/mattn/go-sqlite3"
@@ -54,11 +55,17 @@ func (cr *CommentRepository) GetCommentByID(commentID string) (*Comment, error) 
 	return &comment, nil
 }
 
-// Get all comments from database
-func (cr *CommentRepository) GetAllComments() ([]*Comment, error) {
+func (cr *CommentRepository) GetAllComments(more string) ([]*Comment, error) {
+
+	// more = strings.TrimLeft(more, "+")
+	moreComment, err := strconv.Atoi(more)
+	if err != nil {
+		return nil, err
+	}
+
 	var comments []*Comment
 
-	rows, err := cr.db.Query("SELECT id, text, authorID, postID, parentID, createDate, modifiedDate FROM comment")
+	rows, err := cr.db.Query("SELECT id, text, authorID, postID, parentID, createDate, modifiedDate FROM comment LIMIT ?", moreComment)
 	if err != nil {
 		return nil, err
 	}

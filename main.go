@@ -28,9 +28,9 @@ func main() {
 	http.HandleFunc("/edit-user", handler.EditUser)
 	http.HandleFunc("/edit-user-page", handler.EditUserPage)
 
-	// http.HandleFunc("/post", handler.Post)
-	// http.HandleFunc("/comment", handler.Comment)
-	// http.HandleFunc("/posts", handler.AllPosts)
+	http.HandleFunc("/post", handler.Post)
+	http.HandleFunc("/comment", handler.Comment)
+	http.HandleFunc("/posts", handler.AllPosts)
 
 	go models.DeleteExpiredSessions()
 

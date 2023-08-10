@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"log"
+	"strconv"
 
 	uuid "github.com/gofrs/uuid"
 	_ "github.com/mattn/go-sqlite3"
@@ -64,11 +65,29 @@ func (pr *PostRepository) GetPostByID(postID string) (*Post, error) {
 	return &post, nil
 }
 
+// Get a post by TITLE from the database
+func (pr *PostRepository) GetPostByTitle(title string) (*Post, error) {
+	var post Post
+	row := pr.db.QueryRow("SELECT id, title, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post WHERE title = ?", title)
+	err := row.Scan(&post.ID, &post.Title, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil // Post not found
+		}
+		return nil, err
+	}
+	return &post, nil
+}
+
 // Get all posts from databse
-func (pr *PostRepository) GetAllPosts() ([]*Post, error) {
+func (pr *PostRepository) GetAllPosts(more string) ([]*Post, error) {
+	morePost, err := strconv.Atoi(more)
+	if err != nil {
+		return nil, err
+	}
 	var posts []*Post
 
-	rows, err := pr.db.Query("SELECT id, title, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post")
+	rows, err := pr.db.Query("SELECT id, title, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post LIMIT ?", morePost)
 	if err != nil {
 		return nil, err
 	}
