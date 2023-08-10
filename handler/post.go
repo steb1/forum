@@ -40,8 +40,10 @@ func Post(w http.ResponseWriter, r *http.Request) {
 
 		u := uuid.New()
 
-		imageUrl := "chemin de l'image..."
-		authorID := "ejn3b3h3h3"
+		//--------------------------------------
+		imageUrl := lib.UploadImage(r)
+		authorID := lib.GetUserFromSession(r).ID
+		//--------------------------------------
 		tabcat := strings.Split(categorie, "#")
 
 		tabUUID := []string{}
@@ -139,9 +141,11 @@ func Comment(w http.ResponseWriter, r *http.Request) {
 		u := uuid.New()
 		creationDate := time.Now().Format("2006-01-02")
 		modifDate := time.Now().Format("2006-01-02")
-		authorID := "cdjndjd"
-		parentID := "fdinjff"
+		//--------------------------------------
+		authorID := lib.GetUserFromSession(r).ID
+		parentID := "chjchjchjcxjchjc"
 		postID := "3356e5b9-57c9-4c1f-b67c-7e485f66eab9"
+		//--------------------------------------
 		commentStruct := models.Comment{
 			ID:           u.String(),
 			Text:         text,
