@@ -8,10 +8,40 @@ import (
 	"strconv"
 )
 
-type EditUserPageData struct {
+type UserPageData struct {
 	IsLoggedIn  bool
 	CurrentUser models.User
 	TabIndex    int
+}
+
+func ProfilePage(res http.ResponseWriter, req *http.Request) {
+	if lib.ValidateRequest(req, res, "/profile", http.MethodGet) {
+		basePath := "base"
+		pagePath := "user/profile"
+		queryParams := req.URL.Query()
+		TabIndex := 1
+		if len(queryParams["index"]) != 0 {
+			_tabIndex, err := strconv.Atoi(queryParams.Get("index"))
+			if err != nil {
+				log.Println("❌ Can't convert index to int")
+			} else {
+				TabIndex = _tabIndex
+			}
+		} else {
+			log.Println("❌ Index parameter missing")
+		}
+		isSessionOpen := models.ValidSession(req)
+		user := models.GetUserFromSession(req)
+
+		userPageData := UserPageData{
+			IsLoggedIn:  isSessionOpen,
+			CurrentUser: *user,
+			TabIndex:    TabIndex,
+		}
+
+		lib.RenderPage(basePath, pagePath, userPageData, res)
+		log.Println("✅ Login page get with success")
+	}
 }
 
 func EditUser(res http.ResponseWriter, req *http.Request) {
@@ -82,7 +112,7 @@ func EditUser(res http.ResponseWriter, req *http.Request) {
 func EditUserPage(res http.ResponseWriter, req *http.Request) {
 	if lib.ValidateRequest(req, res, "/edit-user-page", http.MethodGet) {
 		basePath := "base"
-		pagePath := "edit-user"
+		pagePath := "user/edit-user"
 		queryParams := req.URL.Query()
 		TabIndex := 1
 		if len(queryParams["index"]) != 0 {
@@ -98,13 +128,13 @@ func EditUserPage(res http.ResponseWriter, req *http.Request) {
 		isSessionOpen := models.ValidSession(req)
 		user := models.GetUserFromSession(req)
 
-		editUserPageData := EditUserPageData{
+		userPageData := UserPageData{
 			IsLoggedIn:  isSessionOpen,
 			CurrentUser: *user,
 			TabIndex:    TabIndex,
 		}
 
-		lib.RenderPage(basePath, pagePath, editUserPageData, res)
+		lib.RenderPage(basePath, pagePath, userPageData, res)
 		log.Println("✅ Login page get with success")
 	}
 }

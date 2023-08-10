@@ -24,6 +24,7 @@ func main() {
 	http.HandleFunc("/sign-in-page", auth.SignInPage)
 	http.HandleFunc("/logout", auth.Logout)
 
+	http.HandleFunc("/profile", handler.ProfilePage)
 	http.HandleFunc("/edit-user", handler.EditUser)
 	http.HandleFunc("/edit-user-page", handler.EditUserPage)
 
@@ -33,7 +34,7 @@ func main() {
 
 	go models.DeleteExpiredSessions()
 
-	log.Println("Server started and running on", PORT)
+	log.Println("Server started and running on")
 	log.Println(ADDRESS + PORT)
 	if err := http.ListenAndServe(PORT, nil); err != nil {
 		log.Fatal(err)

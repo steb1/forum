@@ -1,0 +1,53 @@
+{{define "title"}} | Profile{{end}}
+
+{{define "content"}}
+<main>
+    <section class="wfull center">
+        <section class="w2-5 col">
+            <h1>Profile</h1>
+            <div class="row mb-1">
+                <img src="{{.CurrentUser.AvatarURL}}" alt="" class="avatar bigger">
+                <div class="col ml-1">
+                    <h2>{{.CurrentUser.Username}}</h2>
+                </div>
+            </div>
+            <div class="row center wfull">
+                <div id="tabLinks" class="row wfull space-between mt-1 mb-1">
+                    {{if eq .TabIndex 1}}
+                    <a class="black" href="/profile?index=1">My Posts</a>
+                    {{else}}
+                    <a href="/profile?index=1">My Posts</a>
+                    {{end}}
+                    {{if eq .TabIndex 2}}
+                    <a class="black" href="/profile?index=2">My Activities</a>
+                    {{else}}
+                    <a href="/profile?index=2">My Activities</a>
+                    {{end}}
+                    {{if eq .TabIndex 3}}
+                    <a class="black" href="/profile?index=3">My Likes</a>
+                    {{else}}
+                    <a href="/profile?index=3">My Likes</a>
+                    {{end}}
+                    {{if eq .TabIndex 4}}
+                    <a class="black" href="/profile?index=4">My Bookmarks</a>
+                    {{else}}
+                    <a href="/profile?index=4">My Bookmarks</a>
+                    {{end}}
+                    <a href="/edit-user-page">Settings</a>
+                </div>
+            </div>
+            <div class="col wfull mt-1">
+                {{if eq .TabIndex 1}}
+                <p>My Post</p>
+                {{else if eq .TabIndex 2}}
+                <p>My Activities</p>
+                {{else if eq .TabIndex 3}}
+                <p>My Likes</p>
+                {{else if eq .TabIndex 4}}
+                <p>My Bookmarks</p>
+                {{end}}
+            </div>
+        </section>
+    </section>
+</main>
+{{end}}
