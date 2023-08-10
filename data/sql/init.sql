@@ -7,14 +7,7 @@ CREATE TABLE IF NOT EXISTS "user" (
     email VARCHAR,
     password TEXT,
     avatarURL VARCHAR,
-    role VARCHAR,
-    token TEXT,
-    tokenExpirationDate DATE
-);
-
-CREATE TABLE IF NOT EXISTS "session" (
-    sessionID  VARCHAR PRIMARY KEY,
-    ExpirationDate Date
+    role VARCHAR
 );
 
 -- Table for 'post'
