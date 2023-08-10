@@ -5,11 +5,13 @@ import (
 	"forum/lib"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 type EditUserPageData struct {
 	IsLoggedIn  bool
 	CurrentUser models.User
+	TabIndex    int
 }
 
 func EditUser(res http.ResponseWriter, req *http.Request) {
@@ -23,7 +25,7 @@ func EditUser(res http.ResponseWriter, req *http.Request) {
 		}
 
 		// Parse form data
-		err := req.ParseForm()
+		err := req.ParseMultipartForm(32 << 20) // 32 MB limit
 		if err != nil {
 			log.Println("❌ Failed to parse form data")
 			return
@@ -32,8 +34,37 @@ func EditUser(res http.ResponseWriter, req *http.Request) {
 		// Update user information
 		username := req.Form.Get("username")
 		email := req.Form.Get("email")
-		currentUser.Username = username
-		currentUser.Email = email
+		newPassword := req.Form.Get("new_password")
+		confirmPassword := req.Form.Get("confirm_password")
+		oldPassword := req.Form.Get("old_password")
+		if username != "" && currentUser.Username != username {
+			currentUser.Username = username
+			log.Println("✅ Username changed successfully")
+		}
+		if email != "" && currentUser.Email != email {
+			currentUser.Email = email
+			log.Println("✅ Email changed successfully")
+		}
+		if newPassword != "" {
+			if lib.IsPasswordsMatch(currentUser.Password, oldPassword) {
+				if !lib.IsPasswordsMatch(currentUser.Password, newPassword) {
+					if newPassword == confirmPassword {
+						newPassword, err = lib.HashPassword(newPassword)
+						if err != nil {
+							log.Println("❌ Failed to hash password")
+							return
+						}
+						currentUser.Password = newPassword
+						log.Println("✅ Password changed successfully")
+					}
+				}
+			}
+		}
+		avatarURL := lib.UploadImage(req)
+		if avatarURL != "" {
+			currentUser.AvatarURL = avatarURL
+			log.Println("✅ Avatar changed successfully")
+		}
 
 		// Update user information in the database
 		err = models.UserRepo.UpdateUser(currentUser)
@@ -52,13 +83,25 @@ func EditUserPage(res http.ResponseWriter, req *http.Request) {
 	if lib.ValidateRequest(req, res, "/edit-user-page", http.MethodGet) {
 		basePath := "base"
 		pagePath := "edit-user"
-
+		queryParams := req.URL.Query()
+		TabIndex := 1
+		if len(queryParams["index"]) != 0 {
+			_tabIndex, err := strconv.Atoi(queryParams.Get("index"))
+			if err != nil {
+				log.Println("❌ Can't convert index to int")
+			} else {
+				TabIndex = _tabIndex
+			}
+		} else {
+			log.Println("❌ Index parameter missing")
+		}
 		isSessionOpen := models.ValidSession(req)
 		user := models.GetUserFromSession(req)
 
 		editUserPageData := EditUserPageData{
 			IsLoggedIn:  isSessionOpen,
 			CurrentUser: *user,
+			TabIndex:    TabIndex,
 		}
 
 		lib.RenderPage(basePath, pagePath, editUserPageData, res)

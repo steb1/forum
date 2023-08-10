@@ -8,31 +8,62 @@
             Here you can edit your profile, change your preferences, export your data and manage billing detials
         </p>
         <div class="row center wfull">
-            <div class="row w4-5 space-between mt-1 mb-1">
-                <a href="#">Profile</a>
-                <a class="black" href="#">Password</a>
-                <a class="black" href="#">Profile</a>
+            <div id="tabLinks" class="row w4-5 space-between mt-1 mb-1">
+                {{if eq .TabIndex 1}}
+                <a class="black" href="/edit-user-page?index=1">Profile</a>
+                {{else}}
+                <a href="/edit-user-page?index=1">Profile</a>
+                {{end}}
+                {{if eq .TabIndex 2}}
+                <a class="black" href="/edit-user-page?index=2">Password</a>
+                {{else}}
+                <a href="/edit-user-page?index=2">Password</a>
+                {{end}}
+                {{if eq .TabIndex 3}}
+                <a class="black" href="/edit-user-page?index=3">Avatar</a>
+                {{else}}
+                <a href="/edit-user-page?index=3">Avatar</a>
+                {{end}}
             </div>
         </div>
-        <div class="row mb-1 center">
-            <img src="{{.CurrentUser.AvatarURL}}" alt="" class="avatar bigger">
-            <div class="col ml-1">
-                <div class="row center">
-                    <p class="mb-0">Choose file to:</p>
-                    <button class="alt ml-1">Upload</button>
-                </div>
-                <p class="small">At least 256x256 PNG or JPG file</p>
-            </div>
-        </div>
-        <form action="/edit-user" method="post" class="wfull mt-1">
+        <form action="/edit-user" method="post" class="wfull mt-1" enctype="multipart/form-data">
+            {{if eq .TabIndex 1}}
             <label for="">Username:</label>
             <input placeholder="Username" type="text" name="username" id="username" value="{{.CurrentUser.Username}}">
             <label for="">Email:</label>
             <input placeholder="Email address" type="email" name="email" id="email" value="{{.CurrentUser.Email}}">
             <div class="row space-between center wfull">
                 <button class="mb-1 mt-1" type="submit">Save changes</button>
-                <p class="mb-0">Your profile: <a href="#">tookapic.com/{{.CurrentUser.Username}}</a></p>
+                <p class="mb-0">Your profile: <a href="#">01-forum.com/{{.CurrentUser.Username}}</a></p>
             </div>
+            {{else if eq .TabIndex 2}}
+            <label for="">Current password:</label>
+            <input placeholder="Enter your actual password" type="password" name="old_password" value="">
+            <label for="">New password:</label>
+            <input placeholder="Enter your new password" type="password" name="new_password" value="">
+            <label for="">Old password:</label>
+            <input placeholder="Confirm new password" type="password" name="confirm_password" value="">
+            <div class="row space-between center wfull">
+                <button class="mb-1 mt-1" type="submit">Change password</button>
+                <p class="mb-0">Your profile: <a href="#">01-forum.com/{{.CurrentUser.Username}}</a></p>
+            </div>
+            {{else if eq .TabIndex 3}}
+            <div class="row mb-1 center">
+                <img src="{{.CurrentUser.AvatarURL}}" alt="" class="avatar bigger">
+                <div class="col ml-1">
+                    <div class="row center">
+                        <p class="mb-0">Choose file to:</p>
+                        <label for="image" class="btn alt ml-1">Upload</label>
+                        <input type="file" id="image" name="image"/>
+                    </div>
+                    <p class="small">At least 256x256 PNG or JPG file</p>
+                </div>
+            </div>
+            <div class="row space-between center wfull">
+                <button class="mb-1 mt-1" type="submit">Change image</button>
+                <p class="mb-0">Your profile: <a href="#">01-forum.com/{{.CurrentUser.Username}}</a></p>
+            </div>
+            {{end}}
         </form>
     </section>
 </section>

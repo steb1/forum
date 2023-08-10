@@ -16,7 +16,7 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-var maxSize int64 = 20 * 1024 * 1024
+var maxSize int64 = 20 * 1024 * 1024 // 20 MB
 
 func Slugify(input string) string {
 	input = strings.ToLower(input)
@@ -77,10 +77,10 @@ func RenderPage(basePath, pagePath string, data any, res http.ResponseWriter) {
 	}
 }
 
-func UploadImage(r *http.Request) string {
-	image, header, err := r.FormFile("image")
+func UploadImage(req *http.Request) string {
+	image, header, err := req.FormFile("image")
 	if err != nil {
-		log.Println("❌ Request doesn't contain image")
+		log.Println("❌ Request doesn't contain image", err)
 		return ""
 	}
 	defer image.Close()
@@ -95,9 +95,10 @@ func UploadImage(r *http.Request) string {
 		return ""
 	}
 
-	uploads := "/uploads/"
-	imageURL := uploads + generateUniqueFilename(header.Filename)
-	file, err := os.Create(imageURL)
+	uploads := "uploads" // Use "uploads" without the leading slash
+    imageURL := filepath.Join(uploads, generateUniqueFilename(header.Filename))
+    filePath := filepath.Join(".", imageURL) // Use "." to denote the current directory
+	file, err := os.Create(filePath)
 	if err != nil {
 		fmt.Println("❌ Error when creating the file", err)
 		return ""
