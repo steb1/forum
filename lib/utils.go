@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"path"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -47,10 +46,6 @@ func LoadEnv(path string) error {
 }
 
 func ValidateRequest(req *http.Request, res http.ResponseWriter, url, method string) bool {
-	if path.Dir(url) == path.Dir(req.URL.Path) {
-		return true
-	}
-
 	if req.URL.Path != url {
 		res.WriteHeader(http.StatusNotFound)
 		RenderPage("base", "404", nil, res)
@@ -96,8 +91,8 @@ func UploadImage(req *http.Request) string {
 	}
 
 	uploads := "uploads" // Use "uploads" without the leading slash
-    imageURL := filepath.Join(uploads, generateUniqueFilename(header.Filename))
-    filePath := filepath.Join(".", imageURL) // Use "." to denote the current directory
+	imageURL := filepath.Join(uploads, generateUniqueFilename(header.Filename))
+	filePath := filepath.Join(".", imageURL) // Use "." to denote the current directory
 	file, err := os.Create(filePath)
 	if err != nil {
 		fmt.Println("❌ Error when creating the file", err)
