@@ -1,11 +1,9 @@
 package handler
 
 import (
-	"database/sql"
 	"fmt"
 	"forum/data/models"
 	"forum/lib"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -13,36 +11,27 @@ import (
 	"github.com/google/uuid"
 )
 
-func Post(w http.ResponseWriter, r *http.Request) {
-
-	db, err := sql.Open("sqlite3", "./data/sql/forum.db")
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-	defer db.Close()
-
-	var categories = make(map[string]models.Category)
-
-	if r.Method == "POST" {
-		err := r.ParseForm()
+func Post(res http.ResponseWriter, req *http.Request) {
+	if lib.ValidateRequest(req, res, "/post", http.MethodPost) {
+		var categories = make(map[string]models.Category)
+		err := req.ParseForm()
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			http.Error(res, err.Error(), http.StatusBadRequest)
 			return
 		}
 		isEdited := false
 		creationDate := time.Now().Format("2006-01-02")
 		modifDate := time.Now().Format("2006-01-02")
-		title := r.FormValue("title")
+		title := req.FormValue("title")
 		title = lib.Slugify(title)
-		description := r.FormValue("description")
-		categorie := r.FormValue("categorie")
+		description := req.FormValue("description")
+		categorie := req.FormValue("categorie")
 
 		u := uuid.New()
 
 		//--------------------------------------
-		imageUrl := lib.UploadImage(r)
-		authorID := models.GetUserFromSession(r).ID
+		imageUrl := lib.UploadImage(req)
+		authorID := models.GetUserFromSession(req).ID
 		//--------------------------------------
 		tabcat := strings.Split(categorie, "#")
 
@@ -63,7 +52,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 			CreateDate:   creationDate,
 			ModifiedDate: modifDate}
 
-		models.NewPostRepository(db).CreatePost(&postStruct)
+		models.PostRepo.CreatePost(&postStruct)
 
 		for i := 0; i < len(categories); i++ {
 			catStruct := models.Category{
@@ -72,35 +61,30 @@ func Post(w http.ResponseWriter, r *http.Request) {
 				CreateDate:   categories[tabUUID[i]].CreateDate,
 				ModifiedDate: categories[tabUUID[i]].ModifiedDate,
 			}
-			models.NewCategoryRepository(db).CreateCategory(&catStruct)
+			models.CategoryRepo.CreateCategory(&catStruct)
 		}
 
-	} else {
-		fmt.Println("Method not allowed")
 	}
 }
 
-func AllPosts(w http.ResponseWriter, r *http.Request) {
-	db, err := sql.Open("sqlite3", "./data/sql/forum.db")
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-	defer db.Close()
-
+func AllPosts(res http.ResponseWriter, req *http.Request) {
 	PostComments := []models.Comment{}
-	if r.Method == "GET" {
-		err := r.ParseForm()
+	if lib.ValidateRequest(req, res, "/posts", http.MethodGet) {
+		err := req.ParseForm()
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			http.Error(res, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		path := r.URL.Path
+		path := req.URL.Path
 		pathPart := strings.Split(path, "/")
 		if len(pathPart) == 3 && pathPart[1] == "posts" {
-			post, err := models.NewPostRepository(db).GetPostByTitle(pathPart[2])
-			comments, err := models.NewCommentRepository(db).GetAllComments("15")
+			post, err := models.PostRepo.GetPostByTitle(pathPart[2])
+			if err != nil {
+				fmt.Println("error DB")
+				return
+			}
+			comments, err := models.CommentRepo.GetAllComments("15")
 			if err != nil {
 				fmt.Println("error DB")
 				return
@@ -114,35 +98,25 @@ func AllPosts(w http.ResponseWriter, r *http.Request) {
 
 			fmt.Println(PostComments)
 		} else {
-			http.NotFound(w, r)
+			http.NotFound(res, req)
 		}
-
-	} else {
-		fmt.Println("Method not allowed")
 	}
 }
 
-func Comment(w http.ResponseWriter, r *http.Request) {
-	db, err := sql.Open("sqlite3", "./data/sql/forum.db")
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-	defer db.Close()
-
-	if r.Method == "POST" {
-		err := r.ParseForm()
+func Comment(res http.ResponseWriter, req *http.Request) {
+	if lib.ValidateRequest(req, res, "/comment", http.MethodPost) {
+		err := req.ParseForm()
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			http.Error(res, err.Error(), http.StatusBadRequest)
 			return
 		}
-		text := r.FormValue("text")
+		text := req.FormValue("text")
 
 		u := uuid.New()
 		creationDate := time.Now().Format("2006-01-02")
 		modifDate := time.Now().Format("2006-01-02")
 		//--------------------------------------
-		authorID := models.GetUserFromSession(r).ID
+		authorID := models.GetUserFromSession(req).ID
 		parentID := "chjchjchjcxjchjc"
 		postID := "3356e5b9-57c9-4c1f-b67c-7e485f66eab9"
 		//--------------------------------------
@@ -155,9 +129,6 @@ func Comment(w http.ResponseWriter, r *http.Request) {
 			CreateDate:   creationDate,
 			ModifiedDate: modifDate}
 
-		models.NewCommentRepository(db).CreateComment(&commentStruct)
-
-	} else {
-		fmt.Println("Method not allowed")
+		models.CommentRepo.CreateComment(&commentStruct)
 	}
 }
