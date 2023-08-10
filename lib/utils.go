@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"strings"
 	"text/template"
+	"time"
 
 	"github.com/gofrs/uuid"
 )
@@ -124,4 +125,39 @@ func isValidFileType(contentType string) bool {
 		return true
 	}
 	return false
+}
+
+func TimeSinceCreation(creationDate string) string {
+	layout := "2006-01-02 15:04:05" // Date format layout
+
+	creationTime, err := time.Parse(layout, creationDate)
+	if err != nil {
+		return "Invalid date format"
+	}
+
+	currentTime := time.Now()
+	elapsedTime := currentTime.Sub(creationTime)
+
+	if elapsedTime < time.Hour {
+		return "Recently"
+	} else if elapsedTime < 24*time.Hour {
+		hours := int(elapsedTime.Hours())
+		return fmt.Sprintf("%d hour%s ago", hours, pluralize(hours))
+	} else if elapsedTime < 30*24*time.Hour {
+		days := int(elapsedTime.Hours() / 24)
+		return fmt.Sprintf("%d day%s ago", days, pluralize(days))
+	} else if elapsedTime < 12*30*24*time.Hour {
+		months := int(elapsedTime.Hours() / (24 * 30))
+		return fmt.Sprintf("%d month%s ago", months, pluralize(months))
+	} else {
+		years := int(elapsedTime.Hours() / (24 * 30 * 12))
+		return fmt.Sprintf("%d year%s ago", years, pluralize(years))
+	}
+}
+
+func pluralize(count int) string {
+	if count > 1 {
+		return "s"
+	}
+	return ""
 }
