@@ -11,10 +11,18 @@ import (
 type View struct {
 	ID           string
 	IsBookmarked bool
-	Rate         string
+	Rate         RATE
 	AuthorID     string
 	PostID       string
 }
+
+type RATE int
+
+const (
+	Neutral ROLE = 0
+	Like    ROLE = 1
+	Dislike ROLE = 2
+)
 
 type ViewRepository struct {
 	db *sql.DB
