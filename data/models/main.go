@@ -8,10 +8,10 @@ import (
 )
 
 var (
-	db       *sql.DB
-	UserRepo *UserRepository
-	PostRepo *PostRepository
-	CommentRepo *CommentRepository
+	db           *sql.DB
+	UserRepo     *UserRepository
+	PostRepo     *PostRepository
+	CommentRepo  *CommentRepository
 	CategoryRepo *CategoryRepository
 )
 

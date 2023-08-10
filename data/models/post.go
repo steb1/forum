@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"strconv"
 
@@ -13,6 +14,7 @@ type PostItem struct {
 	ID                string
 	Title             string
 	AuthorName        string
+	ImageURL          string
 	LastEditionDate   string
 	NumberOfComments  int
 	ListOfCommentator []string
@@ -107,6 +109,66 @@ func (pr *PostRepository) GetAllPosts(more string) ([]*Post, error) {
 	}
 
 	return posts, nil
+}
+
+// Get all posts from databse
+func (pr *PostRepository) GetAllPostsItems(more string) ([]PostItem, error) {
+	morePost, err := strconv.Atoi(more)
+	if err != nil {
+		return nil, err
+	}
+	var posts []*Post
+
+	rows, err := pr.db.Query("SELECT id, title, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post LIMIT ?", morePost)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var post Post
+		err := rows.Scan(&post.ID, &post.Title, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, &post)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	tabpostItem := []PostItem{}
+
+	for i := 0; i < len(posts); i++ {
+		tabUser, _ := UserRepo.SelectAllUsers()
+		tabAllComments, _ := CommentRepo.GetAllComments("15")
+		user := ""
+
+		tabComments := []string{}
+		for k := 0; k < len(tabAllComments); k++ {
+			if posts[i].ID == tabAllComments[k].PostID {
+				tabComments = append(tabComments, tabAllComments[k].Text)
+			}
+		}
+		for j := 0; j < len(tabUser); j++ {
+			if posts[i].AuthorID == tabUser[j].ID {
+				user = tabUser[j].Username
+				break
+			}
+		}
+		PostItemi := PostItem{
+			ID:                posts[i].ID,
+			Title:             posts[i].Title,
+			AuthorName:        user,
+			ImageURL:          posts[i].ImageURL,
+			LastEditionDate:   posts[i].ModifiedDate,
+			NumberOfComments:  len(tabComments),
+			ListOfCommentator: tabComments}
+		tabpostItem = append(tabpostItem, PostItemi)
+	}
+	fmt.Println(tabpostItem)
+
+	return tabpostItem, nil
 }
 
 // Get the number of posts in the database

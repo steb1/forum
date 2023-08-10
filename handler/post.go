@@ -20,8 +20,8 @@ func Post(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 		isEdited := false
-		creationDate := time.Now().Format("2006-01-02")
-		modifDate := time.Now().Format("2006-01-02")
+		creationDate := time.Now().Format("2006-01-02 15:04:05")
+		modifDate := time.Now().Format("2006-01-02 15:04:05")
 		title := req.FormValue("title")
 		title = lib.Slugify(title)
 		description := req.FormValue("description")
@@ -63,7 +63,6 @@ func Post(res http.ResponseWriter, req *http.Request) {
 			}
 			models.CategoryRepo.CreateCategory(&catStruct)
 		}
-
 	}
 }
 
@@ -118,7 +117,7 @@ func Comment(res http.ResponseWriter, req *http.Request) {
 		//--------------------------------------
 		authorID := models.GetUserFromSession(req).ID
 		parentID := "chjchjchjcxjchjc"
-		postID := "3356e5b9-57c9-4c1f-b67c-7e485f66eab9"
+		postID := "709433aa-9fe4-4935-b1d6-48b50e24eb20"
 		//--------------------------------------
 		commentStruct := models.Comment{
 			ID:           u.String(),
