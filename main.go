@@ -34,7 +34,7 @@ func main() {
 
 	go models.DeleteExpiredSessions()
 
-	log.Println("Server started and running on")
+	log.Print("Server started and running on ")
 	log.Println(ADDRESS + PORT)
 	if err := http.ListenAndServe(PORT, nil); err != nil {
 		log.Fatal(err)
