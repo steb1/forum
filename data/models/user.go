@@ -19,7 +19,7 @@ type User struct {
 
 type TopUser struct {
 	ID               string
-	Username         string
+	Email            string
 	AvatarURL        string
 	NumberOfReaction int
 }
@@ -223,14 +223,14 @@ func (ur *UserRepository) IsExisted(email string) (*User, bool) {
 func (ur *UserRepository) TopUsers() ([]TopUser, error) {
 	var user []TopUser
 	row, err := ur.db.Query(`SELECT u.id AS user_id,
-									u.username AS user_username,
+									u.email AS user_email,
 									u.avatarurl AS avatarurl,
 									COALESCE(COUNT(DISTINCT c.id),0) + COALESCE(COUNT(DISTINCT v.id),0) AS number_of_reactions
 							FROM "user" u
 							LEFT JOIN "post" p ON u.id = p.authorID
 							LEFT JOIN "comment" c ON p.id = c.postID
 							LEFT JOIN "view" v ON p.id = v.postID
-							GROUP BY u.id , u.username
+							GROUP BY u.id , u.email
 							ORDER BY (number_of_reactions) DESC
 							LIMIT 3`)
 	if err != nil {
@@ -238,10 +238,10 @@ func (ur *UserRepository) TopUsers() ([]TopUser, error) {
 	}
 	for row.Next() {
 		var ID string
-		var Username string
+		var Email string
 		var AvatarUrl string
 		var NumberOfReaction int
-		err = row.Scan(&ID, &Username, &AvatarUrl, &NumberOfReaction)
+		err = row.Scan(&ID, &Email, &AvatarUrl, &NumberOfReaction)
 
 		if err != nil {
 			log.Fatal(err)
@@ -249,7 +249,7 @@ func (ur *UserRepository) TopUsers() ([]TopUser, error) {
 
 		var tab = TopUser{
 			ID:               ID,
-			Username:         Username,
+			Email:            Email,
 			AvatarURL:        AvatarUrl,
 			NumberOfReaction: NumberOfReaction,
 		}
