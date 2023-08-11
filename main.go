@@ -20,6 +20,8 @@ func main() {
 	http.HandleFunc("/", handler.Index)
 	http.HandleFunc("/sign-up", auth.SignUp)
 	http.HandleFunc("/sign-up-page", auth.SignUpPage)
+	http.HandleFunc("/Google-Sign-up", auth.HandleGoogleLogin)
+	http.HandleFunc("/callback", auth.HandleCallback)
 	http.HandleFunc("/sign-in", auth.SignIn)
 	http.HandleFunc("/sign-in-page", auth.SignInPage)
 	http.HandleFunc("/logout", auth.Logout)
