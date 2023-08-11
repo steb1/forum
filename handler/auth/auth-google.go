@@ -2,7 +2,9 @@ package auth
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 
 	"golang.org/x/oauth2"
@@ -12,22 +14,13 @@ import (
 // Create an OAuth2 configuration using your client ID and secret.
 var (
 	googleOAuthConfig = oauth2.Config{
-		ClientID:     "889533868443-q0ih7c2vah44pbdn5ouag0437pfeb478.apps.googleusercontent.com",         // Replace with your actual client ID
-		ClientSecret: "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",     // Replace with your actual client secret
-		RedirectURL:  "http://localhost:8080/callback", // Replace with your actual redirect URI
-		Scopes: []string{"https://www.googleapis.com/auth/userinfo.email"}, // Request specific scopes
-		Endpoint: google.Endpoint, // Google's OAuth2 endpoint
+		ClientID:     "889533868443-q0ih7c2vah44pbdn5ouag0437pfeb478.apps.googleusercontent.com", // Replace with your actual client ID
+		ClientSecret: "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",                                      // Replace with your actual client secret
+		RedirectURL:  "http://localhost:8080/callback",                                           // Replace with your actual redirect URI
+		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email"},                 // Request specific scopes
+		Endpoint:     google.Endpoint,                                                            // Google's OAuth2 endpoint
 	}
 )
-
-// func main() {
-// 	// Set up HTTP routes and server
-// 	http.HandleFunc("/", handleHome)
-// 	http.HandleFunc("/login", handleLogin)
-// 	http.HandleFunc("/callback", handleCallback)
-// 	http.ListenAndServe(":8080", nil) // Start the server on port 8080
-// }
-
 
 // Handle requests to initiate Google Sign-In
 func HandleGoogleLogin(w http.ResponseWriter, r *http.Request) {
@@ -54,8 +47,20 @@ func HandleCallback(w http.ResponseWriter, r *http.Request) {
 	}
 	defer response.Body.Close()
 
-	// Parse the response and use user information
-	// In a real application, you would process the response to get user details
+	responseData, _ := io.ReadAll(response.Body)
+
+	var Data GoogleUser
+
+	json.Unmarshal(responseData, &Data)
+
+	fmt.Println(Data.Email)
 
 	fmt.Fprint(w, "Logged in successfully!")
+}
+
+type GoogleUser struct {
+	ID       string `json: "id"`
+	Email    string `json: "email"`
+	Isvalid  bool   `json: "verified_email"`
+	ImageURL string `json : "picture"`
 }
