@@ -53,8 +53,6 @@ func HandleCallback(w http.ResponseWriter, r *http.Request) {
 
 	json.Unmarshal(responseData, &Data)
 
-	fmt.Println(Data.Email)
-
 	fmt.Fprint(w, "Logged in successfully!")
 }
 
