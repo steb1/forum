@@ -51,7 +51,7 @@ func (ur *UserRepository) CreateUser(user *User) error {
 		log.Fatalf("❌ Failed to generate UUID: %v", err)
 	}
 	user.ID = ID.String()
-	_, err = ur.db.Exec("INSERT INTO user (id, username, email, password, avatarURL, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+	_, err = ur.db.Exec("INSERT INTO user (id, username, email, password, avatarURL, role) VALUES (?, ?, ?, ?, ?, ?)",
 		user.ID, user.Username, user.Email, user.Password, user.AvatarURL, user.Role)
 	return err
 }
@@ -98,10 +98,8 @@ func (ur *UserRepository) SelectAllUsers() ([]User, error) {
 		var Password string
 		var AvatarUrl string
 		var Role ROLE
-		var Token string
-		var TokenExpirationDate string
 
-		err = row.Scan(&ID, &Email, &Username, &Password, &AvatarUrl, &Role, &Token, &TokenExpirationDate)
+		err = row.Scan(&ID, &Email, &Username, &Password, &AvatarUrl, &Role)
 
 		if err != nil {
 			log.Fatal(err)
@@ -194,7 +192,7 @@ func (ur *UserRepository) SelectRandomUsers(count int) ([]User, error) {
 
 // Update a user in the database
 func (ur *UserRepository) UpdateUser(user *User) error {
-	_, err := ur.db.Exec("UPDATE user SET username = ?, email = ?, password = ?, avatarURL = ?, role = ?, token = ?, tokenExpirationDate = ? WHERE id = ?",
+	_, err := ur.db.Exec("UPDATE user SET username = ?, email = ?, password = ?, avatarURL = ?, role = ? WHERE id = ?",
 		user.Username, user.Email, user.Password, user.AvatarURL, user.Role, user.ID)
 	return err
 }
