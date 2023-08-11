@@ -110,3 +110,19 @@ VALUES
     ("6", "beautiful", "2", "82", "", DATETIME('now'), DATETIME('now')),
     ("7", "beautiful", "2", "91", "", DATETIME('now'), DATETIME('now')),
     ("8", "beautiful", "3", "91", "", DATETIME('now'), DATETIME('now'));
+
+INSERT INTO view(id,isBookmarked,rate,authorID,postID)
+VALUES 
+    ("0",false,"1","2","1"),
+    ("1",false,"2","2","2"),
+    ("2",false,"1","2","1"),
+    ("3",false,"1","2","3"),
+    ("4",false,"1","2","4"),
+    ("5",false,"1","2","5"),
+    ("6",false,"1","2","5"),
+    ("7",false,"1","2","3"),
+    ("8",false,"1","2","1"),
+    ("9",false,"1","2","4"),
+    ("10",false,"1","2","1"),
+    ("11",false,"1","2","3"),
+    ("13",false,"1","2","2");

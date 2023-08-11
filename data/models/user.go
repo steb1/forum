@@ -9,14 +9,19 @@ import (
 )
 
 type User struct {
-	ID                  string
-	Username            string
-	Email               string
-	Password            string
-	AvatarURL           string
-	Role                ROLE
-	Token               string
-	TokenExpirationDate string
+	ID        string
+	Username  string
+	Email     string
+	Password  string
+	AvatarURL string
+	Role      ROLE
+}
+
+type TopUser struct {
+	ID               string
+	Username         string
+	AvatarURL        string
+	NumberOfReaction int
 }
 
 var DEFAULT_AVATAR = "/uploads/avatar.1.jpeg"
@@ -46,16 +51,16 @@ func (ur *UserRepository) CreateUser(user *User) error {
 		log.Fatalf("❌ Failed to generate UUID: %v", err)
 	}
 	user.ID = ID.String()
-	_, err = ur.db.Exec("INSERT INTO user (id, username, email, password, avatarURL, role, token, tokenExpirationDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-		user.ID, user.Username, user.Email, user.Password, user.AvatarURL, user.Role, user.Token, user.TokenExpirationDate)
+	_, err = ur.db.Exec("INSERT INTO user (id, username, email, password, avatarURL, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+		user.ID, user.Username, user.Email, user.Password, user.AvatarURL, user.Role)
 	return err
 }
 
 // Get a user by ID from the database
 func (ur *UserRepository) GetUserByID(userID string) (*User, error) {
 	var user User
-	row := ur.db.QueryRow("SELECT id, username, email, password, avatarURL, role, token, tokenExpirationDate FROM user WHERE id = ?", userID)
-	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.AvatarURL, &user.Role, &user.Token, &user.TokenExpirationDate)
+	row := ur.db.QueryRow("SELECT id, username, email, password, avatarURL, role FROM user WHERE id = ?", userID)
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.AvatarURL, &user.Role)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil // User not found
@@ -68,8 +73,8 @@ func (ur *UserRepository) GetUserByID(userID string) (*User, error) {
 // Get a user by email from the database
 func (ur *UserRepository) GetUserByEmail(email string) (*User, error) {
 	var user User
-	row := ur.db.QueryRow("SELECT id, username, email, password, avatarURL, role, token, tokenExpirationDate FROM user WHERE email = ?", email)
-	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.AvatarURL, &user.Role, &user.Token, &user.TokenExpirationDate)
+	row := ur.db.QueryRow("SELECT id, username, email, password, avatarURL, role FROM user WHERE email = ?", email)
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.AvatarURL, &user.Role)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil // User not found
@@ -103,14 +108,12 @@ func (ur *UserRepository) SelectAllUsers() ([]User, error) {
 		}
 
 		var tab = User{
-			ID:                  ID,
-			Email:               Email,
-			Username:            Username,
-			Password:            Password,
-			AvatarURL:           AvatarUrl,
-			Role:                Role,
-			Token:               Token,
-			TokenExpirationDate: TokenExpirationDate,
+			ID:        ID,
+			Email:     Email,
+			Username:  Username,
+			Password:  Password,
+			AvatarURL: AvatarUrl,
+			Role:      Role,
 		}
 
 		user = append(user, tab)
@@ -166,8 +169,6 @@ func (ur *UserRepository) SelectRandomUsers(count int) ([]User, error) {
 			&user.Password,
 			&user.AvatarURL,
 			&user.Role,
-			&user.Token,
-			&user.TokenExpirationDate,
 		)
 		if err != nil {
 			return nil, err
@@ -194,7 +195,7 @@ func (ur *UserRepository) SelectRandomUsers(count int) ([]User, error) {
 // Update a user in the database
 func (ur *UserRepository) UpdateUser(user *User) error {
 	_, err := ur.db.Exec("UPDATE user SET username = ?, email = ?, password = ?, avatarURL = ?, role = ?, token = ?, tokenExpirationDate = ? WHERE id = ?",
-		user.Username, user.Email, user.Password, user.AvatarURL, user.Role, user.Token, user.TokenExpirationDate, user.ID)
+		user.Username, user.Email, user.Password, user.AvatarURL, user.Role, user.ID)
 	return err
 }
 
@@ -217,4 +218,43 @@ func (ur *UserRepository) IsExisted(email string) (*User, bool) {
 		return nil, false
 	}
 	return &user, true
+}
+
+func (ur *UserRepository) TopUsers() ([]TopUser, error) {
+	var user []TopUser
+	row, err := ur.db.Query(`SELECT u.id AS user_id,
+									u.username AS user_username,
+									u.avatarurl AS avatarurl,
+									COALESCE(COUNT(DISTINCT c.id),0) + COALESCE(COUNT(DISTINCT v.id),0) AS number_of_reactions
+							FROM "user" u
+							LEFT JOIN "post" p ON u.id = p.authorID
+							LEFT JOIN "comment" c ON p.id = c.postID
+							LEFT JOIN "view" v ON p.id = v.postID
+							GROUP BY u.id , u.username
+							ORDER BY (number_of_reactions) DESC
+							LIMIT 3`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for row.Next() {
+		var ID string
+		var Username string
+		var AvatarUrl string
+		var NumberOfReaction int
+		err = row.Scan(&ID, &Username, &AvatarUrl, &NumberOfReaction)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		var tab = TopUser{
+			ID:               ID,
+			Username:         Username,
+			AvatarURL:        AvatarUrl,
+			NumberOfReaction: NumberOfReaction,
+		}
+
+		user = append(user, tab)
+	}
+	return user, nil
 }

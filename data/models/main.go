@@ -32,7 +32,7 @@ func init() {
 		log.Fatal("couldn't read setup.sql")
 	}
 	if _, err = db.Exec(string(query)); err != nil {
-		log.Fatal("database setup wasn't successful")
+		log.Fatal("database setup wasn't successful", err)
 	}
 
 	UserRepo = NewUserRepository(db)

@@ -82,7 +82,7 @@ func (pr *PostRepository) GetPostByTitle(title string) (*Post, error) {
 	return &post, nil
 }
 
-// Get all posts from databse
+// Get all posts from database
 func (pr *PostRepository) GetAllPosts(more string) ([]*Post, error) {
 	morePost, err := strconv.Atoi(more)
 	if err != nil {
@@ -189,7 +189,7 @@ func (pr *PostRepository) GetAllPostsItems(more string) ([]PostItem, error) {
 func (pr *PostRepository) GetNumberOfPosts() int {
 	var numberOfPosts int
 
-	row := pr.db.QueryRow("SELECT count(id) FROM post")
+	row := pr.db.QueryRow("SELECT COUNT(*) FROM post")
 	err := row.Scan(&numberOfPosts)
 	if err != nil {
 		return 0
