@@ -9,13 +9,13 @@ DELETE FROM post_category;
 DELETE FROM category;
 
 -- Insert 5 categories
-INSERT INTO "user" (id, username, email, password, avatarURL, role)
+INSERT INTO "user" (id,email,username, password, avatarURL, role, token, TokenExpirationDate)
 VALUES
-    ('1', 'yazmin_fisher', 'audie_legros97@yahoo.com', '$2a$04$pFAHXsdDLPp5banDftsQrOz/XZ0AVveq8b2mEH2lHzEnzvStZBpeq', '/uploads/avatar.1.jpeg', '2'),
-    ('2', 'katlyn_zboncak', 'devan.turcotte82@hotmail.com', '$2a$04$pFAHXsdDLPp5banDftsQrOz/XZ0AVveq8b2mEH2lHzEnzvStZBpeq', '/uploads/avatar.2.jpeg', '2'),
-    ('3', 'rosal_da54', 'alayna52@hotmail.com', '$2a$04$pFAHXsdDLPp5banDftsQrOz/XZ0AVveq8b2mEH2lHzEnzvStZBpeq', '/uploads/avatar.3.jpeg', '2'),
-    ('4', 'herta31', 'melany.brown8@gmail.com', '$2a$04$pFAHXsdDLPp5banDftsQrOz/XZ0AVveq8b2mEH2lHzEnzvStZBpeq', '/uploads/avatar.4.jpeg', '2'),
-    ('5', 'andreane_flatley', 'melyna.beahan7@gmail.com', '$2a$04$pFAHXsdDLPp5banDftsQrOz/XZ0AVveq8b2mEH2lHzEnzvStZBpeq', '/uploads/avatar.5.jpeg', '2');
+    ('1', 'yazmin_fisher', 'audie_legros97@yahoo.com', '$2a$04$pFAHXsdDLPp5banDftsQrOz/XZ0AVveq8b2mEH2lHzEnzvStZBpeq', '/uploads/avatar.1.jpeg', '2','token','2006-01-02 15:04:05'),
+    ('2', 'katlyn_zboncak', 'devan.turcotte82@hotmail.com', '$2a$04$pFAHXsdDLPp5banDftsQrOz/XZ0AVveq8b2mEH2lHzEnzvStZBpeq', '/uploads/avatar.2.jpeg', '2','token','2006-01-02 15:04:05'),
+    ('3', 'rosal_da54', 'alayna52@hotmail.com', '$2a$04$pFAHXsdDLPp5banDftsQrOz/XZ0AVveq8b2mEH2lHzEnzvStZBpeq', '/uploads/avatar.3.jpeg', '2','token','2006-01-02 15:04:05'),
+    ('4', 'herta31', 'melany.brown8@gmail.com', '$2a$04$pFAHXsdDLPp5banDftsQrOz/XZ0AVveq8b2mEH2lHzEnzvStZBpeq', '/uploads/avatar.4.jpeg', '2','token', '2006-01-02 15:04:05'),
+    ('5', 'andreane_flatley', 'melyna.beahan7@gmail.com', '$2a$04$pFAHXsdDLPp5banDftsQrOz/XZ0AVveq8b2mEH2lHzEnzvStZBpeq', '/uploads/avatar.5.jpeg', '2','token','2006-01-02 15:04:05');
 
 -- Insert 10 categories
 INSERT INTO "category" (id, name, createDate, modifiedDate)

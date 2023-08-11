@@ -2,9 +2,10 @@ package models
 
 import (
 	"database/sql"
-	"fmt"
+	"forum/lib"
 	"log"
 	"strconv"
+	"strings"
 
 	uuid "github.com/gofrs/uuid"
 	_ "github.com/mattn/go-sqlite3"
@@ -147,7 +148,7 @@ func (pr *PostRepository) GetAllPostsItems(more string) ([]PostItem, error) {
 		tabComments := []string{}
 		for k := 0; k < len(tabAllComments); k++ {
 			if posts[i].ID == tabAllComments[k].PostID {
-				tabComments = append(tabComments, tabAllComments[k].Text)
+				tabComments = append(tabComments, posts[i].ImageURL)
 			}
 		}
 		for j := 0; j < len(tabUser); j++ {
@@ -156,17 +157,30 @@ func (pr *PostRepository) GetAllPostsItems(more string) ([]PostItem, error) {
 				break
 			}
 		}
+
+		TopUser, _ := UserRepo.SelectAllUsersBypost(posts[i].ID)
+		tabTopUser := []string{}
+		cpt := 0
+		for l := 0; l < len(TopUser); l++ {
+			if cpt < 3 {
+				tabTopUser = append(tabTopUser, TopUser[l].AvatarURL)
+			}
+			cpt++
+		}
+
+		lastmodif := strings.ReplaceAll(posts[i].ModifiedDate, "T", " ")
+		lastmodif = strings.ReplaceAll(lastmodif, "Z", "")
+		urlImage := strings.ReplaceAll(posts[i].ImageURL, "jpg", "jpg")
 		PostItemi := PostItem{
 			ID:                posts[i].ID,
 			Title:             posts[i].Title,
 			AuthorName:        user,
-			ImageURL:          posts[i].ImageURL,
-			LastEditionDate:   posts[i].ModifiedDate,
+			ImageURL:          urlImage,
+			LastEditionDate:   lib.TimeSinceCreation(lastmodif),
 			NumberOfComments:  len(tabComments),
-			ListOfCommentator: tabComments}
+			ListOfCommentator: tabTopUser}
 		tabpostItem = append(tabpostItem, PostItemi)
 	}
-	fmt.Println(tabpostItem)
 
 	return tabpostItem, nil
 }
@@ -180,7 +194,7 @@ func (pr *PostRepository) GetNumberOfPosts() int {
 	if err != nil {
 		return 0
 	}
-	return 0
+	return numberOfPosts
 }
 
 // Update a post in the database

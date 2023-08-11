@@ -118,6 +118,35 @@ func (ur *UserRepository) SelectAllUsers() ([]User, error) {
 	return user, nil
 }
 
+// Select All users
+func (ur *UserRepository) SelectAllUsersBypost(postID string) ([]User, error) {
+	var user []User
+	row, err := ur.db.Query("SELECT u.id AS user_id, u.avatarURL AS user_avatar, u.username FROM \"comment\" c INNER JOIN \"user\" u ON c.authorID = u.id WHERE c.postID = ?;", postID)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for row.Next() {
+		var ID string
+		var AvatarUrl string
+		var Username string
+
+		err = row.Scan(&ID, &AvatarUrl, &Username)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		var tab = User{
+			ID:        ID,
+			AvatarURL: AvatarUrl,
+			Username:  Username,
+		}
+
+		user = append(user, tab)
+	}
+	return user, nil
+}
+
 // Select 17 random users from the database
 func (ur *UserRepository) SelectRandomUsers(count int) ([]User, error) {
 	var users []User

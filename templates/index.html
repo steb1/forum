@@ -30,82 +30,31 @@
             <div class="row wfull space-between mb-1">
                 <div class="col">
                     <h1>Discussions & Articles</h1>
-                    <p>View all 556 discussions</p>
+                    <p>View all {{ .NumberOfPosts }} discussions</p>
                 </div>
                 <button>Create New Post</button>
             </div>
             <div class="col wfull mt-1 ml-1">
+                {{range .Post}}
                 <article class="list">
                     <div class="row center">
-                        <img class="avatar big mr-1" src="/img/avatar.4.jpeg" alt="">
+                        <img class="avatar big mr-1" src="{{ .ImageURL }}" alt="">
                         <div class="col ml-1 new">
-                            <h2>Photos correlations</h2>
+                            <h2>{{ .Title }}</h2>
                             <div class="row">
-                                <span>ponzu</span>
-                                <span>3 hours ago</span>
-                                <span>26 replies</span>
+                                <span>{{ .AuthorName }}</span>
+                                <span>{{ .LastEditionDate }}</span>
+                                <span>{{ .NumberOfComments }} replies</span>
                             </div>
                         </div>
                     </div>
                     <div class="avatars">
-                        <img class="avatar" src="/img/avatar.2.jpeg" alt="">
-                        <img class="avatar" src="/img/avatar.3.jpeg" alt="">
-                        <img class="avatar" src="/img/avatar.4.jpeg" alt="">
+                        {{range .ListOfCommentator}}
+                        <img class="avatar" src="{{ . }}" alt="">
+                        {{end}}
                     </div>
-                </article>
-                <article class="list">
-                    <div class="row center">
-                        <img class="avatar big mr-1" src="/img/avatar.2.jpeg" alt="">
-                        <div class="col ml-1 new">
-                            <h2>The only thing worse that being a GWC is being a GWoC: Guy Without a
-                                Camera</h2>
-                            <div class="row">
-                                <span>ponzu</span>
-                                <span>3 hours ago</span>
-                                <span>26 replies</span>
-                                <a href="#">facebook.com</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="avatars">
-                        <img class="avatar" src="/img/avatar.2.jpeg" alt="">
-                        <img class="avatar" src="/img/avatar.3.jpeg" alt="">
-                        <img class="avatar" src="/img/avatar.4.jpeg" alt="">
-                    </div>
-                </article>
-                <article class="list">
-                    <div class="row center">
-                        <img class="avatar big mr-1" src="/img/avatar.3.jpeg" alt="">
-                        <div class="col ml-1 new">
-                            <h2>How to build and write a photographer resumé?</h2>
-                            <div class="row">
-                                <span>ponzu</span>
-                                <span>3 hours ago</span>
-                                <span>26 replies</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="avatars">
-                        <img class="avatar" src="/img/avatar.2.jpeg" alt="">
-                        <img class="avatar" src="/img/avatar.3.jpeg" alt="">
-                    </div>
-                </article>
-                <article class="list">
-                    <div class="row center">
-                        <img class="avatar big mr-1" src="/img/avatar.1.jpeg" alt="">
-                        <div class="col ml-1 new">
-                            <h2>Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi, neque!</h2>
-                            <div class="row">
-                                <span>ponzu</span>
-                                <span>3 hours ago</span>
-                                <span>26 replies</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="avatars">
-                        <img class="avatar" src="/img/avatar.1.jpeg" alt="">
-                    </div>
-                </article>
+                </article> 
+                {{end}}               
             </div>
         </section>
         <section class="col w1-3">

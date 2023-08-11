@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"forum/data/models"
 	"forum/lib"
 	"log"
@@ -9,9 +8,11 @@ import (
 )
 
 type HomePageData struct {
-	IsLoggedIn  bool
-	RandomUsers []models.User
-	CurrentUser models.User
+	IsLoggedIn    bool
+	RandomUsers   []models.User
+	CurrentUser   models.User
+	Post          []models.PostItem
+	NumberOfPosts int
 }
 
 func Index(res http.ResponseWriter, req *http.Request) {
@@ -26,12 +27,14 @@ func Index(res http.ResponseWriter, req *http.Request) {
 			log.Println("❌ Can't get 17 random users in the database")
 		}
 
-		fmt.Println("---------------------1")
-		models.PostRepo.GetAllPostsItems("15")
+		posts, _ := models.PostRepo.GetAllPostsItems("5")
+
 		homePageData := HomePageData{
-			IsLoggedIn:  isSessionOpen,
-			CurrentUser: *user,
-			RandomUsers: randomUsers,
+			IsLoggedIn:    isSessionOpen,
+			CurrentUser:   *user,
+			RandomUsers:   randomUsers,
+			Post:          posts,
+			NumberOfPosts: models.PostRepo.GetNumberOfPosts(),
 		}
 
 		lib.RenderPage(basePath, pagePath, homePageData, res)
