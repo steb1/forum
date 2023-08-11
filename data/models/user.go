@@ -9,12 +9,19 @@ import (
 )
 
 type User struct {
-	ID                  string
-	Username            string
-	Email               string
-	Password            string
-	AvatarURL           string
-	Role                ROLE
+	ID        string
+	Username  string
+	Email     string
+	Password  string
+	AvatarURL string
+	Role      ROLE
+}
+
+type TopUser struct {
+	ID               string
+	Username         string
+	AvatarURL        string
+	NumberOfReaction int
 }
 
 var DEFAULT_AVATAR = "/uploads/avatar.1.jpeg"
@@ -101,12 +108,12 @@ func (ur *UserRepository) SelectAllUsers() ([]User, error) {
 		}
 
 		var tab = User{
-			ID:                  ID,
-			Email:               Email,
-			Username:            Username,
-			Password:            Password,
-			AvatarURL:           AvatarUrl,
-			Role:                Role,
+			ID:        ID,
+			Email:     Email,
+			Username:  Username,
+			Password:  Password,
+			AvatarURL: AvatarUrl,
+			Role:      Role,
 		}
 
 		user = append(user, tab)
@@ -182,4 +189,43 @@ func (ur *UserRepository) IsExisted(email string) (*User, bool) {
 		return nil, false
 	}
 	return &user, true
+}
+
+func (ur *UserRepository) TopUsers() ([]TopUser, error) {
+	var user []TopUser
+	row, err := ur.db.Query(`SELECT u.id AS user_id,
+									u.username AS user_username,
+									u.avatarurl AS avatarurl,
+									COALESCE(COUNT(DISTINCT c.id),0) + COALESCE(COUNT(DISTINCT v.id),0) AS number_of_reactions
+							FROM "user" u
+							LEFT JOIN "post" p ON u.id = p.authorID
+							LEFT JOIN "comment" c ON p.id = c.postID
+							LEFT JOIN "view" v ON p.id = v.postID
+							GROUP BY u.id , u.username
+							ORDER BY (number_of_reactions) DESC
+							LIMIT 3`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for row.Next() {
+		var ID string
+		var Username string
+		var AvatarUrl string
+		var NumberOfReaction int
+		err = row.Scan(&ID, &Username, &AvatarUrl, &NumberOfReaction)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		var tab = TopUser{
+			ID:               ID,
+			Username:         Username,
+			AvatarURL:        AvatarUrl,
+			NumberOfReaction: NumberOfReaction,
+		}
+
+		user = append(user, tab)
+	}
+	return user, nil
 }

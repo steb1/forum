@@ -22,6 +22,7 @@ type HomePageData struct {
 	IsLoggedIn   bool
 	NumberOfPost int
 	RandomUsers  []models.User
+	TopUsers  []models.TopUser
 	CurrentUser  models.User
 	AllPostItems []PostItem
 }
@@ -63,12 +64,18 @@ func Index(res http.ResponseWriter, req *http.Request) {
 			allPostItems = append(allPostItems, _postItem)
 		}
 
+		TopUsers, err := models.UserRepo.TopUsers()
+		if err!= nil {
+			log.Println("❌ Can't get top users")
+		}
+		
 		homePageData := HomePageData{
 			IsLoggedIn:   isSessionOpen,
 			CurrentUser:  *user,
 			RandomUsers:  randomUsers,
 			NumberOfPost: models.PostRepo.GetNumberOfPosts(),
 			AllPostItems: allPostItems,
+			TopUsers: TopUsers,
 		}
 
 		lib.RenderPage(basePath, pagePath, homePageData, res)
