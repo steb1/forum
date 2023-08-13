@@ -12,7 +12,7 @@ type UserPageData struct {
 	IsLoggedIn  bool
 	CurrentUser models.User
 	TabIndex    int
-	PostsList  []models.PostItem
+	PostsList   []models.PostItem
 }
 
 func ProfilePage(res http.ResponseWriter, req *http.Request) {
@@ -36,9 +36,21 @@ func ProfilePage(res http.ResponseWriter, req *http.Request) {
 		user := models.GetUserFromSession(req)
 		switch TabIndex {
 		case 1:
-			_postListed, err := models.PostRepo.GetUserPost(user.ID, user.Username)
+			_postListed, err := models.PostRepo.GetUserOwnPosts(user.ID, user.Username)
 			if err != nil {
-				log.Println("❌ Can't get users post")
+				log.Println("❌ Can't get users created post")
+			}
+			postsList = _postListed
+		case 2:
+			_postListed, err := models.PostRepo.GetUserLikedPosts(user.ID)
+			if err != nil {
+				log.Println("❌ Can't get users liked post")
+			}
+			postsList = _postListed
+		case 3:
+			_postListed, err := models.PostRepo.GetUserBookmarkedPosts(user.ID)
+			if err != nil {
+				log.Println("❌ Can't get users bookmarked post")
 			}
 			postsList = _postListed
 		}
@@ -47,7 +59,7 @@ func ProfilePage(res http.ResponseWriter, req *http.Request) {
 			IsLoggedIn:  isSessionOpen,
 			CurrentUser: *user,
 			TabIndex:    TabIndex,
-			PostsList: postsList,
+			PostsList:   postsList,
 		}
 
 		lib.RenderPage(basePath, pagePath, userPageData, res)

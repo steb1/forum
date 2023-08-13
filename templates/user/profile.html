@@ -19,19 +19,19 @@
                     <a href="/profile?index=1">My Posts</a>
                     {{end}}
                     {{if eq .TabIndex 2}}
-                    <a class="black" href="/profile?index=2">My Activities</a>
+                    <a class="black" href="/profile?index=2">My Likes</a>
                     {{else}}
-                    <a href="/profile?index=2">My Activities</a>
+                    <a href="/profile?index=2">My Likes</a>
                     {{end}}
                     {{if eq .TabIndex 3}}
-                    <a class="black" href="/profile?index=3">My Likes</a>
+                    <a class="black" href="/profile?index=3">My Bookmarks</a>
                     {{else}}
-                    <a href="/profile?index=3">My Likes</a>
+                    <a href="/profile?index=3">My Bookmarks</a>
                     {{end}}
                     {{if eq .TabIndex 4}}
-                    <a class="black" href="/profile?index=4">My Bookmarks</a>
+                    <a class="black" href="/profile?index=4">My Activities</a>
                     {{else}}
-                    <a href="/profile?index=4">My Bookmarks</a>
+                    <a href="/profile?index=4">My Activities</a>
                     {{end}}
                     <a href="/edit-user-page">Settings</a>
                 </div>
@@ -58,13 +58,39 @@
                 </article>
                 {{end}}
                 {{else if eq .TabIndex 2}}
-                <p>My Activities</p>
-                <p>Feature not yet available</p>
+                {{range .PostsList}}
+                <article class="list">
+                    <div class="row center">
+                        <img class="avatar big mr-1" src="{{ .ImageURL }}" alt="">
+                        <div class="col ml-1 new">
+                            <h2>{{ .Title }}</h2>
+                            <div class="row">
+                                <span>{{ .AuthorName }}</span>
+                                <span>{{ .LastEditionDate }}</span>
+                                <span>{{ .NumberOfComments }} replies</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                {{end}}
                 {{else if eq .TabIndex 3}}
-                <p>My Likes</p>
-                <p>Feature not yet available</p>
+                {{range .PostsList}}
+                <article class="list">
+                    <div class="row center">
+                        <img class="avatar big mr-1" src="{{ .ImageURL }}" alt="">
+                        <div class="col ml-1 new">
+                            <h2>{{ .Title }}</h2>
+                            <div class="row">
+                                <span>{{ .AuthorName }}</span>
+                                <span>{{ .LastEditionDate }}</span>
+                                <span>{{ .NumberOfComments }} replies</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                {{end}}
                 {{else if eq .TabIndex 4}}
-                <p>My Bookmarks</p>
+                <p>My Activities</p>
                 <p>Feature not yet available</p>
                 {{end}}
             </div>

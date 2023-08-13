@@ -68,7 +68,7 @@ func (pr *PostRepository) GetPostByID(postID string) (*Post, error) {
 	return &post, nil
 }
 
-func (pr *PostRepository) GetUserPost(userId, userName string) ([]PostItem, error) {
+func (pr *PostRepository) GetUserOwnPosts(userId, userName string) ([]PostItem, error) {
 	var posts []*Post
 	var numberComments []int
 
@@ -116,6 +116,100 @@ GROUP BY p.ID ;
 	}
 
 	return tabPostItem, nil
+}
+
+func (pr *PostRepository) GetUserLikedPosts(userId string) ([]PostItem, error) {
+	var posts []PostItem
+	rows, err := pr.db.Query(`SELECT
+    p.id AS ID,
+    p.title AS Title,
+    u.username AS AuthorName,
+    p.imageURL AS ImageURL,
+    p.modifiedDate AS LastEditionDate,
+    COALESCE(cmt.comment_count, 0) AS NumberOfComments,
+    COALESCE(cmt.commentators, '') AS ListOfCommentator
+FROM "post" p
+LEFT JOIN "user" u ON p.authorID = u.id
+LEFT JOIN (
+    SELECT
+        c.postID,
+        COUNT(c.id) AS comment_count,
+        GROUP_CONCAT(u.username) AS commentators
+    FROM "comment" c
+    JOIN "user" u ON c.authorID = u.id
+    GROUP BY c.postID
+) cmt ON p.id = cmt.postID
+JOIN "view" v ON p.id = v.postID AND v.rate = '1'
+WHERE v.authorID = ?`, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var post PostItem
+		var commentators string
+		err := rows.Scan(&post.ID, &post.Title, &post.AuthorName, &post.ImageURL, &post.LastEditionDate, &post.NumberOfComments, &commentators)
+		if err != nil {
+			return nil, err
+		}
+		post.LastEditionDate = lib.TimeSinceCreation(strings.ReplaceAll(post.LastEditionDate, "Z", ""))
+		post.ListOfCommentator = strings.Split(commentators, ",")
+		posts = append(posts, post)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return posts, nil
+}
+
+func (pr *PostRepository) GetUserBookmarkedPosts(userId string) ([]PostItem, error) {
+	var posts []PostItem
+	rows, err := pr.db.Query(`SELECT
+    p.id AS ID,
+    p.title AS Title,
+    u.username AS AuthorName,
+    p.imageURL AS ImageURL,
+    p.modifiedDate AS LastEditionDate,
+    COALESCE(cmt.comment_count, 0) AS NumberOfComments,
+    COALESCE(cmt.commentators, '') AS ListOfCommentator
+FROM "post" p
+LEFT JOIN "user" u ON p.authorID = u.id
+LEFT JOIN (
+    SELECT
+        c.postID,
+        COUNT(c.id) AS comment_count,
+        GROUP_CONCAT(u.username) AS commentators
+    FROM "comment" c
+    JOIN "user" u ON c.authorID = u.id
+    GROUP BY c.postID
+) cmt ON p.id = cmt.postID
+JOIN "view" v ON p.id = v.postID AND v.isBookmarked = 1
+WHERE v.authorID = ?`, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var post PostItem
+		var commentators string
+		err := rows.Scan(&post.ID, &post.Title, &post.AuthorName, &post.ImageURL, &post.LastEditionDate, &post.NumberOfComments, &commentators)
+		if err != nil {
+			return nil, err
+		}
+		post.LastEditionDate = lib.TimeSinceCreation(strings.ReplaceAll(post.LastEditionDate, "Z", ""))
+		post.ListOfCommentator = strings.Split(commentators, ",")
+		posts = append(posts, post)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return posts, nil
 }
 
 // Get a post by TITLE from the database
