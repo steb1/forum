@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS "response" (
 CREATE TABLE IF NOT EXISTS "view" (
     id VARCHAR PRIMARY KEY,
     isBookmarked BOOLEAN,
-    rate VARCHAR,
+    rate INT,
     authorID VARCHAR,
     postID VARCHAR,
     FOREIGN KEY (authorID) REFERENCES user(id),

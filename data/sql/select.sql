@@ -1,3 +1,32 @@
+SELECT
+    p.id AS ID,
+    p.title AS Title,
+    u.username AS AuthorName,
+    p.imageURL AS ImageURL,
+    p.modifiedDate AS LastEditionDate,
+    COALESCE(cmt_counts.comment_count, 0) AS NumberOfComments,
+    COALESCE(cmt.commentators, '') AS ListOfCommentator
+FROM "post" p
+LEFT JOIN "user" u ON p.authorID = u.id
+LEFT JOIN (
+    SELECT
+        c.postID,
+        COUNT(c.id) AS comment_count,
+        GROUP_CONCAT(u.username) AS commentators
+    FROM "comment" c
+    JOIN "user" u ON c.authorID = u.id
+    GROUP BY c.postID
+) cmt_counts ON p.id = cmt_counts.postID
+LEFT JOIN (
+    SELECT
+        c.postID,
+        GROUP_CONCAT(u.username) AS commentators
+    FROM "comment" c
+    JOIN "user" u ON c.authorID = u.id
+    GROUP BY c.postID
+) cmt ON p.id = cmt.postID
+ORDER BY LastEditionDate DESC;
+
 SELECT u.id AS user_id,
        u.username AS user_username,
        COUNT(v.id) AS number_of_likes
@@ -13,7 +42,7 @@ SELECT u.id AS user_id,
 FROM "user" u
 LEFT JOIN "post" p ON u.id = p.authorID
 LEFT JOIN "comment" c ON p.id = c.postID
-LEFT JOIN "view" v ON p.id = v.postID
+LEFT JOIN "view" v ON p.id = v.postID AND v.rate != 0
 GROUP BY u.id, u.username
 ORDER BY number_reaction DESC;
 
