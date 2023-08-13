@@ -12,12 +12,14 @@ type UserPageData struct {
 	IsLoggedIn  bool
 	CurrentUser models.User
 	TabIndex    int
+	PostsList  []models.PostItem
 }
 
 func ProfilePage(res http.ResponseWriter, req *http.Request) {
 	if lib.ValidateRequest(req, res, "/profile", http.MethodGet) {
 		basePath := "base"
 		pagePath := "user/profile"
+		postsList := []models.PostItem{}
 		queryParams := req.URL.Query()
 		TabIndex := 1
 		if len(queryParams["index"]) != 0 {
@@ -32,11 +34,20 @@ func ProfilePage(res http.ResponseWriter, req *http.Request) {
 		}
 		isSessionOpen := models.ValidSession(req)
 		user := models.GetUserFromSession(req)
+		switch TabIndex {
+		case 1:
+			_postListed, err := models.PostRepo.GetUserPost(user.ID, user.Username)
+			if err != nil {
+				log.Println("❌ Can't get users post")
+			}
+			postsList = _postListed
+		}
 
 		userPageData := UserPageData{
 			IsLoggedIn:  isSessionOpen,
 			CurrentUser: *user,
 			TabIndex:    TabIndex,
+			PostsList: postsList,
 		}
 
 		lib.RenderPage(basePath, pagePath, userPageData, res)

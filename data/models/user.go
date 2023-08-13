@@ -99,8 +99,7 @@ func (ur *UserRepository) SelectAllUsers() ([]User, error) {
 		var AvatarUrl string
 		var Role ROLE
 
-		err = row.Scan(&ID, &Email, &Username, &Password, &AvatarUrl, &Role)
-
+		err = row.Scan(&ID, &Username, &Email, &Password, &AvatarUrl, &Role)
 		if err != nil {
 			log.Fatal(err)
 		}

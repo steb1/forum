@@ -7,16 +7,6 @@ import (
 	"net/http"
 )
 
-type PostItem struct {
-	ID                string
-	Title             string
-	ImageURL          string
-	AuthorName        string
-	LastEditionDate   string
-	NumberOfComments  int
-	ListOfCommentator []string
-}
-
 type HomePageData struct {
 	IsLoggedIn    bool
 	RandomUsers   []models.User

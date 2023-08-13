@@ -68,6 +68,56 @@ func (pr *PostRepository) GetPostByID(postID string) (*Post, error) {
 	return &post, nil
 }
 
+func (pr *PostRepository) GetUserPost(userId, userName string) ([]PostItem, error) {
+	var posts []*Post
+	var numberComments []int
+
+	rows, err := pr.db.Query(`
+	SELECT p.id AS id, title, description, imageURL, p.authorID AS authorID, isEdited, p.createDate AS createDate, p.modifiedDate AS modifiedDate, COUNT(*) AS numberComment FROM post p
+LEFT JOIN comment c ON c.postID = p.ID
+WHERE p.authorID = ?
+GROUP BY p.ID ;
+	`, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var post Post
+		var nbComment int
+		err := rows.Scan(&post.ID, &post.Title, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate, &nbComment)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, &post)
+		numberComments = append(numberComments, nbComment)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	tabPostItem := []PostItem{}
+
+	for i := 0; i < len(posts); i++ {
+		lastModificationDate := strings.ReplaceAll(posts[i].ModifiedDate, "T", " ")
+		lastModificationDate = strings.ReplaceAll(lastModificationDate, "Z", "")
+		urlImage := strings.ReplaceAll(posts[i].ImageURL, "jpg", "jpg")
+		postItem := PostItem{
+			ID:                posts[i].ID,
+			Title:             posts[i].Title,
+			AuthorName:        userName,
+			ImageURL:          urlImage,
+			LastEditionDate:   lib.TimeSinceCreation(lastModificationDate),
+			NumberOfComments:  numberComments[i],
+			ListOfCommentator: []string{},
+		}
+		tabPostItem = append(tabPostItem, postItem)
+	}
+
+	return tabPostItem, nil
+}
+
 // Get a post by TITLE from the database
 func (pr *PostRepository) GetPostByTitle(title string) (*Post, error) {
 	var post Post
@@ -112,7 +162,7 @@ func (pr *PostRepository) GetAllPosts(more string) ([]*Post, error) {
 	return posts, nil
 }
 
-// Get all posts from databse
+// Get all posts from database
 func (pr *PostRepository) GetAllPostsItems(more string) ([]PostItem, error) {
 	morePost, err := strconv.Atoi(more)
 	if err != nil {
@@ -138,7 +188,7 @@ func (pr *PostRepository) GetAllPostsItems(more string) ([]PostItem, error) {
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
-	tabpostItem := []PostItem{}
+	tabPostItem := []PostItem{}
 
 	for i := 0; i < len(posts); i++ {
 		tabUser, _ := UserRepo.SelectAllUsers()
@@ -179,10 +229,10 @@ func (pr *PostRepository) GetAllPostsItems(more string) ([]PostItem, error) {
 			LastEditionDate:   lib.TimeSinceCreation(lastmodif),
 			NumberOfComments:  len(tabComments),
 			ListOfCommentator: tabTopUser}
-		tabpostItem = append(tabpostItem, PostItemi)
+		tabPostItem = append(tabPostItem, PostItemi)
 	}
 
-	return tabpostItem, nil
+	return tabPostItem, nil
 }
 
 // Get the number of posts in the database

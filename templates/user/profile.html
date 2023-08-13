@@ -3,7 +3,7 @@
 {{define "content"}}
 <main>
     <section class="wfull center">
-        <section class="w2-5 col">
+        <section class="w3-5 col">
             <h1>Profile</h1>
             <div class="row mb-1">
                 <img src="{{.CurrentUser.AvatarURL}}" alt="" class="avatar bigger">
@@ -38,13 +38,34 @@
             </div>
             <div class="col wfull mt-1">
                 {{if eq .TabIndex 1}}
-                <p>My Post</p>
+                {{range .PostsList}}
+                <article class="list">
+                    <div class="row center">
+                        <img class="avatar big mr-1" src="{{ .ImageURL }}" alt="">
+                        <div class="col ml-1 new">
+                            <h2>{{ .Title }}</h2>
+                            <div class="row">
+                                <span>{{ .AuthorName }}</span>
+                                <span>{{ .LastEditionDate }}</span>
+                                <span>{{ .NumberOfComments }} replies</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="avatars">
+                        <button class="alt mr-1">Edit</button>
+                        <button class="red">Delete</button>
+                    </div>
+                </article>
+                {{end}}
                 {{else if eq .TabIndex 2}}
                 <p>My Activities</p>
+                <p>Feature not yet available</p>
                 {{else if eq .TabIndex 3}}
                 <p>My Likes</p>
+                <p>Feature not yet available</p>
                 {{else if eq .TabIndex 4}}
                 <p>My Bookmarks</p>
+                <p>Feature not yet available</p>
                 {{end}}
             </div>
         </section>
