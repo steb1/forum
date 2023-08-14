@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"text/template"
 	"time"
@@ -166,12 +167,9 @@ func FormatDate(DateAndTime string) string {
 	if len(tab) != 2 {
 		return DateAndTime
 	}
-	Date := tab[0]
-	Time := tab[1]
+	Date, Time := tab[0], tab[1]
 	tabDate := strings.Split(Date, "-")
-	year := tabDate[0]
-	month := tabDate[1]
-	day := tabDate[2]
+	year, month, day := tabDate[0], tabDate[1], tabDate[2]
 	MonthInt := map[string]string{
 		"01": "January",
 		"02": "February",
@@ -186,6 +184,19 @@ func FormatDate(DateAndTime string) string {
 		"11": "November",
 		"12": "December"}
 	month = MonthInt[month]
-	TheDate := fmt.Sprintf("%s, %sth, %s, at %d time",month,day,year,Time)
+	tabTime := strings.Split(Time, ":")
+	hour, minute := tabTime[0], tabTime[1]
+	inthour, _ := strconv.Atoi(hour)
+	suf := ""
+	if inthour > 12 {
+		inthour -= 12
+		suf = "pm"
+	} else {
+		suf = "am"
+	}
+	hour = strconv.Itoa(inthour)
+	minute += suf
+	TimeFormatted := strings.Join([]string{hour, minute}, ":")
+	TheDate := fmt.Sprintf("%s, %sth, %s, at %d time", month, day, year, TimeFormatted)
 	return TheDate
 }
