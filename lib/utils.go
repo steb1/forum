@@ -161,3 +161,31 @@ func pluralize(count int) string {
 	}
 	return ""
 }
+func FormatDate(DateAndTime string) string {
+	tab := strings.Split(DateAndTime, " ")
+	if len(tab) != 2 {
+		return DateAndTime
+	}
+	Date := tab[0]
+	Time := tab[1]
+	tabDate := strings.Split(Date, "-")
+	year := tabDate[0]
+	month := tabDate[1]
+	day := tabDate[2]
+	MonthInt := map[string]string{
+		"01": "January",
+		"02": "February",
+		"03": "March",
+		"04": "April",
+		"05": "May",
+		"06": "June",
+		"07": "July",
+		"08": "August",
+		"09": "September",
+		"10": "October",
+		"11": "November",
+		"12": "December"}
+	month = MonthInt[month]
+	TheDate := fmt.Sprintf("%s, %sth, %s, at %d time",month,day,year,Time)
+	return TheDate
+}
