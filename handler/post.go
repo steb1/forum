@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"forum/data/models"
 	"forum/lib"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -78,6 +79,8 @@ func Post(res http.ResponseWriter, req *http.Request) {
 func AllPosts(res http.ResponseWriter, req *http.Request) {
 	PostComments := []models.Comment{}
 	if lib.ValidateRequest(req, res, "/posts", http.MethodGet) {
+		basePath := "base"
+		pagePath := "post"
 		err := req.ParseForm()
 		if err != nil {
 			http.Error(res, err.Error(), http.StatusBadRequest)
@@ -105,6 +108,8 @@ func AllPosts(res http.ResponseWriter, req *http.Request) {
 			}
 
 			fmt.Println(PostComments)
+			lib.RenderPage(basePath, pagePath, nil, res)
+			log.Println("✅ Home page get with success")
 		} else {
 			http.NotFound(res, req)
 		}
