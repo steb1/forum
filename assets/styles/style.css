@@ -243,6 +243,14 @@ footer span.heart {
 }
 
 aside {
+    display: none;
+}
+
+body.open {
+    overflow: hidden;
+}
+
+body.open aside {
     position: fixed;
     top: 0;
     left: 0;
@@ -255,8 +263,8 @@ aside {
     z-index: 10;
 }
 
-aside dialog {
-    position: relative;
+body.open aside dialog {
+    position: absolute;
     width: 50%;
     border: none;
     padding: 1rem;
