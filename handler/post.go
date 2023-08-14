@@ -11,6 +11,15 @@ import (
 	"github.com/google/uuid"
 )
 
+type PostPageData struct {
+	IsLoggedIn    bool
+	RandomUsers   []models.User
+	CurrentUser   models.User
+	Post          []models.PostItem
+	NumberOfPosts int
+	TopUsers      []models.TopUser
+}
+
 func Post(res http.ResponseWriter, req *http.Request) {
 	if lib.ValidateRequest(req, res, "/post", http.MethodPost) {
 		var categories = make(map[string]models.Category)

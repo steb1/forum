@@ -27,19 +27,14 @@
         <button>Sign Up</button>
     </header>
     <main>
+        {{ range .Post}}
         <section class="row">
             <section class="w3-5">
                 <article class="post">
-                    <img src="./img/banner.3.jpg" alt="">
-                    <h1>Day 1,248 of my life story</h1>
+                    <img src=".ImageURL" alt="">
+                    <h1>.Title</h1>
                     <p class="black mb-1">
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corporis, quis iste. Labore, culpa
-                        aliquam incidunt iure commodi eaque obcaecati qui maxime dolor illo, illum nobis. <br>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem labore modi accusantium, maxime
-                        nesciunt accusamus! <br>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Est illo, exercitationem harum optio
-                        voluptatem, blanditiis reiciendis reprehenderit, sequi porro consequatur molestiae beatae
-                        mollitia quisquam sed.
+                        .Description
                     </p>
                     <div class="row">
                         <p>Taken on March 26th, 2018, at 1:56pm</p>
@@ -179,6 +174,7 @@
                 </div>
             </section>
         </section>
+        {{ end }}
     </main>
     <footer>
         Copyright all rights reserved 2023. Make with ❤️ and ☕
