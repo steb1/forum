@@ -263,13 +263,19 @@
             body.classList.add("open")
         }
 
-        aside.addEventListener("click", (evt) => {
-            if (evt.currentTarget == aside) {
+        window.onclick = function(event) {
+            if (event.target == modal) {
                 modal.close();
                 body.classList.remove("open")
             }
-        })
-    </script>
+        }
+        
+
+    </script>    
+    
+    
+    
+    
 </body>
 
 </html>
