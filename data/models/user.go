@@ -70,6 +70,20 @@ func (ur *UserRepository) GetUserByID(userID string) (*User, error) {
 	return &user, nil
 }
 
+// Get a user by ID from the database
+func (ur *UserRepository) GetUserByPost(authorID string) (*User, error) {
+	var user User
+	row := ur.db.QueryRow("SELECT id, username, email, password, avatarURL, role FROM user WHERE id = ?", authorID)
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.AvatarURL, &user.Role)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil // User not found
+		}
+		return nil, err
+	}
+	return &user, nil
+}
+
 // Get a user by email from the database
 func (ur *UserRepository) GetUserByEmail(email string) (*User, error) {
 	var user User

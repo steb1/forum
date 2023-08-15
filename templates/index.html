@@ -36,6 +36,7 @@
             </div>
             <div class="col wfull mt-1 ml-1">
                 {{range .Post}}
+                <a href="/posts/{{ .Title }}">
                 <article class="list">
                     <div class="row center">
                         <img class="avatar big mr-1" src="{{ .ImageURL }}" alt="">
@@ -54,6 +55,7 @@
                         {{end}}
                     </div>
                 </article>
+                </a>
                 {{end}}
             </div>
         </section>

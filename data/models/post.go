@@ -24,6 +24,7 @@ type PostItem struct {
 type Post struct {
 	ID           string
 	Title        string
+	Slug         string
 	Description  string
 	ImageURL     string
 	AuthorID     string
@@ -49,8 +50,8 @@ func (pr *PostRepository) CreatePost(post *Post) error {
 		log.Fatalf("❌ Failed to generate UUID: %v", err)
 	}
 	post.ID = ID.String()
-	_, err = pr.db.Exec("INSERT INTO post (id, title, description, imageURL, authorID, isEdited, createDate, modifiedDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-		post.ID, post.Title, post.Description, post.ImageURL, post.AuthorID, post.IsEdited, post.CreateDate, post.ModifiedDate)
+	_, err = pr.db.Exec("INSERT INTO post (id, title, slug, description, imageURL, authorID, isEdited, createDate, modifiedDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+		post.ID, post.Title, post.Slug, post.Description, post.ImageURL, post.AuthorID, post.IsEdited, post.CreateDate, post.ModifiedDate)
 	return err
 }
 
@@ -113,6 +114,7 @@ GROUP BY p.ID ;
 			ListOfCommentator: []string{},
 		}
 		tabPostItem = append(tabPostItem, postItem)
+
 	}
 
 	return tabPostItem, nil
@@ -216,6 +218,20 @@ WHERE v.authorID = ?`, userId)
 func (pr *PostRepository) GetPostByTitle(title string) (*Post, error) {
 	var post Post
 	row := pr.db.QueryRow("SELECT id, title, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post WHERE title = ?", title)
+	err := row.Scan(&post.ID, &post.Title, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil // Post not found
+		}
+		return nil, err
+	}
+	return &post, nil
+}
+
+// Get a post by TITLE from the database
+func (pr *PostRepository) GetPostBySlug(slug string) (*Post, error) {
+	var post Post
+	row := pr.db.QueryRow("SELECT id, title, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post WHERE slug = ?", slug)
 	err := row.Scan(&post.ID, &post.Title, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate)
 	if err != nil {
 		if err == sql.ErrNoRows {

@@ -51,7 +51,7 @@ func ValidateRequest(req *http.Request, res http.ResponseWriter, url, method str
 	if req.URL.Path != url {
 		res.WriteHeader(http.StatusNotFound)
 		RenderPage("base", "404", nil, res)
-		log.Println("404 ❌ - Page not found ", req.URL)
+		log.Println("404 ❌ - Page not found ", url)
 		return false
 	}
 
