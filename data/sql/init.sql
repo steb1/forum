@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS "user" (
 CREATE TABLE IF NOT EXISTS "post" (
     id VARCHAR PRIMARY KEY,
     title VARCHAR,
+    slug VARCHAR,
     description VARCHAR,
     imageURL VARCHAR,
     authorID VARCHAR,

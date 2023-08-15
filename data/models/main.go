@@ -8,11 +8,12 @@ import (
 )
 
 var (
-	db           *sql.DB
-	UserRepo     *UserRepository
-	PostRepo     *PostRepository
-	CommentRepo  *CommentRepository
-	CategoryRepo *CategoryRepository
+	db               *sql.DB
+	UserRepo         *UserRepository
+	PostRepo         *PostRepository
+	CommentRepo      *CommentRepository
+	CategoryRepo     *CategoryRepository
+	PostCategoryRepo *PostCategoryRepository
 )
 
 func init() {
@@ -39,6 +40,7 @@ func init() {
 	PostRepo = NewPostRepository(db)
 	CommentRepo = NewCommentRepository(db)
 	CategoryRepo = NewCategoryRepository(db)
+	PostCategoryRepo = NewPostCategoryRepository(db)
 
 	log.Println("✅ Database init with success")
 }

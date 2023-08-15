@@ -51,6 +51,20 @@ func (cr *CategoryRepository) GetCategoryByID(categoryID string) (*Category, err
 	return &category, nil
 }
 
+// Get a category by ID from the database
+func (cr *CategoryRepository) GetCategoryByName(name string) (*Category, error) {
+	var category Category
+	row := cr.db.QueryRow("SELECT id, name, createDate, modifiedDate FROM category WHERE name = ?", name)
+	err := row.Scan(&category.ID, &category.Name, &category.CreateDate, &category.ModifiedDate)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil // Category not found
+		}
+		return nil, err
+	}
+	return &category, nil
+}
+
 // Update a category in the database
 func (cr *CategoryRepository) UpdateCategory(category *Category) error {
 	_, err := cr.db.Exec("UPDATE category SET name = ?, createDate = ?, modifiedDate = ? WHERE id = ?",

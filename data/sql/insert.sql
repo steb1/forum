@@ -11,7 +11,8 @@ DELETE FROM category;
 -- Insert 5 categories
 INSERT INTO "user" (id, username, email, password, avatarURL, role)
 VALUES
-    ('1', 'yazmin_fisher', 'a@a', '$2a$04$pFAHXsdDLPp5banDftsQrOz/XZ0AVveq8b2mEH2lHzEnzvStZBpeq', '/uploads/avatar.1.jpeg', '2'),
+    ('1', 'yazmin_fisher', 'a@a', '$2a$04$lLHjjHjpj7NOUFuGRtX/j.xhcejgcoDjYzUNfvUHZSrduRZbEqesq', '/uploads/avatar.1.jpeg', '2'),
+    ('23439d2e3dfb95bcd256a5456b1105b7a7199adf', 's', 's@a', '$2a$04$lLHjjHjpj7NOUFuGRtX/j.xhcejgcoDjYzUNfvUHZSrduRZbEqesq', '/uploads/avatar.3.jpeg', '2'),
     ('2', 'katlyn_zboncak', 'devan.turcotte82@hotmail.com', '$2a$04$pFAHXsdDLPp5banDftsQrOz/XZ0AVveq8b2mEH2lHzEnzvStZBpeq', '/uploads/avatar.2.jpeg', '2'),
     ('3', 'rosal_da54', 'alayna52@hotmail.com', '$2a$04$pFAHXsdDLPp5banDftsQrOz/XZ0AVveq8b2mEH2lHzEnzvStZBpeq', '/uploads/avatar.3.jpeg', '2'),
     ('4', 'herta31', 'melany.brown8@gmail.com', '$2a$04$pFAHXsdDLPp5banDftsQrOz/XZ0AVveq8b2mEH2lHzEnzvStZBpeq', '/uploads/avatar.4.jpeg', '2'),
