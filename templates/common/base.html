@@ -80,16 +80,23 @@
         }
 
         .upload-area {
+            cursor: pointer;
             margin-top: 1.25rem;
             border: none;
             background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%23ccc' stroke-width='3' stroke-dasharray='6%2c 14' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
             background-color: transparent;
-            padding: 3rem;
+            padding: 2rem;
             width: 100%;
             display: flex;
             border-radius: .25rem;
             flex-direction: column;
             align-items: center;
+        }
+
+        .upload-area #filePreview {
+            width: 70%;
+            height: auto;
+            object-fit: contain;
         }
 
         .upload-area:hover,
@@ -221,8 +228,8 @@
     {{if .IsLoggedIn}}
     <aside>
         <dialog id="uploadModal">
-            <form method="POST" class="blank" action="/post">
-                <button class="upload-area mb-1">
+            <form method="POST" class="blank" action="/post" enctype="multipart/form-data">
+                <label for="fileInput" class="upload-area mb-1" id="customFileButton">
                     <span class="upload-area-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                             width="340.531" height="419.116" viewBox="0 0 340.531 419.116">
@@ -233,22 +240,94 @@
                             </g>
                         </svg>
                     </span>
+                    <img id="filePreview" src="" alt="File Preview" style="display: none;"/>
                     <span class="upload-area-title">
                         Drag file(s) here to upload.
                     </span>
                     <span class="upload-area-description">
-                        Alternatively, you can select a file <br /><strong>clicking here</strong>
+                        Alternatively, you can select a file by <strong>clicking</strong> on this area
                     </span>
-                </button>
+                </label>
+                <input type="file" id="fileInput" style="display: none;" name="image">
                 <input name="title" type="text" placeholder="Add title" class="title">
                 <input name="categories" type="text" placeholder="Add tags with #">
                 <textarea name="description" cols="30" rows="10" placeholder="Describe your day..."></textarea>
                 <div class="row wfull">
-                    <button type="submit" class="wfull alt mr-1">Publish post</button>
                     <button type="submit" class="wfull">Publish post</button>
                 </div>
             </form>
         </dialog>
+        <script>
+            // JavaScript code to trigger file input when button is clicked
+            const customFileButton = document.getElementById('customFileButton');
+            const fileInput = document.getElementById('fileInput');
+            const filePreview = document.getElementById('filePreview');
+
+            // Handle selected files
+            fileInput.addEventListener('change', (event) => {
+                const selectedFiles = event.target.files;
+                if (selectedFiles.length > 0) {
+                    displaySelectedFile(selectedFiles[0]);
+                }
+            });
+
+            // Display selected file
+            function displaySelectedFile(file) {
+                const uploadArea = document.getElementById('customFileButton');
+                const uploadIcon = uploadArea.querySelector('.upload-area-icon');
+                const uploadTitle = uploadArea.querySelector('.upload-area-title');
+                const uploadDescription = uploadArea.querySelector('.upload-area-description');
+
+                // Update icon with file name
+                if (file.type.startsWith('image/')) {
+                    uploadIcon.style.display = "none";
+                    filePreview.style.display = "block";
+                    filePreview.src = URL.createObjectURL(file);
+                }
+
+                // Update title with file name
+                uploadTitle.textContent = `${file.name} (${formatFileSize(file.size)})`;
+
+                // Update description with file name
+                uploadDescription.style.display = "none";
+
+                // You can add more styling or elements to further enhance the display
+            }
+
+            // Format file size for human-readable display
+            function formatFileSize(size) {
+                const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+                let index = 0;
+
+                while (size >= 1024 && index < units.length - 1) {
+                    size /= 1024;
+                    index++;
+                }
+
+                return `${size.toFixed(2)} ${units[index]}`;
+            }
+
+            // Enable drag and drop file upload
+            customFileButton.addEventListener('dragover', (event) => {
+                event.preventDefault();
+                customFileButton.classList.add('dragover');
+            });
+
+            customFileButton.addEventListener('dragleave', (event) => {
+                event.preventDefault();
+                customFileButton.classList.remove('dragover');
+            });
+
+            customFileButton.addEventListener('drop', (event) => {
+                event.preventDefault();
+                customFileButton.classList.remove('dragover');
+
+                const droppedFiles = event.dataTransfer.files;
+                if (droppedFiles.length > 0) {
+                    displaySelectedFile(droppedFiles[0]);
+                }
+            });
+        </script>
         <!-- <button class="icon float">
             🗨️
         </button> -->
@@ -268,10 +347,14 @@
             body.classList.add("open")
         }
 
+        function closeModal() {
+            modal.close();
+            body.classList.remove("open")
+        }
+
         window.onclick = function (event) {
             if (event.target == modal) {
-                modal.close();
-                body.classList.remove("open")
+                closeModal()
             }
         }
     </script>
