@@ -14,6 +14,7 @@ import (
 type PostItem struct {
 	ID                string
 	Title             string
+	Slug              string
 	AuthorName        string
 	ImageURL          string
 	LastEditionDate   string
@@ -58,8 +59,8 @@ func (pr *PostRepository) CreatePost(post *Post) error {
 // Get a post by ID from the database
 func (pr *PostRepository) GetPostByID(postID string) (*Post, error) {
 	var post Post
-	row := pr.db.QueryRow("SELECT id, title, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post WHERE id = ?", postID)
-	err := row.Scan(&post.ID, &post.Title, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate)
+	row := pr.db.QueryRow("SELECT id, title, slug, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post WHERE id = ?", postID)
+	err := row.Scan(&post.ID, &post.Title, &post.Slug, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil // Post not found
@@ -74,7 +75,7 @@ func (pr *PostRepository) GetUserOwnPosts(userId, userName string) ([]PostItem, 
 	var numberComments []int
 
 	rows, err := pr.db.Query(`
-	SELECT p.id AS id, title, description, imageURL, p.authorID AS authorID, isEdited, p.createDate AS createDate, p.modifiedDate AS modifiedDate, COUNT(*) AS numberComment FROM post p
+	SELECT p.id AS id, title, slug, description, imageURL, p.authorID AS authorID, isEdited, p.createDate AS createDate, p.modifiedDate AS modifiedDate, COUNT(*) AS numberComment FROM post p
 LEFT JOIN comment c ON c.postID = p.ID
 WHERE p.authorID = ?
 GROUP BY p.ID ;
@@ -87,7 +88,7 @@ GROUP BY p.ID ;
 	for rows.Next() {
 		var post Post
 		var nbComment int
-		err := rows.Scan(&post.ID, &post.Title, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate, &nbComment)
+		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate, &nbComment)
 		if err != nil {
 			return nil, err
 		}
@@ -114,6 +115,7 @@ GROUP BY p.ID ;
 			ListOfCommentator: []string{},
 		}
 		tabPostItem = append(tabPostItem, postItem)
+
 	}
 
 	return tabPostItem, nil
@@ -124,6 +126,7 @@ func (pr *PostRepository) GetUserLikedPosts(userId string) ([]PostItem, error) {
 	rows, err := pr.db.Query(`SELECT
     p.id AS ID,
     p.title AS Title,
+    p.slug AS Slug,
     u.username AS AuthorName,
     p.imageURL AS ImageURL,
     p.modifiedDate AS LastEditionDate,
@@ -150,7 +153,7 @@ WHERE v.authorID = ?`, userId)
 	for rows.Next() {
 		var post PostItem
 		var commentators string
-		err := rows.Scan(&post.ID, &post.Title, &post.AuthorName, &post.ImageURL, &post.LastEditionDate, &post.NumberOfComments, &commentators)
+		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.AuthorName, &post.ImageURL, &post.LastEditionDate, &post.NumberOfComments, &commentators)
 		if err != nil {
 			return nil, err
 		}
@@ -171,6 +174,7 @@ func (pr *PostRepository) GetUserBookmarkedPosts(userId string) ([]PostItem, err
 	rows, err := pr.db.Query(`SELECT
     p.id AS ID,
     p.title AS Title,
+	p.slug AS Slug,
     u.username AS AuthorName,
     p.imageURL AS ImageURL,
     p.modifiedDate AS LastEditionDate,
@@ -197,7 +201,7 @@ WHERE v.authorID = ?`, userId)
 	for rows.Next() {
 		var post PostItem
 		var commentators string
-		err := rows.Scan(&post.ID, &post.Title, &post.AuthorName, &post.ImageURL, &post.LastEditionDate, &post.NumberOfComments, &commentators)
+		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.AuthorName, &post.ImageURL, &post.LastEditionDate, &post.NumberOfComments, &commentators)
 		if err != nil {
 			return nil, err
 		}
@@ -216,8 +220,8 @@ WHERE v.authorID = ?`, userId)
 // Get a post by TITLE from the database
 func (pr *PostRepository) GetPostBySlug(slug string) (*Post, error) {
 	var post Post
-	row := pr.db.QueryRow("SELECT id, title, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post WHERE slug = ?", slug)
-	err := row.Scan(&post.ID, &post.Title, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate)
+	row := pr.db.QueryRow("SELECT id, title, slug, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post WHERE slug = ?", slug)
+	err := row.Scan(&post.ID, &post.Title, &post.Slug, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil // Post not found
@@ -235,7 +239,7 @@ func (pr *PostRepository) GetAllPosts(more string) ([]*Post, error) {
 	}
 	var posts []*Post
 
-	rows, err := pr.db.Query("SELECT id, title, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post LIMIT ?", morePost)
+	rows, err := pr.db.Query("SELECT id, title, slug, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post LIMIT ?", morePost)
 	if err != nil {
 		return nil, err
 	}
@@ -243,7 +247,7 @@ func (pr *PostRepository) GetAllPosts(more string) ([]*Post, error) {
 
 	for rows.Next() {
 		var post Post
-		err := rows.Scan(&post.ID, &post.Title, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate)
+		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate)
 		if err != nil {
 			return nil, err
 		}
@@ -261,7 +265,7 @@ func (pr *PostRepository) GetAllPosts(more string) ([]*Post, error) {
 func (pr *PostRepository) GetAllPostsItems(morePost int) ([]PostItem, error) {
 	var posts []*Post
 
-	rows, err := pr.db.Query("SELECT id, title, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post ORDER BY createDate DESC LIMIT ?", morePost)
+	rows, err := pr.db.Query("SELECT id, title, slug, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post ORDER BY createDate DESC LIMIT ?", morePost)
 	if err != nil {
 		return nil, err
 	}
@@ -269,7 +273,7 @@ func (pr *PostRepository) GetAllPostsItems(morePost int) ([]PostItem, error) {
 
 	for rows.Next() {
 		var post Post
-		err := rows.Scan(&post.ID, &post.Title, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate)
+		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate)
 		if err != nil {
 			return nil, err
 		}
@@ -315,6 +319,7 @@ func (pr *PostRepository) GetAllPostsItems(morePost int) ([]PostItem, error) {
 		PostItemi := PostItem{
 			ID:                posts[i].ID,
 			Title:             posts[i].Title,
+			Slug:              posts[i].Slug,
 			AuthorName:        user,
 			ImageURL:          urlImage,
 			LastEditionDate:   lib.TimeSinceCreation(lastmodif),
@@ -340,8 +345,8 @@ func (pr *PostRepository) GetNumberOfPosts() int {
 
 // Update a post in the database
 func (pr *PostRepository) UpdatePost(post *Post) error {
-	_, err := pr.db.Exec("UPDATE post SET title = ?, description = ?, imageURL = ?, authorID = ?, isEdited = ?, createDate = ?, modifiedDate = ? WHERE id = ?",
-		post.Title, post.Description, post.ImageURL, post.AuthorID, post.IsEdited, post.CreateDate, post.ModifiedDate, post.ID)
+	_, err := pr.db.Exec("UPDATE post SET title = ?, slug = ?, description = ?, imageURL = ?, authorID = ?, isEdited = ?, createDate = ?, modifiedDate = ? WHERE id = ?",
+		post.Title, post.Slug, post.Description, post.ImageURL, post.AuthorID, post.IsEdited, post.CreateDate, post.ModifiedDate, post.ID)
 	return err
 }
 

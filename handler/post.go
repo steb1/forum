@@ -11,12 +11,11 @@ import (
 )
 
 type PostPageData struct {
-	IsLoggedIn    bool
-	RandomUsers   []models.User
-	CurrentUser   models.User
-	Post          []models.PostItem
-	NumberOfPosts int
-	TopUsers      []models.TopUser
+	IsLoggedIn bool
+	Post       models.Post
+	Comments   []models.Comment
+	UserPoster *models.User
+	NbrComment int
 }
 
 func Post(res http.ResponseWriter, req *http.Request) {
@@ -73,11 +72,14 @@ func Post(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func AllPosts(res http.ResponseWriter, req *http.Request) {
-	PostComments := []models.Comment{}
-	if lib.ValidateRequest(req, res, "/posts", http.MethodGet) {
+func GetPost(res http.ResponseWriter, req *http.Request) {
+	if lib.ValidateRequest(req, res, req.URL.Path, http.MethodGet) {
+		PostComments := []models.Comment{}
 		basePath := "base"
 		pagePath := "post"
+
+		isSessionOpen := models.ValidSession(req)
+
 		err := req.ParseForm()
 		if err != nil {
 			http.Error(res, err.Error(), http.StatusBadRequest)
@@ -93,20 +95,32 @@ func AllPosts(res http.ResponseWriter, req *http.Request) {
 				return
 			}
 			comments, err := models.CommentRepo.GetAllComments("15")
+			if comments == nil {
+				return
+			}
 			if err != nil {
 				fmt.Println("error DB")
 				return
 			}
-
 			for j := 0; j < len(comments); j++ {
 				if post.ID == comments[j].PostID {
 					PostComments = append(PostComments, *comments[j])
 				}
 			}
-
-			fmt.Println(PostComments)
-			lib.RenderPage(basePath, pagePath, nil, res)
-			log.Println("✅ Home page get with success")
+			userPost, err := models.UserRepo.GetUserByID(post.AuthorID)
+			if err != nil {
+				fmt.Println("error reading from user")
+				return
+			}
+			PostPageData := PostPageData{
+				IsLoggedIn: isSessionOpen,
+				Post:       *post,
+				UserPoster: userPost,
+				Comments:   PostComments,
+				NbrComment: len(PostComments),
+			}
+			lib.RenderPage(basePath, pagePath, PostPageData, res)
+			log.Println("✅ Post page get with success")
 		} else {
 			http.NotFound(res, req)
 		}
