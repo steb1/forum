@@ -32,7 +32,11 @@
                     <h1>Discussions & Articles</h1>
                     <p>View all {{ .NumberOfPosts }} discussions</p>
                 </div>
+                {{if .IsLoggedIn}}
                 <button onclick="openModal()">Create New Post</button>
+                {{else}}
+                <a href="/sign-in-page" class="btn">Create New Post</a>
+                {{end}}
             </div>
             <div class="col wfull mt-1 ml-1">
                 {{range .Post}}

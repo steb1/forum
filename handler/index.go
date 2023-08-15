@@ -46,6 +46,5 @@ func Index(res http.ResponseWriter, req *http.Request) {
 
 		lib.RenderPage(basePath, pagePath, homePageData, res)
 		log.Println("✅ Home page get with success")
-
 	}
 }

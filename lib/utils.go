@@ -28,6 +28,14 @@ func Slugify(input string) string {
 	return input
 }
 
+func RedirectToPreviousURL(res http.ResponseWriter, req *http.Request) {
+	// Get the Referer header from the request
+	previousPage := req.Header.Get("Referer")
+
+	// Perform the redirection
+	http.Redirect(res, req, previousPage, http.StatusSeeOther)
+}
+
 func LoadEnv(path string) error {
 	file, err := os.Open(path)
 	if err != nil {

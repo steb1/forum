@@ -218,9 +218,10 @@
         <a href="/sign-up-page" class="btn">Sign Up</a>
         {{end}}
     </header>
+    {{if .IsLoggedIn}}
     <aside>
         <dialog id="uploadModal">
-            <form method="dialog" class="blank">
+            <form method="POST" class="blank" action="/post">
                 <button class="upload-area mb-1">
                     <span class="upload-area-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -239,16 +240,20 @@
                         Alternatively, you can select a file <br /><strong>clicking here</strong>
                     </span>
                 </button>
-                <input type="text" placeholder="Add title" class="title">
-                <input type="text" placeholder="Add tags with #">
-                <textarea name="" id="" cols="30" rows="10" placeholder="Describe your day..."></textarea>
-                <button class="wfull mt-1">Publish post</button>
+                <input name="title" type="text" placeholder="Add title" class="title">
+                <input name="categories" type="text" placeholder="Add tags with #">
+                <textarea name="description" cols="30" rows="10" placeholder="Describe your day..."></textarea>
+                <div class="row wfull">
+                    <button type="submit" class="wfull alt mr-1">Publish post</button>
+                    <button type="submit" class="wfull">Publish post</button>
+                </div>
             </form>
         </dialog>
-        <button class="icon float">
+        <!-- <button class="icon float">
             🗨️
-        </button>
+        </button> -->
     </aside>
+    {{end}}
     {{template "content" .}}
     <footer>
         Copyright make with <span class="heart">❤️</span> and ☕
@@ -263,13 +268,13 @@
             body.classList.add("open")
         }
 
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             if (event.target == modal) {
                 modal.close();
                 body.classList.remove("open")
             }
         }
-    </script>    
+    </script>
 </body>
 
 </html>

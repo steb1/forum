@@ -80,7 +80,7 @@ func EditUser(res http.ResponseWriter, req *http.Request) {
 		// Parse form data
 		err := req.ParseMultipartForm(32 << 20) // 32 MB limit
 		if err != nil {
-			log.Println("❌ Failed to parse form data")
+			log.Println("❌ Failed to parse form data", err.Error())
 			return
 		}
 
@@ -104,7 +104,7 @@ func EditUser(res http.ResponseWriter, req *http.Request) {
 					if newPassword == confirmPassword {
 						newPassword, err = lib.HashPassword(newPassword)
 						if err != nil {
-							log.Println("❌ Failed to hash password")
+							log.Println("❌ Failed to hash password", err.Error())
 							return
 						}
 						currentUser.Password = newPassword
@@ -122,7 +122,7 @@ func EditUser(res http.ResponseWriter, req *http.Request) {
 		// Update user information in the database
 		err = models.UserRepo.UpdateUser(currentUser)
 		if err != nil {
-			log.Println("❌ Failed to update user information")
+			log.Println("❌ Failed to update user information ", err.Error())
 			return
 		}
 
@@ -141,7 +141,7 @@ func EditUserPage(res http.ResponseWriter, req *http.Request) {
 		if len(queryParams["index"]) != 0 {
 			_tabIndex, err := strconv.Atoi(queryParams.Get("index"))
 			if err != nil {
-				log.Println("❌ Can't convert index to int")
+				log.Println("❌ Can't convert index to int", err.Error())
 			} else {
 				TabIndex = _tabIndex
 			}

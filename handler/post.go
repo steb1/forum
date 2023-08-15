@@ -8,8 +8,6 @@ import (
 	"net/http"
 	"strings"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type PostPageData struct {
@@ -23,55 +21,53 @@ type PostPageData struct {
 
 func Post(res http.ResponseWriter, req *http.Request) {
 	if lib.ValidateRequest(req, res, "/post", http.MethodPost) {
-		var categories = make(map[string]models.Category)
-		err := req.ParseForm()
-		if err != nil {
-			http.Error(res, err.Error(), http.StatusBadRequest)
-			return
-		}
-		isEdited := false
-		creationDate := time.Now().Format("2006-01-02 15:04:05")
-		modifDate := time.Now().Format("2006-01-02 15:04:05")
-		title := req.FormValue("title")
-		title = lib.Slugify(title)
-		description := req.FormValue("description")
-		categorie := req.FormValue("categorie")
-
-		u := uuid.New()
-
-		//--------------------------------------
-		imageUrl := lib.UploadImage(req)
-		authorID := models.GetUserFromSession(req).ID
-		//--------------------------------------
-		tabcat := strings.Split(categorie, "#")
-
-		tabUUID := []string{}
-		for i := 1; i < len(tabcat); i++ {
-			c := uuid.New()
-			tabUUID = append(tabUUID, c.String())
-			categories[c.String()] = models.Category{ID: c.String(), Name: strings.TrimSpace(tabcat[i]), CreateDate: creationDate, ModifiedDate: modifDate}
-		}
-
-		postStruct := models.Post{
-			ID:           u.String(),
-			Title:        title,
-			Description:  description,
-			ImageURL:     imageUrl,
-			AuthorID:     authorID,
-			IsEdited:     isEdited,
-			CreateDate:   creationDate,
-			ModifiedDate: modifDate}
-
-		models.PostRepo.CreatePost(&postStruct)
-
-		for i := 0; i < len(categories); i++ {
-			catStruct := models.Category{
-				ID:           categories[tabUUID[i]].ID,
-				Name:         categories[tabUUID[i]].Name,
-				CreateDate:   categories[tabUUID[i]].CreateDate,
-				ModifiedDate: categories[tabUUID[i]].ModifiedDate,
+		isSessionOpen := models.ValidSession(req)
+		if isSessionOpen {
+			err := req.ParseForm()
+			if err != nil {
+				http.Error(res, err.Error(), http.StatusBadRequest)
+				return
 			}
-			models.CategoryRepo.CreateCategory(&catStruct)
+			creationDate := time.Now().Format("2006-01-02 15:04:05")
+			modificationDate := time.Now().Format("2006-01-02 15:04:05")
+			title := req.FormValue("title")
+			slug := lib.Slugify(title)
+			description := req.FormValue("description")
+			_categories := req.FormValue("categories")
+
+			imageUrl := lib.UploadImage(req)
+			authorID := models.GetUserFromSession(req).ID
+			categories := strings.Split(_categories, "#")
+
+			post := models.Post{
+				Title:        title,
+				Slug:         slug,
+				Description:  description,
+				ImageURL:     imageUrl,
+				AuthorID:     authorID,
+				IsEdited:     false,
+				CreateDate:   creationDate,
+				ModifiedDate: modificationDate,
+			}
+
+			models.PostRepo.CreatePost(&post)
+
+			for i := 1; i < len(categories); i++ {
+				name := strings.TrimSpace(categories[i])
+				category, _ := models.CategoryRepo.GetCategoryByName(name)
+				if category == nil {
+					category = &models.Category{
+						Name: name,
+						CreateDate: creationDate,
+						ModifiedDate: modificationDate,
+					}
+					models.CategoryRepo.CreateCategory(category)
+				}
+				models.PostCategoryRepo.CreatePostCategory(category.ID, post.ID)
+			}
+
+			log.Println("✅ Post created with success")
+			lib.RedirectToPreviousURL(res, req)
 		}
 	}
 }
@@ -90,7 +86,7 @@ func AllPosts(res http.ResponseWriter, req *http.Request) {
 		path := req.URL.Path
 		pathPart := strings.Split(path, "/")
 		if len(pathPart) == 3 && pathPart[1] == "posts" {
-			post, err := models.PostRepo.GetPostByTitle(pathPart[2])
+			post, err := models.PostRepo.GetPostBySlug(pathPart[2])
 			if err != nil {
 				fmt.Println("error DB")
 				return
@@ -125,7 +121,6 @@ func Comment(res http.ResponseWriter, req *http.Request) {
 		}
 		text := req.FormValue("text")
 
-		u := uuid.New()
 		creationDate := time.Now().Format("2006-01-02")
 		modifDate := time.Now().Format("2006-01-02")
 		//--------------------------------------
@@ -134,7 +129,6 @@ func Comment(res http.ResponseWriter, req *http.Request) {
 		postID := "709433aa-9fe4-4935-b1d6-48b50e24eb20"
 		//--------------------------------------
 		commentStruct := models.Comment{
-			ID:           u.String(),
 			Text:         text,
 			AuthorID:     authorID,
 			PostID:       postID,
