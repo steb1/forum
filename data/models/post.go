@@ -261,7 +261,7 @@ func (pr *PostRepository) GetAllPosts(more string) ([]*Post, error) {
 func (pr *PostRepository) GetAllPostsItems(morePost int) ([]PostItem, error) {
 	var posts []*Post
 
-	rows, err := pr.db.Query("SELECT id, title, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post LIMIT ?", morePost)
+	rows, err := pr.db.Query("SELECT id, title, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post ORDER BY createDate DESC LIMIT ?", morePost)
 	if err != nil {
 		return nil, err
 	}
