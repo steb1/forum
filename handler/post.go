@@ -23,9 +23,10 @@ func Post(res http.ResponseWriter, req *http.Request) {
 	if lib.ValidateRequest(req, res, "/post", http.MethodPost) {
 		isSessionOpen := models.ValidSession(req)
 		if isSessionOpen {
-			err := req.ParseForm()
+			// Parse form data
+			err := req.ParseMultipartForm(32 << 20) // 32 MB limit
 			if err != nil {
-				http.Error(res, err.Error(), http.StatusBadRequest)
+				log.Println("❌ Failed to parse form data", err.Error())
 				return
 			}
 			creationDate := time.Now().Format("2006-01-02 15:04:05")
@@ -57,8 +58,8 @@ func Post(res http.ResponseWriter, req *http.Request) {
 				category, _ := models.CategoryRepo.GetCategoryByName(name)
 				if category == nil {
 					category = &models.Category{
-						Name: name,
-						CreateDate: creationDate,
+						Name:         name,
+						CreateDate:   creationDate,
 						ModifiedDate: modificationDate,
 					}
 					models.CategoryRepo.CreateCategory(category)

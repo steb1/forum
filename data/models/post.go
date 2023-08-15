@@ -258,11 +258,7 @@ func (pr *PostRepository) GetAllPosts(more string) ([]*Post, error) {
 }
 
 // Get all posts from database
-func (pr *PostRepository) GetAllPostsItems(more string) ([]PostItem, error) {
-	morePost, err := strconv.Atoi(more)
-	if err != nil {
-		return nil, err
-	}
+func (pr *PostRepository) GetAllPostsItems(morePost int) ([]PostItem, error) {
 	var posts []*Post
 
 	rows, err := pr.db.Query("SELECT id, title, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post LIMIT ?", morePost)
