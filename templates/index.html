@@ -59,7 +59,7 @@
                     </div>
                 </article>
                 {{end}}
-                {{if lt .Limit .NumberOfPosts}}
+                {{if ne .Limit -1}}
                 <a href="/?limit={{ .Limit }}" class="btn alt">Load more</a>
                 {{end}}
             </div>

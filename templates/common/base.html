@@ -324,13 +324,11 @@
 
                 const droppedFiles = event.dataTransfer.files;
                 if (droppedFiles.length > 0) {
+                    fileInput.files = droppedFiles;
                     displaySelectedFile(droppedFiles[0]);
                 }
             });
         </script>
-        <!-- <button class="icon float">
-            🗨️
-        </button> -->
     </aside>
     {{end}}
     {{template "content" .}}

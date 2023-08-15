@@ -27,12 +27,18 @@ func Index(res http.ResponseWriter, req *http.Request) {
 		user := models.GetUserFromSession(req)
 		queryParams := req.URL.Query()
 		limit := 5
+		numberOfPosts := models.PostRepo.GetNumberOfPosts()
+
 		if len(queryParams["limit"]) != 0 {
 			_limit, err := strconv.Atoi(queryParams.Get("limit"))
-			if err != nil {
+			if limit <= 0 || err != nil {
 				log.Println("❌ Can't convert index to int")
 			} else {
-				limit = _limit
+				if _limit == numberOfPosts {
+					limit = -1
+				} else {
+					limit = _limit
+				}
 			}
 		}
 		randomUsers, err := models.UserRepo.SelectRandomUsers(17)
@@ -46,12 +52,13 @@ func Index(res http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			log.Println("❌ Can't get top users")
 		}
-		numberOfPosts := models.PostRepo.GetNumberOfPosts()
 
-		if limit + 5 > numberOfPosts {
-			limit = numberOfPosts
-		} else {
-			limit += 5
+		if limit != -1 {
+			if limit+5 > numberOfPosts {
+				limit = numberOfPosts
+			} else {
+				limit += 5
+			}
 		}
 
 		homePageData := HomePageData{
@@ -59,7 +66,7 @@ func Index(res http.ResponseWriter, req *http.Request) {
 			CurrentUser:   *user,
 			RandomUsers:   randomUsers,
 			Post:          posts,
-			NumberOfPosts: models.PostRepo.GetNumberOfPosts(),
+			NumberOfPosts: numberOfPosts,
 			TopUsers:      TopUsers,
 			Limit:         limit,
 		}
