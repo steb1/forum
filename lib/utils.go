@@ -108,6 +108,9 @@ func UploadImage(req *http.Request) string {
 	uploads := "uploads" // Use "uploads" without the leading slash
 	imageURL := filepath.Join(uploads, generateUniqueFilename(header.Filename))
 	filePath := filepath.Join(".", imageURL) // Use "." to denote the current directory
+	if filePath[0] != '/' {
+		filePath = "/" + filePath
+	}
 	file, err := os.Create(filePath)
 	if err != nil {
 		fmt.Println("❌ Error when creating the file", err)

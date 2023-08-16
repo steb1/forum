@@ -46,10 +46,13 @@
             </div>
             {{if .IsLoggedIn}}
             <div class="col block mb-1 wfull">
+                <p id="replyMessage" style="display: none;"></p>
                 <form action="/comment/{{.Post.ID}}" method="POST" class="wfull m-0">
-                    <textarea placeholder="Type your comment here..." name="" id="" cols="30" rows="5"></textarea>
+                    <input type="hidden" name="parentID" id="parentID">
+                    <textarea placeholder="Type your comment here..." name="text" id="" cols="30" rows="5"></textarea>
                     <div class="row center mb-0">
                         <button>Comment</button>
+                        <a id="resetBtn" class="black ml-1" href="" style="display: none;" onclick="(e) => reset(e)">Reset reply</a>
                         <p class="mb-0 ml-1">Use @ to mention other users</p>
                     </div>
                 </form>
@@ -62,12 +65,12 @@
                     {{.Depth}}
                     {{if eq .Index 0}}
                     <div class="col mb-1">
-                    {{else}}
-                    <div class="col mb-1 pl-1 border-left">
-                    {{end}}
+                        {{else}}
+                        <div class="col mb-1 pl-1 border-left">
+                            {{end}}
                             <div class="row center">
                                 <img class="avatar small mr-1" src="{{.AuthorAvatar}}" alt="">
-                                <p class="mr-1">{{.AuthorName}}</p>
+                                <p id="username-{{.ID}}" class="mr-1">{{.AuthorName}}</p>
                             </div>
                             <p class="black">
                                 {{ .Text }}
@@ -79,83 +82,43 @@
                                         ❤️
                                     </a>
                                 </p>
-                                <a class="ml-1 mr-1" href="#">Reply</a>
+                                {{if $.IsLoggedIn}}
+                                <a class="ml-1 mr-1" href="" onclick="reply(event)" id="reply-{{.ID}}">Reply</a>
+                                {{else}}
+                                <a class="ml-1 mr-1" href="/sign-in-page">Reply</a>
+                                {{end}}
                                 <p class="mb-0">{{.LastModifiedDate}}</p>
                             </div>
                         </div>
                     </div>
                     {{end}}
-                    <!-- <div class="row">
-                    <span class="ml-1"></span>
-                    <span class="ml-1"></span>
-                    <div class="col mb-1 pl-1 border-left">
-                        <div class="row center">
-                            <img class="avatar small mr-1" src="./img/avatar.6.jpg" alt="">
-                            <p class="mr-1">Pawel Kadysz</p>
-                        </div>
-                        <p class="black">
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt, quas.
-                        </p>
-                        <div class="row center">
-                            <p class="mb-0">
-                                2
-                                <a href="#">
-                                    ❤️
-                                </a>
-                            </p>
-                            <a class="ml-1 mr-1" href="#">Reply</a>
-                            <p class="mb-0">3 min ago</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <span class="ml-1"></span>
-                    <span class="ml-1"></span>
-                    <span class="ml-1"></span>
-                    <span class="ml-1"></span>
-                    <div class="col mb-1 pl-1 border-left">
-                        <div class="row center">
-                            <img class="avatar small mr-1" src="./img/avatar.7.jpg" alt="">
-                            <p class="mr-1">Pawel Kadysz</p>
-                        </div>
-                        <p class="black">
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt, quas.
-                        </p>
-                        <div class="row center">
-                            <p class="mb-0">
-                                2
-                                <a href="#">
-                                    ❤️
-                                </a>
-                            </p>
-                            <a class="ml-1 mr-1" href="#">Reply</a>
-                            <p class="mb-0">3 min ago</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col mb-1">
-                        <div class="row center">
-                            <img class="avatar small mr-1" src="./img/avatar.8.jpg" alt="">
-                            <p class="mr-1">Pawel Kadysz</p>
-                        </div>
-                        <p class="black">
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt, quas.
-                        </p>
-                        <div class="row center">
-                            <p class="mb-0">
-                                2
-                                <a href="#">
-                                    ❤️
-                                </a>
-                            </p>
-                            <a class="ml-1 mr-1" href="#">Reply</a>
-                            <p class="mb-0">3 min ago</p>
-                        </div>
-                    </div>
-                </div> -->
                 </div>
         </section>
     </section>
+    <script defer>
+        const resetBtn = document.getElementById("resetBtn");
+        const parentIDInput = document.getElementById("parentID");
+        const replyMessageSection = document.getElementById("replyMessage");
+
+        function reply(event) {
+            event.preventDefault();
+            console.log(event.srcElement.getAttribute("id"));
+            console.log(parentIDInput);
+            parentID = event.srcElement.getAttribute("id").substring(6);
+            replyTo = document.querySelector("#username-" + parentID).textContent
+            parentIDInput.value = parentID;
+            replyMessageSection.style.display = "block";
+            resetBtn.style.display = "block";
+            replyMessageSection.textContent = "You replying to " + replyTo;
+        }
+
+        function reset(event) {
+            event.preventDefault();
+            resetBtn.style.display = "none";
+            replyMessageSection.style.display = "none";
+            replyMessageSection.textContent = "";
+            parentIDInput.value = "";
+        }
+    </script>
 </main>
 {{end}}
