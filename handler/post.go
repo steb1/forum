@@ -13,6 +13,7 @@ import (
 
 type PostPageData struct {
 	IsLoggedIn bool
+	CurrentUser   models.User
 	Post       models.Post
 	Comments   []*models.CommentItem
 	UserPoster *models.User
@@ -138,6 +139,7 @@ func GetPost(res http.ResponseWriter, req *http.Request) {
 			PostPageData := PostPageData{
 				IsLoggedIn: isSessionOpen,
 				Post:       *post,
+				CurrentUser: *(models.GetUserFromSession(req)),
 				UserPoster: userPost,
 				Comments:   PostComments,
 				NbrComment: len(PostComments),
