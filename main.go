@@ -30,6 +30,7 @@ func main() {
 	http.HandleFunc("/edit-user", handler.EditUser)
 	http.HandleFunc("/edit-user-page", handler.EditUserPage)
 
+	http.HandleFunc("/trending", handler.ListPost)
 	http.HandleFunc("/post", handler.Post)
 	http.HandleFunc("/comment/", handler.Comment)
 	http.HandleFunc("/posts/", handler.GetPost)
