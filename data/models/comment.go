@@ -2,8 +2,10 @@ package models
 
 import (
 	"database/sql"
+	"forum/lib"
 	"log"
 	"strconv"
+	"strings"
 
 	uuid "github.com/gofrs/uuid"
 	_ "github.com/mattn/go-sqlite3"
@@ -17,6 +19,18 @@ type Comment struct {
 	ParentID     string
 	CreateDate   string
 	ModifiedDate string
+}
+
+type CommentItem struct {
+	ID               string
+	Index            int
+	Depth            string
+	Text             string
+	AuthorID         string
+	AuthorName       string
+	AuthorAvatar     string
+	ParentID         string
+	LastModifiedDate string
 }
 
 type CommentRepository struct {
@@ -55,28 +69,29 @@ func (cr *CommentRepository) GetCommentByID(commentID string) (*Comment, error) 
 	return &comment, nil
 }
 
-func (cr *CommentRepository) GetAllComments(more string) ([]*Comment, error) {
-
-	// more = strings.TrimLeft(more, "+")
-	moreComment, err := strconv.Atoi(more)
+func (cr *CommentRepository) GetCommentsOfPost(postID, limit string) ([]*CommentItem, error) {
+	moreComment, err := strconv.Atoi(limit)
 	if err != nil {
 		return nil, err
 	}
 
-	var comments []*Comment
+	var comments []*CommentItem
 
-	rows, err := cr.db.Query("SELECT id, text, authorID, postID, parentID, createDate, modifiedDate FROM comment LIMIT ?", moreComment)
+	rows, err := cr.db.Query("SELECT c.id, c.text, c.authorID, c.parentID, c.modifiedDate, u.userName, u.avatarURL FROM comment c LEFT JOIN user u ON c.authorID = u.ID WHERE c.PostID = ? LIMIT ?", postID, moreComment)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		var comment Comment
-		err := rows.Scan(&comment.ID, &comment.Text, &comment.AuthorID, &comment.PostID, &comment.ParentID, &comment.CreateDate, &comment.ModifiedDate)
+		var comment CommentItem
+		err := rows.Scan(&comment.ID, &comment.Text, &comment.AuthorID, &comment.ParentID, &comment.LastModifiedDate, &comment.AuthorName, &comment.AuthorAvatar)
 		if err != nil {
 			return nil, err
 		}
+		comment.LastModifiedDate = strings.ReplaceAll(comment.LastModifiedDate, "T", " ")
+		comment.LastModifiedDate = strings.ReplaceAll(comment.LastModifiedDate, "Z", "")
+		comment.LastModifiedDate = lib.TimeSinceCreation(comment.LastModifiedDate)
 		comments = append(comments, &comment)
 	}
 

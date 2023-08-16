@@ -119,7 +119,7 @@ func (ur *UserRepository) SelectAllUsers() ([]User, error) {
 }
 
 // Select All users
-func (ur *UserRepository) SelectAllUsersBypost(postID string) ([]User, error) {
+func (ur *UserRepository) SelectAllUsersByPost(postID string) ([]User, error) {
 	var user []User
 	row, err := ur.db.Query("SELECT u.id AS user_id, u.avatarURL AS user_avatar, u.username FROM \"comment\" c INNER JOIN \"user\" u ON c.authorID = u.id WHERE c.postID = ?;", postID)
 	if err != nil {

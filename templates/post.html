@@ -1,4 +1,4 @@
-{{define "title"}} | .Title{{end}}
+{{define "title"}} | {{ .Post.Title }}{{end}}
 
 {{define "content"}}
 <main>
@@ -11,7 +11,7 @@
                     {{ .Post.Description }}
                 </p>
                 <div class="row">
-                    <p>Taken on March 26th, 2018, at 1:56pm</p>
+                    <p>Published {{.Post.ModifiedDate}}</p>
                 </div>
             </article>
         </section>
@@ -21,7 +21,7 @@
                 <div class="col ml-1">
                     <h3>{{ .UserPoster.Username }}</h3>
                     <span class="green">Online</span>
-                    <p>Published 3 days ago</p>
+                    <p>Published {{.Post.ModifiedDate}}</p>
                 </div>
             </div>
             <div class="row center mb-1">
@@ -44,8 +44,9 @@
                     </a>
                 </p>
             </div>
+            {{if .IsLoggedIn }}
             <div class="col block mb-1 wfull">
-                <form action="" class="wfull m-0">
+                <form action="/comment/{{.Post.ID}}" method="POST" class="wfull m-0">
                     <textarea placeholder="Type your comment here..." name="" id="" cols="30" rows="5"></textarea>
                     <div class="row center mb-0">
                         <button>Comment</button>
@@ -53,30 +54,38 @@
                     </div>
                 </form>
             </div>
-            <div class="col block mt-1">
+            {{end}}
+            <div class="col block mt-1 wfull">
                 <h2 class="mb-1">{{ .NbrComment }} Comments</h2>
-                <div class="row">
+                {{range .Comments}}
+                <div class="row wfull">
+                    {{.Depth}}
+                    {{if eq .Index 0}}
                     <div class="col mb-1">
-                        <div class="row center">
-                            <img class="avatar small mr-1" src="./img/avatar.1.jpeg" alt="">
-                            <p class="mr-1">Pawel Kadysz</p>
-                        </div>
-                        <p class="black">
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt, quas.
-                        </p>
-                        <div class="row center">
-                            <p class="mb-0">
-                                2
-                                <a href="#">
-                                    ❤️
-                                </a>
+                    {{else}}
+                    <div class="col mb-1 pl-1 border-left">
+                    {{end}}
+                            <div class="row center">
+                                <img class="avatar small mr-1" src="{{.AuthorAvatar}}" alt="">
+                                <p class="mr-1">{{.AuthorName}}</p>
+                            </div>
+                            <p class="black">
+                                {{ .Text }}
                             </p>
-                            <a class="ml-1 mr-1" href="#">Reply</a>
-                            <p class="mb-0">3 min ago</p>
+                            <div class="row center">
+                                <p class="mb-0">
+                                    2
+                                    <a href="#">
+                                        ❤️
+                                    </a>
+                                </p>
+                                <a class="ml-1 mr-1" href="#">Reply</a>
+                                <p class="mb-0">{{.LastModifiedDate}}</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
+                    {{end}}
+                    <!-- <div class="row">
                     <span class="ml-1"></span>
                     <span class="ml-1"></span>
                     <div class="col mb-1 pl-1 border-left">
@@ -144,8 +153,8 @@
                             <p class="mb-0">3 min ago</p>
                         </div>
                     </div>
+                </div> -->
                 </div>
-            </div>
         </section>
     </section>
 </main>

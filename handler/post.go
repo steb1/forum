@@ -6,6 +6,7 @@ import (
 	"forum/lib"
 	"log"
 	"net/http"
+	"sort"
 	"strings"
 	"time"
 )
@@ -13,9 +14,35 @@ import (
 type PostPageData struct {
 	IsLoggedIn bool
 	Post       models.Post
-	Comments   []models.Comment
+	Comments   []*models.CommentItem
 	UserPoster *models.User
 	NbrComment int
+}
+
+func SortComments(comments []*models.CommentItem) []*models.CommentItem {
+	commentMap := make(map[string][]*models.CommentItem)
+
+	for _, comment := range comments {
+		commentMap[comment.ParentID] = append(commentMap[comment.ParentID], comment)
+	}
+
+	var sortedComments []*models.CommentItem
+	var dfs func(string, int)
+	dfs = func(parentID string, depth int) {
+		children := commentMap[parentID]
+		sort.SliceStable(children, func(i, j int) bool {
+			return children[i].Index < children[j].Index
+		})
+		for _, child := range children {
+			child.Index = depth
+			child.Depth = strings.Repeat(`<span class="ml-1"></span>`, child.Index)
+			sortedComments = append(sortedComments, child)
+			dfs(child.ID, depth+1)
+		}
+	}
+
+	dfs("", 0)
+	return sortedComments
 }
 
 func Post(res http.ResponseWriter, req *http.Request) {
@@ -73,8 +100,7 @@ func Post(res http.ResponseWriter, req *http.Request) {
 }
 
 func GetPost(res http.ResponseWriter, req *http.Request) {
-	if lib.ValidateRequest(req, res, req.URL.Path, http.MethodGet) {
-		PostComments := []models.Comment{}
+	if lib.ValidateRequest(req, res, "/posts/*", http.MethodGet) {
 		basePath := "base"
 		pagePath := "post"
 
@@ -89,23 +115,20 @@ func GetPost(res http.ResponseWriter, req *http.Request) {
 		path := req.URL.Path
 		pathPart := strings.Split(path, "/")
 		if len(pathPart) == 3 && pathPart[1] == "posts" {
-			post, err := models.PostRepo.GetPostBySlug(pathPart[2])
+			slug := pathPart[2]
+			post, err := models.PostRepo.GetPostBySlug(slug)
 			if err != nil {
 				fmt.Println("error DB")
 				return
 			}
-			comments, err := models.CommentRepo.GetAllComments("15")
-			if comments == nil {
-				return
-			}
+			PostComments, err := models.CommentRepo.GetCommentsOfPost(post.ID, "15")
+			PostComments = SortComments(PostComments)
+			post.ModifiedDate = strings.ReplaceAll(post.ModifiedDate, "T", " ")
+			post.ModifiedDate = strings.ReplaceAll(post.ModifiedDate, "Z", "")
+			post.ModifiedDate = lib.TimeSinceCreation(post.ModifiedDate)
 			if err != nil {
 				fmt.Println("error DB")
 				return
-			}
-			for j := 0; j < len(comments); j++ {
-				if post.ID == comments[j].PostID {
-					PostComments = append(PostComments, *comments[j])
-				}
 			}
 			userPost, err := models.UserRepo.GetUserByID(post.AuthorID)
 			if err != nil {

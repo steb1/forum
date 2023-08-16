@@ -287,15 +287,8 @@ func (pr *PostRepository) GetAllPostsItems(morePost int) ([]PostItem, error) {
 
 	for i := 0; i < len(posts); i++ {
 		tabUser, _ := UserRepo.SelectAllUsers()
-		tabAllComments, _ := CommentRepo.GetAllComments("15")
+		tabAllComments, _ := CommentRepo.GetCommentsOfPost(posts[i].ID, "15")
 		user := ""
-
-		tabComments := []string{}
-		for k := 0; k < len(tabAllComments); k++ {
-			if posts[i].ID == tabAllComments[k].PostID {
-				tabComments = append(tabComments, posts[i].ImageURL)
-			}
-		}
 		for j := 0; j < len(tabUser); j++ {
 			if posts[i].AuthorID == tabUser[j].ID {
 				user = tabUser[j].Username
@@ -303,7 +296,7 @@ func (pr *PostRepository) GetAllPostsItems(morePost int) ([]PostItem, error) {
 			}
 		}
 
-		TopUser, _ := UserRepo.SelectAllUsersBypost(posts[i].ID)
+		TopUser, _ := UserRepo.SelectAllUsersByPost(posts[i].ID)
 		tabTopUser := []string{}
 		cpt := 0
 		for l := 0; l < len(TopUser); l++ {
@@ -323,7 +316,7 @@ func (pr *PostRepository) GetAllPostsItems(morePost int) ([]PostItem, error) {
 			AuthorName:        user,
 			ImageURL:          urlImage,
 			LastEditionDate:   lib.TimeSinceCreation(lastmodif),
-			NumberOfComments:  len(tabComments),
+			NumberOfComments:  len(tabAllComments),
 			ListOfCommentator: tabTopUser}
 		tabPostItem = append(tabPostItem, PostItemi)
 	}

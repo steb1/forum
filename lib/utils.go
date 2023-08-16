@@ -56,6 +56,11 @@ func LoadEnv(path string) error {
 }
 
 func ValidateRequest(req *http.Request, res http.ResponseWriter, url, method string) bool {
+	if strings.Contains(url, "*") {
+		_urlSplit := strings.Split(req.URL.Path, "/")
+		url = url[:len(url)-1]
+		url += _urlSplit[len(_urlSplit)-1]
+	}
 	if req.URL.Path != url {
 		res.WriteHeader(http.StatusNotFound)
 		RenderPage("base", "404", nil, res)
@@ -170,6 +175,7 @@ func pluralize(count int) string {
 	}
 	return ""
 }
+
 func FormatDate(DateAndTime string) string {
 	tab := strings.Split(DateAndTime, " ")
 	if len(tab) != 2 {
