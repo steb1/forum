@@ -18,6 +18,7 @@ type PostPageData struct {
 	Comments    []*models.CommentItem
 	UserPoster  *models.User
 	NbrComment  int
+	Categories  []models.Category
 }
 
 func SortComments(comments []*models.CommentItem) []*models.CommentItem {
@@ -115,7 +116,7 @@ func GetPost(res http.ResponseWriter, req *http.Request) {
 
 		path := req.URL.Path
 		pathPart := strings.Split(path, "/")
-		if len(pathPart) == 3 && pathPart[1] == "posts" {
+		if len(pathPart) == 3 && pathPart[1] == "posts" && pathPart[2] != "" {
 			slug := pathPart[2]
 			post, err := models.PostRepo.GetPostBySlug(slug)
 			if err != nil {
@@ -136,6 +137,11 @@ func GetPost(res http.ResponseWriter, req *http.Request) {
 				fmt.Println("error reading from user")
 				return
 			}
+			postCategories, err := models.PostCategoryRepo.GetCategoriesOfPost(post.ID)
+			if err != nil {
+				fmt.Println("error reading from category")
+				return
+			}
 			PostPageData := PostPageData{
 				IsLoggedIn:  isSessionOpen,
 				Post:        *post,
@@ -143,6 +149,7 @@ func GetPost(res http.ResponseWriter, req *http.Request) {
 				UserPoster:  userPost,
 				Comments:    PostComments,
 				NbrComment:  len(PostComments),
+				Categories:  postCategories,
 			}
 			lib.RenderPage(basePath, pagePath, PostPageData, res)
 			log.Println("✅ Post page get with success")

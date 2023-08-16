@@ -7,6 +7,9 @@
             <article class="post">
                 <img src="{{ .Post.ImageURL }}" alt="">
                 <h1>{{ .Post.Title }}</h1>
+                {{ range .Categories }}
+                <p>#{{ .Name }}</p>
+                {{ end }}
                 <p class="black mb-1">
                     {{ .Post.Description }}
                 </p>
