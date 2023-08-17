@@ -108,6 +108,7 @@ GROUP BY p.ID ;
 		postItem := PostItem{
 			ID:                posts[i].ID,
 			Title:             posts[i].Title,
+			Slug:              posts[i].Slug,
 			AuthorName:        userName,
 			ImageURL:          urlImage,
 			LastEditionDate:   lib.TimeSinceCreation(lastModificationDate),

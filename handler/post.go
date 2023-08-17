@@ -154,7 +154,9 @@ func GetPost(res http.ResponseWriter, req *http.Request) {
 			lib.RenderPage(basePath, pagePath, PostPageData, res)
 			log.Println("✅ Post page get with success")
 		} else {
-			http.NotFound(res, req)
+			res.WriteHeader(http.StatusNotFound)
+			lib.RenderPage("base", "404", nil, res)
+			log.Println("404 ❌ - Page not found ", req.URL.Path)
 		}
 	}
 }
