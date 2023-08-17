@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"log"
+	"strings"
 
 	uuid "github.com/gofrs/uuid"
 	_ "github.com/mattn/go-sqlite3"
@@ -67,28 +68,59 @@ func (pcr *PostCategoryRepository) GetCategoriesOfPost(postID string) ([]Categor
 }
 
 // Get posts of a category from the database
-func (pcr *PostCategoryRepository) GetPostsOfCategory(categoryID string) ([]Post, error) {
+func (pcr *PostCategoryRepository) GetPostsOfCategory(categoryName string) ([]PostItem, error) {
 	rows, err := pcr.db.Query(`
-		SELECT p.id, p.title, p.description, p.imageURL, p.authorID, p.isEdited, p.createDate, p.modifiedDate
-		FROM post p
-		INNER JOIN post_category pc ON p.id = pc.postID
-		WHERE pc.categoryID = ?
-	`, categoryID)
+SELECT
+    p.id AS ID,
+    p.title AS Title,
+    p.slug AS Slug,
+    u.username AS AuthorName,
+    p.imageURL AS ImageURL,
+    p.modifiedDate AS LastEditionDate,
+    COALESCE(cmt.comment_count, 0) AS NumberOfComments,
+    COALESCE(cmt.commentators, '') AS ListOfCommentator
+FROM
+    post p
+JOIN
+    post_category pc ON p.id = pc.postID
+JOIN
+    category cat ON pc.categoryID = cat.id
+LEFT JOIN (
+    SELECT
+        c.postID,
+        COUNT(c.id) AS comment_count,
+        GROUP_CONCAT(u.avatarURL) AS commentators
+    FROM "comment" c
+    JOIN "user" u ON c.authorID = u.id
+    GROUP BY c.postID
+) cmt ON p.id = cmt.postID
+LEFT JOIN
+    user u ON p.authorID = u.id
+WHERE
+    cat.name = ?
+GROUP BY
+    p.id, p.title, p.slug, u.avatarURL, p.imageURL, p.modifiedDate, comment_count
+ORDER BY
+    p.modifiedDate DESC
+	`, categoryName)
 	if err != nil {
+		log.Println("❌ SQL ERROR ", err.Error())
 		return nil, err
 	}
 	defer rows.Close()
 
-	var posts []Post
+	var posts []PostItem
 	for rows.Next() {
-		var post Post
+		_listOfCommentator := ""
+		var post PostItem
 		err := rows.Scan(
-			&post.ID, &post.Title, &post.Description, &post.ImageURL,
-			&post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate,
+			&post.ID, &post.Title, &post.Slug, &post.AuthorName, &post.ImageURL, &post.LastEditionDate, &post.NumberOfComments, &_listOfCommentator,
 		)
 		if err != nil {
+			log.Println("❌ SQL ERROR ", err.Error())
 			return nil, err
 		}
+		post.ListOfCommentator = strings.Split(_listOfCommentator, ",")
 		posts = append(posts, post)
 	}
 

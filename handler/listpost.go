@@ -9,6 +9,7 @@ import (
 )
 
 type ListPostsPageData struct {
+	Title         string
 	IsLoggedIn    bool
 	CurrentUser   models.User
 	Post          []models.PostItem
