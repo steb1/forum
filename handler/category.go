@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"forum/data/models"
 	"forum/lib"
 	"log"
@@ -23,7 +22,6 @@ func GetPostOfCategory(res http.ResponseWriter, req *http.Request) {
 		if len(pathPart) == 3 && pathPart[1] == "category" && pathPart[2] != "" {
 			name := pathPart[2]
 			posts, _ := models.PostCategoryRepo.GetPostsOfCategory(name)
-			fmt.Println(posts)
 
 			TopUsers, err := models.UserRepo.TopUsers()
 			if err != nil {

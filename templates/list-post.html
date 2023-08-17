@@ -44,9 +44,12 @@
                     </div>
                 </article>
                 {{end}}
+                {{if eq .Title ""}}
                 {{if ne .Limit -1}}
                 <a href="/trending?limit={{ .Limit }}" class="btn alt">Load more</a>
                 {{end}}
+                {{end}}
+                
             </div>
         </section>
         <section class="col w1-3">
