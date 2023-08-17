@@ -57,8 +57,8 @@ func HandleCallback(w http.ResponseWriter, r *http.Request) {
 }
 
 type GoogleUser struct {
-	ID       string `json: "id"`
-	Email    string `json: "email"`
-	Isvalid  bool   `json: "verified_email"`
-	ImageURL string `json : "picture"`
+	ID       string `json:"id"`
+	Email    string `json:"email"`
+	Isvalid  bool   `json:"verified_email"`
+	ImageURL string `json:"picture"`
 }
