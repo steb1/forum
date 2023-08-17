@@ -120,3 +120,23 @@ LEFT JOIN "view" v ON p.id = v.postID;
 -- GROUP BY u.id
 -- ORDER BY (number_of_comments) DESC
 -- LIMIT 3;
+
+SELECT p.id AS post_id,
+       COUNT(v.id) AS views_of_the_post
+FROM "post" p
+LEFT JOIN "view" v on v.postid = p.id
+GROUP BY p.id;
+
+SELECT p.id AS post_id,
+       COUNT(v.id) AS likes_of_the_post
+FROM "post" p
+LEFT JOIN "view" v on v.postid = p.id
+WHERE v.rate = 1
+GROUP BY p.id;
+
+SELECT p.id AS post_id,
+       COUNT(v.id) AS dislikes_of_the_post
+FROM "post" p
+LEFT JOIN "view" v on v.postid = p.id
+WHERE v.rate = 2
+GROUP BY p.id;
