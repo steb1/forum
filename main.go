@@ -25,17 +25,18 @@ func main() {
 	http.HandleFunc("/sign-in", auth.SignIn)
 	http.HandleFunc("/sign-in-page", auth.SignInPage)
 	http.HandleFunc("/logout", auth.Logout)
-	
+
 	http.HandleFunc("/profile", handler.ProfilePage)
 	http.HandleFunc("/edit-user", handler.EditUser)
 	http.HandleFunc("/edit-user-page", handler.EditUserPage)
 
 	http.HandleFunc("/trending", handler.ListPost)
-	http.HandleFunc("/post", handler.Post)
+	http.HandleFunc("/post", handler.CreatePost)
+	http.HandleFunc("/delete-post/", handler.DeletePost)
 	http.HandleFunc("/comment/", handler.Comment)
 	http.HandleFunc("/posts/", handler.GetPost)
 	http.HandleFunc("/category/", handler.GetPostOfCategory)
-	
+
 	go models.DeleteExpiredSessions()
 
 	log.Print("Server started and running on ")

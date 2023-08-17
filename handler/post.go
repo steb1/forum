@@ -47,7 +47,7 @@ func SortComments(comments []*models.CommentItem) []*models.CommentItem {
 	return sortedComments
 }
 
-func Post(res http.ResponseWriter, req *http.Request) {
+func CreatePost(res http.ResponseWriter, req *http.Request) {
 	if lib.ValidateRequest(req, res, "/post", http.MethodPost) {
 		isSessionOpen := models.ValidSession(req)
 		if isSessionOpen {
@@ -97,6 +97,24 @@ func Post(res http.ResponseWriter, req *http.Request) {
 
 			log.Println("✅ Post created with success")
 			lib.RedirectToPreviousURL(res, req)
+		}
+	}
+}
+
+func DeletePost(res http.ResponseWriter, req *http.Request) {
+	if lib.ValidateRequest(req, res, "/delete-post/*", http.MethodGet) {
+		isSessionOpen := models.ValidSession(req)
+		if isSessionOpen {
+			path := req.URL.Path
+			pathPart := strings.Split(path, "/")
+			if len(pathPart) == 3 && pathPart[1] == "delete-post" && pathPart[2] != "" {
+				id := pathPart[2]
+				models.PostRepo.DeletePost(id)
+
+				log.Println("✅ Post created with success")
+				lib.RedirectToPreviousURL(res, req)
+			}
+
 		}
 	}
 }
