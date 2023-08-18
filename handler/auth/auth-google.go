@@ -18,7 +18,7 @@ var (
 		ClientSecret: "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",                                      // Replace with your actual client secret
 		RedirectURL:  "http://localhost:8080/callback",                                           // Replace with your actual redirect URI
 		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email"},                 // Request specific scopes
-		Endpoint:     google.Endpoint,                                                            // Google's OAuth2 endpoint
+		Endpoint:     google.Endpoint,                                                     // Google's OAuth2 endpoint
 	}
 )
 

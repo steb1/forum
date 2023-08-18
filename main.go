@@ -26,7 +26,7 @@ func main() {
 		auth.LoggedinHandler(w, r, "")
 	})
 	http.HandleFunc("/callback", auth.HandleCallback)
-	http.HandleFunc("/Github-callback", auth.HandleGithubCallback)
+	http.HandleFunc("/login/github/callback", auth.HandleGithubCallback)
 	http.HandleFunc("/sign-in", auth.SignIn)
 	http.HandleFunc("/sign-in-page", auth.SignInPage)
 	http.HandleFunc("/logout", auth.Logout)
