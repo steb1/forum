@@ -19,6 +19,7 @@ type PostPageData struct {
 	UserPoster  *models.User
 	NbrComment  int
 	Categories  []models.Category
+	NbrLike     int
 }
 
 func SortComments(comments []*models.CommentItem) []*models.CommentItem {
@@ -142,6 +143,12 @@ func GetPost(res http.ResponseWriter, req *http.Request) {
 				fmt.Println("error reading from category")
 				return
 			}
+			fmt.Println(post.ID)
+			nbrLike, err := models.ViewRepo.GetLikesByPost(post.ID)
+			if err != nil {
+				fmt.Println("error reading from View")
+				return
+			}
 			PostPageData := PostPageData{
 				IsLoggedIn:  isSessionOpen,
 				Post:        *post,
@@ -150,6 +157,7 @@ func GetPost(res http.ResponseWriter, req *http.Request) {
 				Comments:    PostComments,
 				NbrComment:  len(PostComments),
 				Categories:  postCategories,
+				NbrLike:     nbrLike,
 			}
 			lib.RenderPage(basePath, pagePath, PostPageData, res)
 			log.Println("✅ Post page get with success")

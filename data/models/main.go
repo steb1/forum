@@ -9,6 +9,7 @@ import (
 
 var (
 	db               *sql.DB
+	ViewRepo         *ViewRepository
 	UserRepo         *UserRepository
 	PostRepo         *PostRepository
 	CommentRepo      *CommentRepository
@@ -37,6 +38,7 @@ func init() {
 	}
 
 	UserRepo = NewUserRepository(db)
+	ViewRepo = NewViewRepository(db)
 	PostRepo = NewPostRepository(db)
 	CommentRepo = NewCommentRepository(db)
 	CategoryRepo = NewCategoryRepository(db)

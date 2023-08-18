@@ -31,15 +31,19 @@
             </div>
             <div class="row center mb-1">
                 <p class="mr-1">
-                    272
-                    <a href="#">
+                    {{ .NbrLike }}
+                    {{if .IsLoggedIn}}
+                    <a href="/like/{{ .Post.Slug }}">
                         ❤️
                     </a>
+                    {{else}}
+                        ❤️
+                    {{end}}
                 </p>
                 <p class="mr-1">
                     3.5k
                     <span>
-                        👁️
+                        👎
                     </span>
                 </p>
                 <p>
