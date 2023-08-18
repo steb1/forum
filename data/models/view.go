@@ -60,7 +60,7 @@ func (vr *ViewRepository) GetViewByID(viewID string) (*View, error) {
 	return &view, nil
 }
 
-// Get a view by ID from the database
+// Get a number of dislike by post
 func (vr *ViewRepository) GetLikesByPost(postID string) (int, error) {
 	var nbrLike int
 	row := vr.db.QueryRow("SELECT COUNT(*) FROM view WHERE postid = ? AND rate=1", postID)
@@ -72,6 +72,19 @@ func (vr *ViewRepository) GetLikesByPost(postID string) (int, error) {
 		return 0, err
 	}
 	return nbrLike, nil
+}
+
+func (vr *ViewRepository) GetDislikesByPost(postID string) (int, error) {
+	var nbrDislike int
+	row := vr.db.QueryRow("SELECT COUNT(*) FROM view WHERE postid = ? AND rate=2", postID)
+	err := row.Scan(&nbrDislike)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return 0, nil // View not found
+		}
+		return 0, err
+	}
+	return nbrDislike, nil
 }
 
 // Get a view by ID from the database

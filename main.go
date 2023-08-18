@@ -23,13 +23,14 @@ func main() {
 	http.HandleFunc("/Google-Sign-in", auth.HandleGoogleLogin)
 	http.HandleFunc("/Github-Sign-in", auth.HandleGithubLoginHandler)
 	http.HandleFunc("/loggedin", func(w http.ResponseWriter, r *http.Request) {
-        auth.LoggedinHandler(w, r, "")})
+		auth.LoggedinHandler(w, r, "")
+	})
 	http.HandleFunc("/callback", auth.HandleCallback)
 	http.HandleFunc("/Github-callback", auth.HandleGithubCallback)
 	http.HandleFunc("/sign-in", auth.SignIn)
 	http.HandleFunc("/sign-in-page", auth.SignInPage)
 	http.HandleFunc("/logout", auth.Logout)
-	
+
 	http.HandleFunc("/profile", handler.ProfilePage)
 	http.HandleFunc("/edit-user", handler.EditUser)
 	http.HandleFunc("/edit-user-page", handler.EditUserPage)
@@ -39,8 +40,9 @@ func main() {
 	http.HandleFunc("/comment/", handler.Comment)
 	http.HandleFunc("/posts/", handler.GetPost)
 	http.HandleFunc("/like/", handler.LikePost)
+	http.HandleFunc("/dislike/", handler.DislikePost)
 	http.HandleFunc("/category/", handler.GetPostOfCategory)
-	
+
 	go models.DeleteExpiredSessions()
 
 	log.Print("Server started and running on ")
