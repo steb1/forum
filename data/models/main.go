@@ -10,6 +10,7 @@ import (
 var (
 	db               *sql.DB
 	ViewRepo         *ViewRepository
+	CommentViewRepo  *CommentViewRepository
 	UserRepo         *UserRepository
 	PostRepo         *PostRepository
 	CommentRepo      *CommentRepository
@@ -38,6 +39,7 @@ func init() {
 	}
 
 	UserRepo = NewUserRepository(db)
+	CommentViewRepo = NewCommentViewRepository(db)
 	ViewRepo = NewViewRepository(db)
 	PostRepo = NewPostRepository(db)
 	CommentRepo = NewCommentRepository(db)

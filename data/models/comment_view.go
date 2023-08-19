@@ -9,10 +9,10 @@ import (
 )
 
 type Comment_View struct {
-	ID           string
-	Rate         RATE
-	AuthorID     string
-	CommentID       string
+	ID        string
+	Rate      RATE
+	AuthorID  string
+	CommentID string
 }
 
 type CommentViewRepository struct {
@@ -33,7 +33,7 @@ func (vr *CommentViewRepository) CreateCommentView(Comment_View *Comment_View) e
 	}
 	Comment_View.ID = ID.String()
 	_, err = vr.db.Exec("INSERT INTO comment_view (id, rate, authorID, commentID) VALUES (?, ?, ?, ?)",
-		Comment_View.ID,Comment_View.Rate, Comment_View.AuthorID, Comment_View.CommentID)
+		Comment_View.ID, Comment_View.Rate, Comment_View.AuthorID, Comment_View.CommentID)
 	return err
 }
 
@@ -81,7 +81,7 @@ func (vr *CommentViewRepository) GetDislikesByComment(commentID string) (int, er
 // Get a view by ID from the database
 func (vr *CommentViewRepository) GetViewByAuthorIDandCommentID(authorID string, commentID string) (*Comment_View, error) {
 	var comment_view Comment_View
-	row := vr.db.QueryRow("SELECT id, rate, authorID, commentID FROM comment_comment_view WHERE authorid = ? AND commentid = ?", authorID, commentID)
+	row := vr.db.QueryRow("SELECT id, rate, authorID, commentID FROM comment_view WHERE authorid = ? AND commentid = ?", authorID, commentID)
 	err := row.Scan(&comment_view.ID, &comment_view.Rate, &comment_view.AuthorID, &comment_view.CommentID)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -94,8 +94,8 @@ func (vr *CommentViewRepository) GetViewByAuthorIDandCommentID(authorID string, 
 
 // Update a view in the database
 func (vr *CommentViewRepository) UpdateView(comment_view *Comment_View) error {
-	_, err := vr.db.Exec("UPDATE comment_view SET rate = ?, authorID = ?, postID = ? WHERE id = ?",
-		 comment_view.Rate, comment_view.AuthorID, comment_view.CommentID, comment_view.ID)
+	_, err := vr.db.Exec("UPDATE comment_view SET rate = ?, authorID = ?, commentID = ? WHERE id = ?",
+		comment_view.Rate, comment_view.AuthorID, comment_view.CommentID, comment_view.ID)
 	return err
 }
 

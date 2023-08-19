@@ -41,6 +41,8 @@ func main() {
 	http.HandleFunc("/posts/", handler.GetPost)
 	http.HandleFunc("/like/", handler.LikePost)
 	http.HandleFunc("/dislike/", handler.DislikePost)
+	http.HandleFunc("/like-comment/", handler.LikeComment)
+	http.HandleFunc("/dislike-comment/", handler.DislikeComment)
 	http.HandleFunc("/category/", handler.GetPostOfCategory)
 
 	go models.DeleteExpiredSessions()
