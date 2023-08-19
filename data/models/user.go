@@ -217,6 +217,21 @@ func (ur *UserRepository) IsExisted(email string) (*User, bool) {
 	return &user, true
 }
 
+// Check if user exists
+func (ur *UserRepository) IsExistedByID(ID string) (*User, bool) {
+	var user User
+	row := ur.db.QueryRow("SELECT id FROM user WHERE id = ?", ID)
+	err := row.Scan(&user.ID)
+	if err != nil {
+		log.Println("❌ ", err)
+		if err == sql.ErrNoRows {
+			return nil, false
+		}
+		return nil, false
+	}
+	return &user, true
+}
+
 func (ur *UserRepository) TopUsers() ([]TopUser, error) {
 	var user []TopUser
 	row, err := ur.db.Query(`SELECT u.id AS user_id,
