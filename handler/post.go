@@ -71,6 +71,7 @@ func CreatePost(res http.ResponseWriter, req *http.Request) {
 				for j := 0; j < len(posts); j++ {
 					if strings.EqualFold(posts[j].Title, title) {
 						lib.RedirectToPreviousURL(res, req)
+						return
 					}
 				}
 			}
