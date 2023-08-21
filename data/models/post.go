@@ -234,13 +234,19 @@ func (pr *PostRepository) GetPostBySlug(slug string) (*Post, error) {
 
 // Get all posts from database
 func (pr *PostRepository) GetAllPosts(more string) ([]*Post, error) {
-	morePost, err := strconv.Atoi(more)
-	if err != nil {
-		return nil, err
-	}
 	var posts []*Post
+	requete := ""
+	if more == "" {
+		requete = "SELECT id, title, slug, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post"
+	} else {
+		_, err := strconv.Atoi(more)
+		if err != nil {
+			return nil, err
+		}
+		requete = "SELECT id, title, slug, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post LIMIT ?" + more
+	}
 
-	rows, err := pr.db.Query("SELECT id, title, slug, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post LIMIT ?", morePost)
+	rows, err := pr.db.Query(requete)
 	if err != nil {
 		return nil, err
 	}

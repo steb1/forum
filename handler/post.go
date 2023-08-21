@@ -63,6 +63,17 @@ func CreatePost(res http.ResponseWriter, req *http.Request) {
 			creationDate := time.Now().Format("2006-01-02 15:04:05")
 			modificationDate := time.Now().Format("2006-01-02 15:04:05")
 			title := req.FormValue("title")
+			posts, err := models.PostRepo.GetAllPosts("")
+			if err != nil {
+				return
+			}
+			if posts != nil {
+				for j := 0; j < len(posts); j++ {
+					if strings.EqualFold(posts[j].Title, title) {
+						lib.RedirectToPreviousURL(res, req)
+					}
+				}
+			}
 			slug := lib.Slugify(title)
 			description := req.FormValue("description")
 			_categories := req.FormValue("categories")
@@ -215,14 +226,14 @@ func Comment(res http.ResponseWriter, req *http.Request) {
 		parentID := req.FormValue("parentID")
 		path := req.URL.Path
 		pathPart := strings.Split(path, "/")
-		if text != ""{
+		if text != "" {
 			if len(pathPart) == 3 && pathPart[1] == "comment" {
 				creationDate := time.Now().Format("2006-01-02 15:04:05")
 				modifDate := time.Now().Format("2006-01-02 15:04:05")
-	
+
 				authorID := models.GetUserFromSession(req).ID
 				postID := pathPart[2]
-	
+
 				commentStruct := models.Comment{
 					Text:         text,
 					AuthorID:     authorID,
@@ -231,14 +242,13 @@ func Comment(res http.ResponseWriter, req *http.Request) {
 					CreateDate:   creationDate,
 					ModifiedDate: modifDate,
 				}
-	
+
 				models.CommentRepo.CreateComment(&commentStruct)
 				lib.RedirectToPreviousURL(res, req)
 			}
-		}else {
+		} else {
 			lib.RedirectToPreviousURL(res, req)
 		}
-		
 
 	}
 }
