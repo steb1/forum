@@ -32,6 +32,8 @@ func RedirectToPreviousURL(res http.ResponseWriter, req *http.Request) {
 	// Get the Referer header from the request
 	previousPage := req.Header.Get("Referer")
 
+	fmt.Println(previousPage)
+
 	// Perform the redirection
 	http.Redirect(res, req, previousPage, http.StatusSeeOther)
 }

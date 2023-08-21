@@ -11,6 +11,7 @@ import (
 type SignPageData struct {
 	IsLoggedIn  bool
 	RandomUsers []models.User
+	Err         string
 }
 
 func SignUp(res http.ResponseWriter, req *http.Request) {
@@ -20,6 +21,13 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 		user := models.User{}
+
+		if req.FormValue("email") == "" || req.FormValue("username") == "" {
+			res.WriteHeader(http.StatusBadRequest)
+			lib.RenderPage("base", "sign-up", nil, res)
+			fmt.Println("❌ User already exist")
+			return
+		}
 		user.Email = req.FormValue("email")
 		user.Username = req.FormValue("username")
 
@@ -48,9 +56,26 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 			http.Redirect(res, req, "/", http.StatusSeeOther)
 			log.Println("✅ Account created with success")
 		} else {
-			fmt.Println("❌ User already exist")
+			res.WriteHeader(http.StatusBadRequest)
+			randomUsers, err := models.UserRepo.SelectRandomUsers(15)
+			if err != nil {
+				log.Println("❌ Can't get 15 random users in the database")
+			}
+
+			signPageData := SignPageData{
+				IsLoggedIn:  false,
+				RandomUsers: randomUsers,
+				Err:         "User Already exists",
+			}
+			lib.RenderPage("base", "sign-up", signPageData, res)
+			fmt.Println("❌ User already exists")
 			return
 		}
+	} else {
+		res.WriteHeader(http.StatusNotFound)
+		lib.RenderPage("base", "404", nil, res)
+		log.Println("404 ❌ - Page not found ", req.URL)
+		return
 	}
 }
 
@@ -67,6 +92,7 @@ func SignUpPage(res http.ResponseWriter, req *http.Request) {
 		signPageData := SignPageData{
 			IsLoggedIn:  false,
 			RandomUsers: randomUsers,
+			Err:         "",
 		}
 
 		lib.RenderPage(basePath, pagePath, signPageData, res)
@@ -86,7 +112,21 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 
 		if _user, exist := models.UserRepo.IsExisted(email); exist {
 			if !lib.IsPasswordsMatch(_user.Password, password) {
-				log.Println("❌ Password given is wrong")
+				res.WriteHeader(http.StatusNotFound)
+				randomUsers, err := models.UserRepo.SelectRandomUsers(15)
+				if err != nil {
+					log.Println("❌ Can't get 15 random users in the database")
+				}
+
+				signPageData := SignPageData{
+					IsLoggedIn:  false,
+					RandomUsers: randomUsers,
+					Err:         "Email or Password Wrong",
+				}
+
+				lib.RenderPage("base", "sign-in", signPageData, res)
+				log.Println("❌ User with the given email don't exist")
+				return
 			} else {
 				_user, err := models.UserRepo.GetUserByEmail(email)
 				if err != nil {
@@ -100,6 +140,17 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 				log.Println("✅ Sign in with success")
 			}
 		} else {
+			res.WriteHeader(http.StatusNotFound)
+			randomUsers, err := models.UserRepo.SelectRandomUsers(15)
+			if err != nil {
+				log.Println("❌ Can't get 15 random users in the database")
+			}
+			signPageData := SignPageData{
+				IsLoggedIn:  false,
+				RandomUsers: randomUsers,
+				Err:         "User doesn't exist",
+			}
+			lib.RenderPage("base", "sign-in", signPageData, res)
 			log.Println("❌ User with the given email don't exist")
 			return
 		}
@@ -119,6 +170,7 @@ func SignInPage(res http.ResponseWriter, req *http.Request) {
 		signPageData := SignPageData{
 			IsLoggedIn:  false,
 			RandomUsers: randomUsers,
+			Err:         "",
 		}
 
 		lib.RenderPage(basePath, pagePath, signPageData, res)

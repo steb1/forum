@@ -53,7 +53,7 @@ func HandleCallback(w http.ResponseWriter, r *http.Request) {
 
 	responseData, _ := io.ReadAll(response.Body)
 
-	fmt.Println(string(responseData))
+	//fmt.Println(string(responseData))
 
 	var Data GoogleUser
 
@@ -83,7 +83,7 @@ func HandleCallback(w http.ResponseWriter, r *http.Request) {
 }
 
 type GoogleUser struct {
-	ID      string `json:"id"`
+	ID       string `json:"id"`
 	Name     string `json:"name"`
 	ImageURL string `json:"picture"`
 }
