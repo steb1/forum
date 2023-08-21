@@ -31,16 +31,24 @@
             </div>
             <div class="row center mb-1">
                 <p class="mr-1">
-                    272
-                    <a href="#">
+                    {{ .NbrLike }}
+                    {{if .IsLoggedIn}}
+                    <a href="/like/{{ .Post.Slug }}">
                         ❤️
                     </a>
+                    {{else}}
+                        ❤️
+                    {{end}}
                 </p>
                 <p class="mr-1">
-                    3.5k
-                    <span>
-                        👁️
-                    </span>
+                    {{ .NbrDislike }}
+                    {{if .IsLoggedIn}}
+                    <a href="/dislike/{{ .Post.Slug }}">
+                        👎
+                    </a>
+                    {{else}}
+                        👎
+                    {{end}}
                 </p>
                 <p>
                     Mark
@@ -82,10 +90,25 @@
                             </p>
                             <div class="row center">
                                 <p class="mb-0">
-                                    2
+                                    {{if $.IsLoggedIn}}
+                                    {{ .NbrLikesComment }}
+                                    <a href="/like-comment/{{.ID}}">
+                                        ❤️
+                                    </a>
+                                    {{ .NbrDislikesComment }}
+                                    <a href="/dislike-comment/{{.ID}}">
+                                        👎
+                                    </a>
+                                    {{ else}}
+                                    {{ .NbrLikesComment }}
                                     <a href="#">
                                         ❤️
                                     </a>
+                                    {{ .NbrDislikesComment }}
+                                    <a href="#">
+                                        👎
+                                    </a>
+                                    {{end}}
                                 </p>
                                 {{if $.IsLoggedIn}}
                                 <a class="ml-1 mr-1" href="" onclick="reply(event)" id="reply-{{.ID}}">Reply</a>

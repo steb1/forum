@@ -19,7 +19,7 @@ type User struct {
 
 type TopUser struct {
 	ID               string
-	Email            string
+	Username         string
 	AvatarURL        string
 	NumberOfReaction int
 }
@@ -217,10 +217,25 @@ func (ur *UserRepository) IsExisted(email string) (*User, bool) {
 	return &user, true
 }
 
+// Check if user exists
+func (ur *UserRepository) IsExistedByID(ID string) (*User, bool) {
+	var user User
+	row := ur.db.QueryRow("SELECT id FROM user WHERE id = ?", ID)
+	err := row.Scan(&user.ID)
+	if err != nil {
+		log.Println("❌ ", err)
+		if err == sql.ErrNoRows {
+			return nil, false
+		}
+		return nil, false
+	}
+	return &user, true
+}
+
 func (ur *UserRepository) TopUsers() ([]TopUser, error) {
 	var user []TopUser
 	row, err := ur.db.Query(`SELECT u.id AS user_id,
-									u.email AS user_email,
+									u.username AS user_username,
 									u.avatarurl AS avatarurl,
 									COALESCE(COUNT(DISTINCT c.id),0) + COALESCE(COUNT(DISTINCT v.id),0) AS number_of_reactions
 							FROM "user" u
@@ -235,10 +250,10 @@ func (ur *UserRepository) TopUsers() ([]TopUser, error) {
 	}
 	for row.Next() {
 		var ID string
-		var Email string
+		var Username string
 		var AvatarUrl string
 		var NumberOfReaction int
-		err = row.Scan(&ID, &Email, &AvatarUrl, &NumberOfReaction)
+		err = row.Scan(&ID, &Username, &AvatarUrl, &NumberOfReaction)
 
 		if err != nil {
 			log.Fatal(err)
@@ -246,7 +261,7 @@ func (ur *UserRepository) TopUsers() ([]TopUser, error) {
 
 		var tab = TopUser{
 			ID:               ID,
-			Email:            Email,
+			Username:         Username,
 			AvatarURL:        AvatarUrl,
 			NumberOfReaction: NumberOfReaction,
 		}

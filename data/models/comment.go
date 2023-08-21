@@ -22,15 +22,17 @@ type Comment struct {
 }
 
 type CommentItem struct {
-	ID               string
-	Index            int
-	Depth            string
-	Text             string
-	AuthorID         string
-	AuthorName       string
-	AuthorAvatar     string
-	ParentID         string
-	LastModifiedDate string
+	ID                 string
+	Index              int
+	Depth              string
+	Text               string
+	AuthorID           string
+	AuthorName         string
+	AuthorAvatar       string
+	ParentID           string
+	LastModifiedDate   string
+	NbrLikesComment    int
+	NbrDislikesComment int
 }
 
 type CommentRepository struct {
@@ -92,6 +94,14 @@ func (cr *CommentRepository) GetCommentsOfPost(postID, limit string) ([]*Comment
 		comment.LastModifiedDate = strings.ReplaceAll(comment.LastModifiedDate, "T", " ")
 		comment.LastModifiedDate = strings.ReplaceAll(comment.LastModifiedDate, "Z", "")
 		comment.LastModifiedDate = lib.TimeSinceCreation(comment.LastModifiedDate)
+		comment.NbrLikesComment, err = CommentRateRepo.GetLikesByComment(comment.ID)
+		if err != nil {
+			return nil, err
+		}
+		comment.NbrDislikesComment, err = CommentRateRepo.GetDislikesByComment(comment.ID)
+		if err != nil {
+			return nil, err
+		}
 		comments = append(comments, &comment)
 	}
 

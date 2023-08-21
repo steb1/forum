@@ -3,7 +3,7 @@ DELETE FROM post;
 DELETE FROM report;
 DELETE FROM response;
 DELETE FROM view;
-DELETE FROM comment_like;
+DELETE FROM comment_rate;
 DELETE FROM comment;
 DELETE FROM post_category;
 DELETE FROM category;
@@ -136,6 +136,14 @@ VALUES
     ("0",false,"1","2","1"),
     ("1",false,"2","2","2"),
     ("3",false,"1","1","11"),
+    ("8",false,"1","1","11"),
+    ("9",false,"2","1","11"),
+    ("13",false,"2","1","11"),
+    ("14",false,"2","1","11"),
+    ("15",false,"2","1","11"),
+    ("10",false,"0","1","11"),
+    ("11",false,"0","1","11"),
+    ("12",false,"0","1","11"),
     ("4",false,"1","2","41"),
     ("5",true,"1","1","42"),
     ("6",true,"1","1","72"),

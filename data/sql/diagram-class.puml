@@ -56,10 +56,11 @@ frame "cl: Class Diagram - User" {
         postID: UUID
     }
 
-    class comment_like {
+    class comment_view {
         **id: UUID**
         authorID: UUID
         commentID: UUID
+        rate: RATE
     }
 
     class comment {

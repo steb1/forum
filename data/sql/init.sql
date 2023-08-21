@@ -60,11 +60,12 @@ CREATE TABLE IF NOT EXISTS "view" (
     FOREIGN KEY (postID) REFERENCES post(id)
 );
 
--- Table for 'comment_like'
-CREATE TABLE IF NOT EXISTS "comment_like" (
+-- Table for 'comment_rate'
+CREATE TABLE IF NOT EXISTS "comment_rate" (
     id VARCHAR PRIMARY KEY,
     authorID VARCHAR,
     commentID VARCHAR,
+    rate INT,
     FOREIGN KEY (authorID) REFERENCES user(id),
     FOREIGN KEY (commentID) REFERENCES comment(id)
 );
