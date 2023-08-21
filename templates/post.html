@@ -62,7 +62,7 @@
                 <p id="replyMessage" style="display: none;"></p>
                 <form action="/comment/{{.Post.ID}}" method="POST" class="wfull m-0">
                     <input type="hidden" name="parentID" id="parentID">
-                    <textarea placeholder="Type your comment here..." name="text" id="" cols="30" rows="5"></textarea>
+                    <textarea placeholder="Type your comment here..." name="text" id="" cols="30" rows="5" required></textarea>
                     <div class="row center mb-0">
                         <button>Comment</button>
                         <a id="resetBtn" class="black ml-1" href="" style="display: none;" onclick="(e) => reset(e)">Reset reply</a>

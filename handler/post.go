@@ -215,26 +215,30 @@ func Comment(res http.ResponseWriter, req *http.Request) {
 		parentID := req.FormValue("parentID")
 		path := req.URL.Path
 		pathPart := strings.Split(path, "/")
-
-		if len(pathPart) == 3 && pathPart[1] == "comment" {
-			creationDate := time.Now().Format("2006-01-02 15:04:05")
-			modifDate := time.Now().Format("2006-01-02 15:04:05")
-
-			authorID := models.GetUserFromSession(req).ID
-			postID := pathPart[2]
-
-			commentStruct := models.Comment{
-				Text:         text,
-				AuthorID:     authorID,
-				PostID:       postID,
-				ParentID:     parentID,
-				CreateDate:   creationDate,
-				ModifiedDate: modifDate,
+		if text != ""{
+			if len(pathPart) == 3 && pathPart[1] == "comment" {
+				creationDate := time.Now().Format("2006-01-02 15:04:05")
+				modifDate := time.Now().Format("2006-01-02 15:04:05")
+	
+				authorID := models.GetUserFromSession(req).ID
+				postID := pathPart[2]
+	
+				commentStruct := models.Comment{
+					Text:         text,
+					AuthorID:     authorID,
+					PostID:       postID,
+					ParentID:     parentID,
+					CreateDate:   creationDate,
+					ModifiedDate: modifDate,
+				}
+	
+				models.CommentRepo.CreateComment(&commentStruct)
+				lib.RedirectToPreviousURL(res, req)
 			}
-
-			models.CommentRepo.CreateComment(&commentStruct)
+		}else {
 			lib.RedirectToPreviousURL(res, req)
 		}
+		
 
 	}
 }
