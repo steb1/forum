@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"log"
+	"strings"
 
 	uuid "github.com/gofrs/uuid"
 	_ "github.com/mattn/go-sqlite3"
@@ -205,6 +206,7 @@ func (ur *UserRepository) DeleteUser(userID string) error {
 // Check if user exists
 func (ur *UserRepository) IsExisted(email string) (*User, bool) {
 	var user User
+	email = strings.ToLower(email)
 	row := ur.db.QueryRow("SELECT password FROM user WHERE email = ?", email)
 	err := row.Scan(&user.Password)
 	if err != nil {

@@ -6,6 +6,7 @@ import (
 	"forum/lib"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type SignPageData struct {
@@ -25,11 +26,11 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 		if req.FormValue("email") == "" || req.FormValue("username") == "" {
 			res.WriteHeader(http.StatusBadRequest)
 			lib.RenderPage("base", "sign-up", nil, res)
-			fmt.Println("❌ User already exist")
+			fmt.Println("❌ Bad Credetials")
 			return
 		}
-		user.Email = req.FormValue("email")
-		user.Username = req.FormValue("username")
+		user.Email = strings.ToLower(req.FormValue("email"))
+		user.Username = strings.ToLower(req.FormValue("username"))
 
 		_password, err := lib.HashPassword(req.FormValue("password"))
 		if err != nil {
@@ -97,6 +98,11 @@ func SignUpPage(res http.ResponseWriter, req *http.Request) {
 
 		lib.RenderPage(basePath, pagePath, signPageData, res)
 		log.Println("✅ Register page get with success")
+	} else {
+		res.WriteHeader(http.StatusNotFound)
+		lib.RenderPage("base", "404", nil, res)
+		log.Println("404 ❌ - Page not found ", req.URL)
+		return
 	}
 }
 
@@ -121,7 +127,7 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 				signPageData := SignPageData{
 					IsLoggedIn:  false,
 					RandomUsers: randomUsers,
-					Err:         "Email or Password Wrong",
+					Err:         "Email or Password Wrong ❌",
 				}
 
 				lib.RenderPage("base", "sign-in", signPageData, res)
@@ -175,6 +181,11 @@ func SignInPage(res http.ResponseWriter, req *http.Request) {
 
 		lib.RenderPage(basePath, pagePath, signPageData, res)
 		log.Println("✅ Login page get with success")
+	}else {
+		res.WriteHeader(http.StatusNotFound)
+		lib.RenderPage("base", "404", nil, res)
+		log.Println("404 ❌ - Page not found ", req.URL)
+		return
 	}
 }
 
@@ -186,5 +197,10 @@ func Logout(res http.ResponseWriter, req *http.Request) {
 		} else {
 			log.Println("❌ Logout failure")
 		}
+	} else {
+		res.WriteHeader(http.StatusNotFound)
+		lib.RenderPage("base", "404", nil, res)
+		log.Println("404 ❌ - Page not found ", req.URL)
+		return
 	}
 }
