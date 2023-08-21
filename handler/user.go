@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"text/template"
 )
 
 type UserPageData struct {
@@ -54,7 +55,11 @@ func ProfilePage(res http.ResponseWriter, req *http.Request) {
 			}
 			postsList = _postListed
 		}
-
+		if postsList != nil {
+			for j := 0; j < len(postsList); j++ {
+				postsList[j].Title = template.HTMLEscapeString(postsList[j].Slug)
+			}
+		}
 		userPageData := UserPageData{
 			IsLoggedIn:  isSessionOpen,
 			CurrentUser: *user,

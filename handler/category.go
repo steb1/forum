@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"text/template"
 )
 
 func GetPostOfCategory(res http.ResponseWriter, req *http.Request) {
@@ -27,7 +28,11 @@ func GetPostOfCategory(res http.ResponseWriter, req *http.Request) {
 			if err != nil {
 				log.Println("❌ Can't get top users")
 			}
-
+			if posts != nil {
+				for j := 0; j < len(posts); j++ {
+					posts[j].Title = template.HTMLEscapeString(posts[j].Title)
+				}
+			}
 			homePageData := ListPostsPageData{
 				Title:       "Category: " + name,
 				IsLoggedIn:  isSessionOpen,

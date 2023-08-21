@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"text/template"
 )
 
 type ListPostsPageData struct {
@@ -56,7 +57,11 @@ func ListPost(res http.ResponseWriter, req *http.Request) {
 				limit += 5
 			}
 		}
-
+		if posts != nil {
+			for j := 0; j < len(posts); j++ {
+				posts[j].Title = template.HTMLEscapeString(posts[j].Title)
+			}
+		}
 		homePageData := ListPostsPageData{
 			IsLoggedIn:    isSessionOpen,
 			CurrentUser:   *user,

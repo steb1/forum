@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"text/template"
 )
 
 type HomePageData struct {
@@ -60,7 +61,11 @@ func Index(res http.ResponseWriter, req *http.Request) {
 				limit += 5
 			}
 		}
-
+		if posts != nil {
+			for j := 0; j < len(posts); j++ {
+				posts[j].Title = template.HTMLEscapeString(posts[j].Title)
+			}
+		}
 		homePageData := HomePageData{
 			IsLoggedIn:    isSessionOpen,
 			CurrentUser:   *user,

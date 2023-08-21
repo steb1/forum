@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"sort"
 	"strings"
+	"text/template"
 	"time"
 )
 
@@ -168,6 +169,20 @@ func GetPost(res http.ResponseWriter, req *http.Request) {
 				return
 			}
 			nbrDislike, err := models.ViewRepo.GetDislikesByPost(post.ID)
+			post.Description = template.HTMLEscapeString(post.Description)
+			post.Title = template.HTMLEscapeString(post.Title)
+			if postCategories != nil {
+				for k := 0; k < len(postCategories); k++ {
+					postCategories[k].Name = template.HTMLEscapeString(postCategories[k].Name)
+				}
+			}
+
+			if PostComments != nil {
+				for j := 0; j < len(PostComments); j++ {
+					PostComments[j].Text = template.HTMLEscapeString(PostComments[j].Text)
+				}
+			}
+
 			PostPageData := PostPageData{
 				IsLoggedIn:  isSessionOpen,
 				Post:        *post,
