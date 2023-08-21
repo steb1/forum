@@ -3,7 +3,6 @@ DELETE FROM post;
 DELETE FROM report;
 DELETE FROM response;
 DELETE FROM view;
-DELETE FROM comment_like;
 DELETE FROM comment;
 DELETE FROM post_category;
 DELETE FROM category;
