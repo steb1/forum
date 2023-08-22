@@ -66,7 +66,7 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 			signPageData := SignPageData{
 				IsLoggedIn:  false,
 				RandomUsers: randomUsers,
-				Err:         "User Already exists",
+				Err:         "Email or password invalid",
 			}
 			lib.RenderPage("base", "sign-up", signPageData, res)
 			fmt.Println("❌ User already exists")
@@ -127,7 +127,7 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 				signPageData := SignPageData{
 					IsLoggedIn:  false,
 					RandomUsers: randomUsers,
-					Err:         "Email or Password Wrong ❌",
+					Err:         "Email or Password Wrong ",
 				}
 
 				lib.RenderPage("base", "sign-in", signPageData, res)
@@ -154,7 +154,7 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 			signPageData := SignPageData{
 				IsLoggedIn:  false,
 				RandomUsers: randomUsers,
-				Err:         "User doesn't exist",
+				Err:         "Email or password Invalid",
 			}
 			lib.RenderPage("base", "sign-in", signPageData, res)
 			log.Println("❌ User with the given email don't exist")
