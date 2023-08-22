@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"forum/lib"
 	"log"
 	"strings"
 
@@ -121,6 +122,9 @@ ORDER BY
 			return nil, err
 		}
 		post.ListOfCommentator = strings.Split(_listOfCommentator, ",")
+		post.LastEditionDate = strings.ReplaceAll(post.LastEditionDate, "T", " ")
+		post.LastEditionDate = strings.ReplaceAll(post.LastEditionDate, "Z", "")
+		post.LastEditionDate = lib.TimeSinceCreation(post.LastEditionDate)
 		posts = append(posts, post)
 	}
 
