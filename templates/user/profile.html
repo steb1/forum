@@ -73,7 +73,11 @@
                                 </h2>
                             </a>
                             <div class="row">
-                                <span>{{ .AuthorName }}</span>
+                                <span>
+                                    <a href="/user/{{.AuthorName}}">
+                                    {{ .AuthorName }}
+                                    </a>
+                                </span>
                                 <span>{{ .LastEditionDate }}</span>
                                 <span>{{ .NumberOfComments }} replies</span>
                             </div>
@@ -93,7 +97,11 @@
                                 </h2>
                             </a>
                             <div class="row">
-                                <span>{{ .AuthorName }}</span>
+                                <span>
+                                    <a href="/user/{{.AuthorName}}">
+                                    {{ .AuthorName }}
+                                    </a>
+                                </span>
                                 <span>{{ .LastEditionDate }}</span>
                                 <span>{{ .NumberOfComments }} replies</span>
                             </div>

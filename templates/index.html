@@ -22,7 +22,9 @@
     </section>
     <section class="space-between shadow mb-1">
         {{range .RandomUsers}}
-        <img src="{{ .AvatarURL }}" class="avatar big">
+        <a href="/user/{{.Username}}">
+            <img src="{{ .AvatarURL }}" class="avatar big">
+        </a>
         {{end}}
     </section>
     <section class="mt-1">
@@ -50,7 +52,11 @@
                                 </h2>
                             </a>
                             <div class="row">
-                                <span>{{ .AuthorName }}</span>
+                                <span>
+                                    <a href="/user/{{.AuthorName}}">
+                                    {{ .AuthorName }}
+                                    </a>
+                                </span>
                                 <span>{{ .LastEditionDate }}</span>
                                 <span>{{ .NumberOfComments }} replies</span>
                             </div>
@@ -74,7 +80,11 @@
             {{ range .TopUsers }}
             <div class="row center mb-1">
                 <img class="avatar small mr-1" src="{{.AvatarURL}}" alt="">
-                <p class="mr-1">{{.Username}}</p>
+                <p class="mr-1">
+                    <a href="/user/{{.Username}}">
+                    {{.Username}}
+                    </a>
+                </p>
                 <a href="#" class="mr-1">
                     <span class="like"></span>
                 </a>

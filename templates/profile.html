@@ -4,13 +4,13 @@
 <main>
     <section class="wfull center">
         <section class="w3-5 col">
-            <h1>Profile</h1>
             <div class="row mb-1">
-                <img src="{{.CurrentUser.AvatarURL}}" alt="" class="avatar bigger">
+                <img src="{{.Author.AvatarURL}}" alt="" class="avatar bigger">
                 <div class="col ml-1">
-                    <h2>{{.CurrentUser.Username}}</h2>
+                    <h2>{{.Author.Username}}</h2>
                 </div>
             </div>
+            <h1>Posts:</h1>
             <div class="col wfull mt-1">
                 {{range .PostsList}}
                 <article class="list">

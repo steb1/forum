@@ -13,6 +13,7 @@ import (
 type UserPageData struct {
 	IsLoggedIn  bool
 	CurrentUser models.User
+	Author      models.User
 	TabIndex    int
 	PostsList   []models.PostItem
 }
@@ -109,6 +110,7 @@ func UserProfilePage(res http.ResponseWriter, req *http.Request) {
 			userPageData := UserPageData{
 				IsLoggedIn:  isSessionOpen,
 				CurrentUser: *user,
+				Author:      *_user,
 				PostsList:   postsList,
 			}
 
