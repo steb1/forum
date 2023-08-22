@@ -8,7 +8,7 @@
                 <img src="{{ .Post.ImageURL }}" alt="">
                 <h1>{{ .Post.Title }}</h1>
                 <div class="row mb-1">
-                    {{ range .Categories }}
+                    {{ range .CategoriesPost }}
                     <a href="/category/{{.Name}}">#{{ .Name }}</a>
                     {{ end }}
                 </div>

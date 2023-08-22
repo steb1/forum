@@ -17,6 +17,7 @@ type ListPostsPageData struct {
 	NumberOfPosts int
 	Limit         int
 	TopUsers      []models.TopUser
+	Categories    []*models.Category
 }
 
 func ListPost(res http.ResponseWriter, req *http.Request) {
@@ -66,6 +67,10 @@ func ListPost(res http.ResponseWriter, req *http.Request) {
 				posts[j].Title = template.HTMLEscapeString(posts[j].Title)
 			}
 		}
+		cat, err := models.CategoryRepo.GetAllCategory()
+		if err != nil {
+			return
+		}
 		homePageData := ListPostsPageData{
 			IsLoggedIn:    isSessionOpen,
 			CurrentUser:   *user,
@@ -73,6 +78,7 @@ func ListPost(res http.ResponseWriter, req *http.Request) {
 			NumberOfPosts: numberOfPosts,
 			TopUsers:      TopUsers,
 			Limit:         limit,
+			Categories:    cat,
 		}
 
 		lib.RenderPage(basePath, pagePath, homePageData, res)

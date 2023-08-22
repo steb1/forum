@@ -35,6 +35,10 @@ func GetPostOfCategory(res http.ResponseWriter, req *http.Request) {
 					posts[j].Title = template.HTMLEscapeString(posts[j].Title)
 				}
 			}
+			cat, err := models.CategoryRepo.GetAllCategory()
+			if err != nil {
+				return
+			}
 			homePageData := ListPostsPageData{
 				Title:       "Category: " + name,
 				IsLoggedIn:  isSessionOpen,
@@ -42,6 +46,7 @@ func GetPostOfCategory(res http.ResponseWriter, req *http.Request) {
 				Post:        posts,
 				TopUsers:    TopUsers,
 				Limit:       limit,
+				Categories:  cat,
 			}
 
 			lib.RenderPage(basePath, pagePath, homePageData, res)
