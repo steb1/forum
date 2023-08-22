@@ -1,5 +1,5 @@
-+   [ ] Return error login & registration
-+   [ ] Empty comment & post
-+   [ ] Send html post & comment
-+   [ ] Invalid format on my likes
++   [x] Return error login & registration
++   [x] Empty comment & post
++   [x] Send html post & comment
++   [x] Invalid format on my likes
 +   [ ] Check Status Code 500 404 400

@@ -158,6 +158,7 @@ WHERE v.authorID = ?`, userId)
 		if err != nil {
 			return nil, err
 		}
+		post.LastEditionDate = strings.ReplaceAll(post.LastEditionDate, "T", " ")
 		post.LastEditionDate = lib.TimeSinceCreation(strings.ReplaceAll(post.LastEditionDate, "Z", ""))
 		post.ListOfCommentator = strings.Split(commentators, ",")
 		posts = append(posts, post)
@@ -206,6 +207,7 @@ WHERE v.authorID = ?`, userId)
 		if err != nil {
 			return nil, err
 		}
+		post.LastEditionDate = strings.ReplaceAll(post.LastEditionDate, "T", " ")
 		post.LastEditionDate = lib.TimeSinceCreation(strings.ReplaceAll(post.LastEditionDate, "Z", ""))
 		post.ListOfCommentator = strings.Split(commentators, ",")
 		posts = append(posts, post)
