@@ -194,7 +194,10 @@ func GetPost(res http.ResponseWriter, req *http.Request) {
 					PostComments[j].Text = template.HTMLEscapeString(PostComments[j].Text)
 				}
 			}
-
+			userPost.IsLoggedIn = "Offline"
+			if models.CheckIfSessionExist(userPost.Username) {
+				userPost.IsLoggedIn = "Online"
+			}
 			PostPageData := PostPageData{
 				IsLoggedIn:  isSessionOpen,
 				Post:        *post,

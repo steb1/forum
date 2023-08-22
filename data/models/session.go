@@ -71,6 +71,17 @@ func deleteSessionIfExist(username string) {
 	})
 }
 
+func CheckIfSessionExist(username string) bool {
+	exist := false
+	AllSessions.Range(func(key, value interface{}) bool {
+		if username == value.(Session).Username {
+			exist = true
+		}
+		return true
+	})
+	return exist
+}
+
 func DeleteExpiredSessions() {
 	for {
 		AllSessions.Range(func(key, value interface{}) bool {

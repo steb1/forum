@@ -10,12 +10,13 @@ import (
 )
 
 type User struct {
-	ID        string
-	Username  string
-	Email     string
-	Password  string
-	AvatarURL string
-	Role      ROLE
+	ID         string
+	Username   string
+	IsLoggedIn string
+	Email      string
+	Password   string
+	AvatarURL  string
+	Role       ROLE
 }
 
 type TopUser struct {

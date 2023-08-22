@@ -25,7 +25,11 @@
                 <img src="{{ .UserPoster.AvatarURL }}" alt="" class="avatar big">
                 <div class="col ml-1">
                     <h3>{{ .UserPoster.Username }}</h3>
-                    <span class="green">Online</span>
+                    {{ if eq .UserPoster.IsLoggedIn "Online" }}
+                    <span class="green">{{ .UserPoster.IsLoggedIn }}</span>
+                    {{ else }}
+                    <span class="red">{{ .UserPoster.IsLoggedIn }}</span>
+                    {{ end }}
                     <p>Published {{.Post.ModifiedDate}}</p>
                 </div>
             </div>
