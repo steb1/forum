@@ -52,20 +52,6 @@
                 
             </div>
         </section>
-        <section class="col w1-3">
-            <h1>Top Streaks</h1>
-            <p class="mb-1">Take and publish photos consecutive days to earn your streak.</p>
-            {{ range .TopUsers }}
-            <div class="row center mb-1">
-                <img class="avatar small mr-1" src="{{.AvatarURL}}" alt="">
-                <p class="mr-1">{{.Email}}</p>
-                <a href="#" class="mr-1">
-                    <span class="like"></span>
-                </a>
-                <span>{{.NumberOfReaction}}</span>
-            </div>
-            {{ end }}
-        </section>
     </section>
 </main>
 {{end}}
