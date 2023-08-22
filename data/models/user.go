@@ -86,6 +86,21 @@ func (ur *UserRepository) GetUserByEmail(email string) (*User, error) {
 	return &user, nil
 }
 
+
+// Get a user by email from the database
+func (ur *UserRepository) GetUserByUsername(username string) (*User, error) {
+	var user User
+	row := ur.db.QueryRow("SELECT id, username, email, password, avatarURL, role FROM user WHERE username = ?", username)
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.AvatarURL, &user.Role)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil // User not found
+		}
+		return nil, err
+	}
+	return &user, nil
+}
+
 // Select All users
 func (ur *UserRepository) SelectAllUsers() ([]User, error) {
 	var user []User

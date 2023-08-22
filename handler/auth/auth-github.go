@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -116,7 +116,7 @@ func getGithubAccessToken(w http.ResponseWriter, r *http.Request, code string) s
 	}
 
 	// Response body converted to stringified JSON
-	respbody, _ := ioutil.ReadAll(resp.Body)
+	respbody, _ := io.ReadAll(resp.Body)
 
 	// Represents the response received from Github
 	type githubAccessTokenResponse struct {
@@ -157,7 +157,7 @@ func getGithubData(accessToken string) string {
 	}
 
 	// Read the response as a byte slice
-	respbody, _ := ioutil.ReadAll(resp.Body)
+	respbody, _ := io.ReadAll(resp.Body)
 
 	// Convert byte slice to string and return
 	return string(respbody)

@@ -40,6 +40,7 @@ func main() {
 	http.HandleFunc("/delete-post/", handler.DeletePost)
 	http.HandleFunc("/comment/", handler.Comment)
 	http.HandleFunc("/posts/", handler.GetPost)
+	http.HandleFunc("/user/", handler.UserProfilePage)
 	http.HandleFunc("/like/", handler.LikePost)
 	http.HandleFunc("/dislike/", handler.DislikePost)
 	http.HandleFunc("/like-comment/", handler.LikeComment)

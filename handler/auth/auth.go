@@ -181,7 +181,7 @@ func SignInPage(res http.ResponseWriter, req *http.Request) {
 
 		lib.RenderPage(basePath, pagePath, signPageData, res)
 		log.Println("✅ Login page get with success")
-	}else {
+	} else {
 		res.WriteHeader(http.StatusNotFound)
 		lib.RenderPage("base", "404", nil, res)
 		log.Println("404 ❌ - Page not found ", req.URL)

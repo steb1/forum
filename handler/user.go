@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"text/template"
 )
 
@@ -74,6 +75,46 @@ func ProfilePage(res http.ResponseWriter, req *http.Request) {
 
 		lib.RenderPage(basePath, pagePath, userPageData, res)
 		log.Println("✅ Login page get with success")
+	}
+}
+
+func UserProfilePage(res http.ResponseWriter, req *http.Request) {
+	if lib.ValidateRequest(req, res, "/user/*", http.MethodGet) {
+		basePath := "base"
+		pagePath := "profile"
+		path := req.URL.Path
+		pathPart := strings.Split(path, "/")
+		if len(pathPart) == 3 && pathPart[1] == "user" && pathPart[2] != "" {
+			username := pathPart[2]
+			isSessionOpen := models.ValidSession(req)
+			user := models.GetUserFromSession(req)
+			_user, err := models.UserRepo.GetUserByUsername(username)
+			if err != nil {
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ Can't post author")
+				return
+			}
+			postsList, err := models.PostRepo.GetUserOwnPosts(_user.ID, _user.Username)
+			if err != nil {
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ Can't get users created post")
+				return
+			}
+
+			if postsList != nil {
+				for j := 0; j < len(postsList); j++ {
+					postsList[j].Title = template.HTMLEscapeString(postsList[j].Title)
+				}
+			}
+			userPageData := UserPageData{
+				IsLoggedIn:  isSessionOpen,
+				CurrentUser: *user,
+				PostsList:   postsList,
+			}
+
+			lib.RenderPage(basePath, pagePath, userPageData, res)
+			log.Println("✅ Login page get with success")
+		}
 	}
 }
 
