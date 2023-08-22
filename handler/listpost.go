@@ -33,7 +33,9 @@ func ListPost(res http.ResponseWriter, req *http.Request) {
 		if len(queryParams["limit"]) != 0 {
 			_limit, err := strconv.Atoi(queryParams.Get("limit"))
 			if limit <= 0 || err != nil {
+				res.WriteHeader(http.StatusBadRequest)
 				log.Println("❌ Can't convert index to int")
+				return
 			} else {
 				if _limit == numberOfPosts {
 					limit = -1
@@ -47,7 +49,9 @@ func ListPost(res http.ResponseWriter, req *http.Request) {
 
 		TopUsers, err := models.UserRepo.TopUsers()
 		if err != nil {
+			res.WriteHeader(http.StatusInternalServerError)
 			log.Println("❌ Can't get top users")
+			return
 		}
 
 		if limit != -1 {

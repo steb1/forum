@@ -83,6 +83,7 @@ func RenderPage(basePath, pagePath string, data any, res http.ResponseWriter) {
 	files := []string{"templates/common/" + basePath + ".html", "templates/" + pagePath + ".html"}
 	tpl, err := template.ParseFiles(files...)
 	if err != nil {
+		res.WriteHeader(http.StatusInternalServerError)
 		log.Println("🚨 " + err.Error())
 	} else {
 		tpl.Execute(res, data)

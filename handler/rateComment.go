@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"forum/data/models"
 	"forum/lib"
 	"log"
@@ -25,7 +24,8 @@ func LikeComment(res http.ResponseWriter, req *http.Request) {
 				return
 			}
 			if err != nil {
-				fmt.Println("error DB")
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ error DB")
 				return
 			}
 			user := models.GetUserFromSession(req)
@@ -34,7 +34,8 @@ func LikeComment(res http.ResponseWriter, req *http.Request) {
 			}
 			commentRate, err := models.CommentRateRepo.GetRateByAuthorIDandCommentID(user.ID, comment.ID)
 			if err != nil {
-				fmt.Println("error Reading from Rate")
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ error Reading from Rate")
 				return
 			}
 			if commentRate == nil {
@@ -43,7 +44,12 @@ func LikeComment(res http.ResponseWriter, req *http.Request) {
 					AuthorID:  user.ID,
 					CommentID: comment.ID,
 				}
-				models.CommentRateRepo.CreateCommentRate(&NewRate)
+				err = models.CommentRateRepo.CreateCommentRate(&NewRate)
+				if err != nil {
+					res.WriteHeader(http.StatusInternalServerError)
+					log.Println("❌ error Creating comment rate")
+					return
+				}
 				lib.RedirectToPreviousURL(res, req)
 			} else {
 				if commentRate.Rate == 0 || commentRate.Rate == 2 {
@@ -53,7 +59,12 @@ func LikeComment(res http.ResponseWriter, req *http.Request) {
 						AuthorID:  user.ID,
 						CommentID: comment.ID,
 					}
-					models.CommentRateRepo.UpdateRate(&UpdateRate)
+					err = models.CommentRateRepo.UpdateRate(&UpdateRate)
+					if err != nil {
+						res.WriteHeader(http.StatusInternalServerError)
+						log.Println("❌ error Update comment rate")
+						return
+					}
 					lib.RedirectToPreviousURL(res, req)
 				} else if commentRate.Rate == 1 {
 					UpdateRate := models.CommentRate{
@@ -62,7 +73,12 @@ func LikeComment(res http.ResponseWriter, req *http.Request) {
 						AuthorID:  user.ID,
 						CommentID: comment.ID,
 					}
-					models.CommentRateRepo.UpdateRate(&UpdateRate)
+					err = models.CommentRateRepo.UpdateRate(&UpdateRate)
+					if err != nil {
+						res.WriteHeader(http.StatusInternalServerError)
+						log.Println("❌ error Update comment rate")
+						return
+					}
 					lib.RedirectToPreviousURL(res, req)
 				}
 			}
@@ -90,7 +106,8 @@ func DislikeComment(res http.ResponseWriter, req *http.Request) {
 				return
 			}
 			if err != nil {
-				fmt.Println("error DB")
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ error DB")
 				return
 			}
 			user := models.GetUserFromSession(req)
@@ -99,7 +116,8 @@ func DislikeComment(res http.ResponseWriter, req *http.Request) {
 			}
 			commentRate, err := models.CommentRateRepo.GetRateByAuthorIDandCommentID(user.ID, comment.ID)
 			if err != nil {
-				fmt.Println("error Reading from Rate")
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ error Reading from Rate")
 				return
 			}
 			if commentRate == nil {
@@ -108,7 +126,12 @@ func DislikeComment(res http.ResponseWriter, req *http.Request) {
 					AuthorID:  user.ID,
 					CommentID: comment.ID,
 				}
-				models.CommentRateRepo.CreateCommentRate(&NewRate)
+				err = models.CommentRateRepo.CreateCommentRate(&NewRate)
+				if err != nil {
+					res.WriteHeader(http.StatusInternalServerError)
+					log.Println("❌ error Creating comment rate")
+					return
+				}
 				lib.RedirectToPreviousURL(res, req)
 			} else {
 				if commentRate.Rate == 0 || commentRate.Rate == 1 {
@@ -118,7 +141,12 @@ func DislikeComment(res http.ResponseWriter, req *http.Request) {
 						AuthorID:  user.ID,
 						CommentID: comment.ID,
 					}
-					models.CommentRateRepo.UpdateRate(&UpdateRate)
+					err = models.CommentRateRepo.UpdateRate(&UpdateRate)
+					if err != nil {
+						res.WriteHeader(http.StatusInternalServerError)
+						log.Println("❌ error Update comment rate")
+						return
+					}
 					lib.RedirectToPreviousURL(res, req)
 				} else if commentRate.Rate == 2 {
 					UpdateRate := models.CommentRate{
@@ -127,7 +155,12 @@ func DislikeComment(res http.ResponseWriter, req *http.Request) {
 						AuthorID:  user.ID,
 						CommentID: comment.ID,
 					}
-					models.CommentRateRepo.UpdateRate(&UpdateRate)
+					err = models.CommentRateRepo.UpdateRate(&UpdateRate)
+					if err != nil {
+						res.WriteHeader(http.StatusInternalServerError)
+						log.Println("❌ error Update comment rate")
+						return
+					}
 					lib.RedirectToPreviousURL(res, req)
 				}
 			}

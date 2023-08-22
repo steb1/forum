@@ -26,12 +26,11 @@ func ProfilePage(res http.ResponseWriter, req *http.Request) {
 		if len(queryParams["index"]) != 0 {
 			_tabIndex, err := strconv.Atoi(queryParams.Get("index"))
 			if err != nil {
+				res.WriteHeader(http.StatusBadRequest)
 				log.Println("❌ Can't convert index to int")
 			} else {
 				TabIndex = _tabIndex
 			}
-		} else {
-			log.Println("❌ Index parameter missing")
 		}
 		isSessionOpen := models.ValidSession(req)
 		user := models.GetUserFromSession(req)
@@ -39,25 +38,31 @@ func ProfilePage(res http.ResponseWriter, req *http.Request) {
 		case 1:
 			_postListed, err := models.PostRepo.GetUserOwnPosts(user.ID, user.Username)
 			if err != nil {
+				res.WriteHeader(http.StatusInternalServerError)
 				log.Println("❌ Can't get users created post")
+				return
 			}
 			postsList = _postListed
 		case 2:
 			_postListed, err := models.PostRepo.GetUserLikedPosts(user.ID)
 			if err != nil {
+				res.WriteHeader(http.StatusInternalServerError)
 				log.Println("❌ Can't get users liked post")
+				return
 			}
 			postsList = _postListed
 		case 3:
 			_postListed, err := models.PostRepo.GetUserBookmarkedPosts(user.ID)
 			if err != nil {
+				res.WriteHeader(http.StatusInternalServerError)
 				log.Println("❌ Can't get users bookmarked post")
+				return
 			}
 			postsList = _postListed
 		}
 		if postsList != nil {
 			for j := 0; j < len(postsList); j++ {
-				postsList[j].Title = template.HTMLEscapeString(postsList[j].Slug)
+				postsList[j].Title = template.HTMLEscapeString(postsList[j].Title)
 			}
 		}
 		userPageData := UserPageData{
@@ -85,6 +90,7 @@ func EditUser(res http.ResponseWriter, req *http.Request) {
 		// Parse form data
 		err := req.ParseMultipartForm(32 << 20) // 32 MB limit
 		if err != nil {
+			res.WriteHeader(http.StatusBadRequest)
 			log.Println("❌ Failed to parse form data", err.Error())
 			return
 		}
@@ -109,13 +115,23 @@ func EditUser(res http.ResponseWriter, req *http.Request) {
 					if newPassword == confirmPassword {
 						newPassword, err = lib.HashPassword(newPassword)
 						if err != nil {
+							res.WriteHeader(http.StatusInternalServerError)
 							log.Println("❌ Failed to hash password", err.Error())
 							return
 						}
 						currentUser.Password = newPassword
 						log.Println("✅ Password changed successfully")
+					} else {
+						res.WriteHeader(http.StatusBadRequest)
+						log.Println("❌ The password is different with the confirmation")
 					}
+				} else {
+					res.WriteHeader(http.StatusBadRequest)
+					log.Println("❌ The password is the same")
 				}
+			} else {
+				res.WriteHeader(http.StatusUnauthorized)
+				log.Println("❌ Password is wrong")
 			}
 		}
 		avatarURL := lib.UploadImage(req)
@@ -127,6 +143,7 @@ func EditUser(res http.ResponseWriter, req *http.Request) {
 		// Update user information in the database
 		err = models.UserRepo.UpdateUser(currentUser)
 		if err != nil {
+			res.WriteHeader(http.StatusInternalServerError)
 			log.Println("❌ Failed to update user information ", err.Error())
 			return
 		}
@@ -146,12 +163,11 @@ func EditUserPage(res http.ResponseWriter, req *http.Request) {
 		if len(queryParams["index"]) != 0 {
 			_tabIndex, err := strconv.Atoi(queryParams.Get("index"))
 			if err != nil {
-				log.Println("❌ Can't convert index to int", err.Error())
+				res.WriteHeader(http.StatusBadRequest)
+				log.Println("❌ Can't convert index to int")
 			} else {
 				TabIndex = _tabIndex
 			}
-		} else {
-			log.Println("❌ Index parameter missing")
 		}
 		isSessionOpen := models.ValidSession(req)
 		user := models.GetUserFromSession(req)

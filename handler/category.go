@@ -26,7 +26,9 @@ func GetPostOfCategory(res http.ResponseWriter, req *http.Request) {
 
 			TopUsers, err := models.UserRepo.TopUsers()
 			if err != nil {
+				res.WriteHeader(http.StatusInternalServerError)
 				log.Println("❌ Can't get top users")
+				return
 			}
 			if posts != nil {
 				for j := 0; j < len(posts); j++ {

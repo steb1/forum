@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"forum/data/models"
 	"forum/lib"
 	"log"
@@ -22,10 +21,14 @@ func LikePost(res http.ResponseWriter, req *http.Request) {
 			slug := pathPart[2]
 			post, err := models.PostRepo.GetPostBySlug(slug)
 			if post == nil {
+				res.WriteHeader(http.StatusNotFound)
+				lib.RenderPage("base", "404", nil, res)
+				log.Println("404 ❌ - Page not found ", req.URL.Path)
 				return
 			}
 			if err != nil {
-				fmt.Println("error DB")
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ error DB")
 				return
 			}
 			user := models.GetUserFromSession(req)
@@ -34,7 +37,8 @@ func LikePost(res http.ResponseWriter, req *http.Request) {
 			}
 			view, err := models.ViewRepo.GetViewByAuthorIDandPostID(user.ID, post.ID)
 			if err != nil {
-				fmt.Println("error Reading from View")
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ error Reading from View")
 				return
 			}
 			if view == nil {
@@ -44,7 +48,12 @@ func LikePost(res http.ResponseWriter, req *http.Request) {
 					AuthorID:     user.ID,
 					PostID:       post.ID,
 				}
-				models.ViewRepo.CreateView(&NewView)
+				err = models.ViewRepo.CreateView(&NewView)
+				if err != nil {
+					res.WriteHeader(http.StatusInternalServerError)
+					log.Println("❌ error Create view")
+					return
+				}
 				lib.RedirectToPreviousURL(res, req)
 			} else {
 				if view.Rate == 0 || view.Rate == 2 {
@@ -55,7 +64,12 @@ func LikePost(res http.ResponseWriter, req *http.Request) {
 						AuthorID:     user.ID,
 						PostID:       post.ID,
 					}
-					models.ViewRepo.UpdateView(&UpdateView)
+					err = models.ViewRepo.UpdateView(&UpdateView)
+					if err != nil {
+						res.WriteHeader(http.StatusInternalServerError)
+						log.Println("❌ error Update view")
+						return
+					}
 					lib.RedirectToPreviousURL(res, req)
 				} else if view.Rate == 1 {
 					UpdateView := models.View{
@@ -65,7 +79,12 @@ func LikePost(res http.ResponseWriter, req *http.Request) {
 						AuthorID:     user.ID,
 						PostID:       post.ID,
 					}
-					models.ViewRepo.UpdateView(&UpdateView)
+					err = models.ViewRepo.UpdateView(&UpdateView)
+					if err != nil {
+						res.WriteHeader(http.StatusInternalServerError)
+						log.Println("❌ error Update view")
+						return
+					}
 					lib.RedirectToPreviousURL(res, req)
 				}
 			}
@@ -93,7 +112,8 @@ func DislikePost(res http.ResponseWriter, req *http.Request) {
 				return
 			}
 			if err != nil {
-				fmt.Println("error DB")
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ error DB")
 				return
 			}
 			user := models.GetUserFromSession(req)
@@ -102,7 +122,8 @@ func DislikePost(res http.ResponseWriter, req *http.Request) {
 			}
 			view, err := models.ViewRepo.GetViewByAuthorIDandPostID(user.ID, post.ID)
 			if err != nil {
-				fmt.Println("error Reading from View")
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ error Reading from View")
 				return
 			}
 			if view == nil {
@@ -112,7 +133,12 @@ func DislikePost(res http.ResponseWriter, req *http.Request) {
 					AuthorID:     user.ID,
 					PostID:       post.ID,
 				}
-				models.ViewRepo.CreateView(&NewView)
+				err = models.ViewRepo.CreateView(&NewView)
+				if err != nil {
+					res.WriteHeader(http.StatusInternalServerError)
+					log.Println("❌ error Create view")
+					return
+				}
 				lib.RedirectToPreviousURL(res, req)
 			} else {
 				if view.Rate == 0 || view.Rate == 1 {
@@ -123,7 +149,12 @@ func DislikePost(res http.ResponseWriter, req *http.Request) {
 						AuthorID:     user.ID,
 						PostID:       post.ID,
 					}
-					models.ViewRepo.UpdateView(&UpdateView)
+					err = models.ViewRepo.UpdateView(&UpdateView)
+					if err != nil {
+						res.WriteHeader(http.StatusInternalServerError)
+						log.Println("❌ error Update view")
+						return
+					}
 					lib.RedirectToPreviousURL(res, req)
 				} else if view.Rate == 2 {
 					UpdateView := models.View{
@@ -133,7 +164,12 @@ func DislikePost(res http.ResponseWriter, req *http.Request) {
 						AuthorID:     user.ID,
 						PostID:       post.ID,
 					}
-					models.ViewRepo.UpdateView(&UpdateView)
+					err = models.ViewRepo.UpdateView(&UpdateView)
+					if err != nil {
+						res.WriteHeader(http.StatusInternalServerError)
+						log.Println("❌ error Update view")
+						return
+					}
 					lib.RedirectToPreviousURL(res, req)
 				}
 			}

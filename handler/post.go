@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"forum/data/models"
 	"forum/lib"
 	"log"
@@ -94,7 +93,12 @@ func CreatePost(res http.ResponseWriter, req *http.Request) {
 				ModifiedDate: modificationDate,
 			}
 
-			models.PostRepo.CreatePost(&post)
+			err = models.PostRepo.CreatePost(&post)
+			if err != nil {
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ Can't create post")
+				return
+			}
 
 			for i := 1; i < len(categories); i++ {
 				name := strings.TrimSpace(categories[i])
@@ -129,7 +133,6 @@ func DeletePost(res http.ResponseWriter, req *http.Request) {
 				log.Println("✅ Post created with success")
 				lib.RedirectToPreviousURL(res, req)
 			}
-
 		}
 	}
 }
@@ -153,34 +156,43 @@ func GetPost(res http.ResponseWriter, req *http.Request) {
 			slug := pathPart[2]
 			post, err := models.PostRepo.GetPostBySlug(slug)
 			if err != nil {
-				fmt.Println("error DB")
+				log.Println("❌ error DB", err.Error())
 				return
 			}
 			PostComments, err := models.CommentRepo.GetCommentsOfPost(post.ID, "15")
+			if err != nil {
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ error DB", err.Error())
+				return
+			}
 			PostComments = SortComments(PostComments)
 			post.ModifiedDate = strings.ReplaceAll(post.ModifiedDate, "T", " ")
 			post.ModifiedDate = strings.ReplaceAll(post.ModifiedDate, "Z", "")
 			post.ModifiedDate = lib.TimeSinceCreation(post.ModifiedDate)
-			if err != nil {
-				fmt.Println("error DB")
-				return
-			}
 			userPost, err := models.UserRepo.GetUserByID(post.AuthorID)
 			if err != nil {
-				fmt.Println("error reading from user")
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ error reading from user", err.Error())
 				return
 			}
 			postCategories, err := models.PostCategoryRepo.GetCategoriesOfPost(post.ID)
 			if err != nil {
-				fmt.Println("error reading from category")
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ error reading from category", err.Error())
 				return
 			}
 			nbrLike, err := models.ViewRepo.GetLikesByPost(post.ID)
 			if err != nil {
-				fmt.Println("error reading from View")
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ error reading from View", err.Error())
 				return
 			}
 			nbrDislike, err := models.ViewRepo.GetDislikesByPost(post.ID)
+			if err != nil {
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ error reading from View", err.Error())
+				return
+			}
 			post.Description = template.HTMLEscapeString(post.Description)
 			post.Title = template.HTMLEscapeString(post.Title)
 			if postCategories != nil {
@@ -226,8 +238,8 @@ func Comment(res http.ResponseWriter, req *http.Request) {
 			http.Error(res, err.Error(), http.StatusBadRequest)
 			return
 		}
-		text := req.FormValue("text")
-		parentID := req.FormValue("parentID")
+		text := strings.TrimSpace(req.FormValue("text"))
+		parentID := strings.TrimSpace(req.FormValue("parentID"))
 		path := req.URL.Path
 		pathPart := strings.Split(path, "/")
 		if text != "" {
