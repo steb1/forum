@@ -21,6 +21,9 @@ func LikeComment(res http.ResponseWriter, req *http.Request) {
 			commentID := pathPart[2]
 			comment, err := models.CommentRepo.GetCommentByID(commentID)
 			if comment == nil {
+				res.WriteHeader(http.StatusNotFound)
+				lib.RenderPage("base", "404", nil, res)
+				log.Println("404 ❌ - Page not found ", req.URL.Path)
 				return
 			}
 			if err != nil {
@@ -103,6 +106,9 @@ func DislikeComment(res http.ResponseWriter, req *http.Request) {
 			commentID := pathPart[2]
 			comment, err := models.CommentRepo.GetCommentByID(commentID)
 			if comment == nil {
+				res.WriteHeader(http.StatusNotFound)
+				lib.RenderPage("base", "404", nil, res)
+				log.Println("404 ❌ - Page not found ", req.URL.Path)
 				return
 			}
 			if err != nil {

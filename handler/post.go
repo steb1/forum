@@ -12,16 +12,17 @@ import (
 )
 
 type PostPageData struct {
-	IsLoggedIn       bool
-	CurrentUser      models.User
-	Post             models.Post
-	Comments         []*models.CommentItem
-	UserPoster       *models.User
-	NbrComment       int
-	Categories       []models.Category
+	IsLoggedIn     bool
+	CurrentUser    models.User
+	Post           models.Post
+	Comments       []*models.CommentItem
+	UserPoster     *models.User
+	NbrComment     int
+	CategoriesPost []models.Category
 	CategoriesString string
-	NbrLike          int
-	NbrDislike       int
+	NbrLike        int
+	NbrDislike     int
+	Categories     []*models.Category
 }
 
 func SortComments(comments []*models.CommentItem) []*models.CommentItem {
@@ -313,6 +314,12 @@ func GetPost(res http.ResponseWriter, req *http.Request) {
 		if len(pathPart) == 3 && pathPart[1] == "posts" && pathPart[2] != "" {
 			slug := pathPart[2]
 			post, err := models.PostRepo.GetPostBySlug(slug)
+			if post == nil {
+				res.WriteHeader(http.StatusNotFound)
+				lib.RenderPage("base", "404", nil, res)
+				log.Println("404 ❌ - Page not found ", req.URL.Path)
+				return
+			}
 			if err != nil {
 				log.Println("❌ error DB", err.Error())
 				return
@@ -368,16 +375,21 @@ func GetPost(res http.ResponseWriter, req *http.Request) {
 			if models.CheckIfSessionExist(userPost.Username) {
 				userPost.IsLoggedIn = "Online"
 			}
+			cat, err := models.CategoryRepo.GetAllCategory()
+			if err != nil {
+				return
+			}
 			PostPageData := PostPageData{
-				IsLoggedIn:  isSessionOpen,
-				Post:        *post,
-				CurrentUser: *(models.GetUserFromSession(req)),
-				UserPoster:  userPost,
-				Comments:    PostComments,
-				NbrComment:  len(PostComments),
-				Categories:  postCategories,
-				NbrLike:     nbrLike,
-				NbrDislike:  nbrDislike,
+				IsLoggedIn:     isSessionOpen,
+				Post:           *post,
+				CurrentUser:    *(models.GetUserFromSession(req)),
+				UserPoster:     userPost,
+				Comments:       PostComments,
+				NbrComment:     len(PostComments),
+				CategoriesPost: postCategories,
+				NbrLike:        nbrLike,
+				NbrDislike:     nbrDislike,
+				Categories:     cat,
 			}
 			lib.RenderPage(basePath, pagePath, PostPageData, res)
 			log.Println("✅ Post page get with success")

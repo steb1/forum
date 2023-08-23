@@ -65,6 +65,31 @@ func (cr *CategoryRepository) GetCategoryByName(name string) (*Category, error) 
 	return &category, nil
 }
 
+// Get all category in the database
+func (pr *CategoryRepository) GetAllCategory() ([]*Category, error) {
+	var categories []*Category
+
+	rows, err := pr.db.Query("SELECT * FROM Category")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var category Category
+		err := rows.Scan(&category.ID, &category.Name, &category.CreateDate, &category.ModifiedDate)
+		if err != nil {
+			return nil, err
+		}
+		categories = append(categories, &category)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return categories, nil
+}
+
 // Update a category in the database
 func (cr *CategoryRepository) UpdateCategory(category *Category) error {
 	_, err := cr.db.Exec("UPDATE category SET name = ?, createDate = ?, modifiedDate = ? WHERE id = ?",

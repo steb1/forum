@@ -16,6 +16,7 @@ type UserPageData struct {
 	Author      models.User
 	TabIndex    int
 	PostsList   []models.PostItem
+	Categories  []*models.Category
 }
 
 func ProfilePage(res http.ResponseWriter, req *http.Request) {
@@ -67,11 +68,16 @@ func ProfilePage(res http.ResponseWriter, req *http.Request) {
 				postsList[j].Title = template.HTMLEscapeString(postsList[j].Title)
 			}
 		}
+		cat, err := models.CategoryRepo.GetAllCategory()
+		if err != nil {
+			return
+		}
 		userPageData := UserPageData{
 			IsLoggedIn:  isSessionOpen,
 			CurrentUser: *user,
 			TabIndex:    TabIndex,
 			PostsList:   postsList,
+			Categories:  cat,
 		}
 
 		lib.RenderPage(basePath, pagePath, userPageData, res)
@@ -214,11 +220,16 @@ func EditUserPage(res http.ResponseWriter, req *http.Request) {
 		}
 		isSessionOpen := models.ValidSession(req)
 		user := models.GetUserFromSession(req)
+		cat, err := models.CategoryRepo.GetAllCategory()
+		if err != nil {
+			return
+		}
 
 		userPageData := UserPageData{
 			IsLoggedIn:  isSessionOpen,
 			CurrentUser: *user,
 			TabIndex:    TabIndex,
+			Categories:  cat,
 		}
 
 		lib.RenderPage(basePath, pagePath, userPageData, res)

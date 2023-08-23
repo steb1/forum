@@ -13,6 +13,7 @@ type SignPageData struct {
 	IsLoggedIn  bool
 	RandomUsers []models.User
 	Err         string
+	Categories  []*models.Category
 }
 
 func SignUp(res http.ResponseWriter, req *http.Request) {
@@ -84,11 +85,15 @@ func SignUpPage(res http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			log.Println("❌ Can't get 15 random users in the database")
 		}
-
+		cat, err := models.CategoryRepo.GetAllCategory()
+		if err != nil {
+			return
+		}
 		signPageData := SignPageData{
 			IsLoggedIn:  false,
 			RandomUsers: randomUsers,
 			Err:         "",
+			Categories:  cat,
 		}
 
 		lib.RenderPage(basePath, pagePath, signPageData, res)
@@ -167,11 +172,15 @@ func SignInPage(res http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			log.Println("❌ Can't get 15 random users in the database")
 		}
-
+		cat, err := models.CategoryRepo.GetAllCategory()
+		if err != nil {
+			return
+		}
 		signPageData := SignPageData{
 			IsLoggedIn:  false,
 			RandomUsers: randomUsers,
 			Err:         "",
+			Categories:  cat,
 		}
 
 		lib.RenderPage(basePath, pagePath, signPageData, res)

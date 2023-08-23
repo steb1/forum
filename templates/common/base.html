@@ -171,6 +171,38 @@
             right: 2rem;
             box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
         }
+        .suggestionsList {
+            width: 50%;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            /* border: 1px solid #ccc; */
+            border-top: none;
+            padding: 0;
+            margin: 0;
+            margin-left: 30%;
+            border-radius: 30px;
+            list-style-type: none;
+            z-index: 9999;
+        }
+
+        a{
+            font-size: 20px;
+            color: black;
+        }
+
+        .suggestionsList li {
+            padding: 10px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .suggestionsList li:hover {
+            background-color: #f4f4f4;
+            border-radius: 30px;
+        }
     </style>
 </head>
 
@@ -194,7 +226,8 @@
             <a href="#">About</a>
             {{end}}
         </nav>
-        <input type="search" name="" id="" placeholder="Search...">
+        <input type="search" name="search" id="search" placeholder="Search..." oninput="updateSuggestions()">
+        <ul id="suggestionsList" class="suggestionsList"></ul>
         {{if .IsLoggedIn}}
         <a href="#" class="icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -355,6 +388,49 @@
             if (event.target == modal) {
                 closeModal()
             }
+        }
+
+        var container = document.querySelector("#category_list")
+        var listCategory = []
+        {{range .Categories}}
+            listCategory = [...listCategory, {Name: `{{.Name}}`}]
+        {{end}}
+        
+        function updateSuggestions() {
+            let searchValue = document.getElementById('search').value
+            console.log(searchValue)
+            var suggestionsList = document.getElementById('suggestionsList')
+            suggestionsList.innerHTML = ""
+        
+            var filteredListCategory = listCategory.filter(category => {
+            return category.Name.toLowerCase().includes(searchValue.toLowerCase())
+            })
+        
+            filteredListCategory.map(category => {
+            var suggestionItem = document.createElement('li')
+            var suggestionLink = document.createElement('a')
+            suggestionLink.setAttribute('href', '/category/' + category.Name)
+            suggestionLink.textContent = category.Name
+            suggestionItem.appendChild(suggestionLink)
+            suggestionItem.addEventListener('click', function () {
+                document.getElementById('search').value = category.Name
+                suggestionsList.innerHTML = "" // Clear suggestions
+                filterList() // Perform search
+            })
+            suggestionsList.appendChild(suggestionItem)
+            })
+        }
+
+        document.addEventListener('click',function(event){
+            var suggestionsList = document.getElementById('suggestionsList')
+            var targetElement=event.target;
+            if(!suggestionsList.contains(event.target)){
+                suggestionsList.innerHTML = "";
+            }
+        });
+        function clearSuggestions() {
+            var suggestionsList = document.getElementById('suggestionsList')
+            suggestionsList.innerHTML = ""
         }
     </script>
 </body>
