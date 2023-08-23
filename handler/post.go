@@ -156,6 +156,12 @@ func GetPost(res http.ResponseWriter, req *http.Request) {
 		if len(pathPart) == 3 && pathPart[1] == "posts" && pathPart[2] != "" {
 			slug := pathPart[2]
 			post, err := models.PostRepo.GetPostBySlug(slug)
+			if post == nil {
+				res.WriteHeader(http.StatusNotFound)
+				lib.RenderPage("base", "404", nil, res)
+				log.Println("404 ❌ - Page not found ", req.URL.Path)
+				return
+			}
 			if err != nil {
 				log.Println("❌ error DB", err.Error())
 				return
