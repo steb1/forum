@@ -93,6 +93,7 @@
             align-items: center;
         }
 
+        .upload-area #filePreview1,
         .upload-area #filePreview {
             width: 70%;
             height: auto;
@@ -280,9 +281,14 @@
                     <span class="upload-area-description">
                         Alternatively, you can select a file by <strong>clicking</strong> on this area
                     </span>
+                    <input type="file" id="fileInput" style="display: none;" name="image">
                 </label>
+<<<<<<< HEAD
                 <input type="file" id="fileInput" style="display: none;" name="image">
                 <input name="title" type="text" id="title" placeholder="Add title" class="title">
+=======
+                <input name="title" type="text" placeholder="Add title" class="title">
+>>>>>>> cd51cb0f267d7316b16e1fc8ac62fd7a1422e0a1
                 <input name="categories" type="text" placeholder="Add tags with #">
                 <textarea name="description" cols="30" rows="10" placeholder="Describe your day..."></textarea>
                 <div class="row wfull">

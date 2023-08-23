@@ -27,7 +27,7 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 		if req.FormValue("email") == "" || req.FormValue("username") == "" {
 			res.WriteHeader(http.StatusBadRequest)
 			lib.RenderPage("base", "sign-up", nil, res)
-			fmt.Println("❌ Bad Credetials")
+			fmt.Println("❌ Bad Credentials")
 			return
 		}
 		user.Email = strings.ToLower(req.FormValue("email"))
@@ -39,12 +39,7 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 		}
 		user.Password = _password
 
-		// TODO: Handle the avatar upload
-		avatarURL := lib.UploadImage(req)
-		if avatarURL == "" {
-			avatarURL = models.DEFAULT_AVATAR
-		}
-		user.AvatarURL = avatarURL
+		user.AvatarURL = models.DEFAULT_AVATAR
 		user.Role = models.RoleUser
 
 		if _, exist := models.UserRepo.IsExisted(user.Email); !exist {
