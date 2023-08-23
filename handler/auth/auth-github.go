@@ -39,7 +39,7 @@ func HandleGithubLoginHandler(w http.ResponseWriter, r *http.Request) {
 	redirectURL := fmt.Sprintf(
 		"https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s",
 		githubClientID,
-		"http://localhost:8080/github-callback")
+		"https://localhost:8085/github-callback")
 
 	http.Redirect(w, r, redirectURL, http.StatusTemporaryRedirect)
 }
