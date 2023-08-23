@@ -44,6 +44,10 @@ func GetPostOfCategory(res http.ResponseWriter, req *http.Request) {
 			if err != nil {
 				return
 			}
+			allPost, err := models.PostRepo.GetAllPosts("")
+			if err != nil {
+				return
+			}
 			homePageData := ListPostsPageData{
 				Title:       "Category: " + name,
 				IsLoggedIn:  isSessionOpen,
@@ -52,6 +56,7 @@ func GetPostOfCategory(res http.ResponseWriter, req *http.Request) {
 				TopUsers:    TopUsers,
 				Limit:       limit,
 				Categories:  cat,
+				Allposts:    allPost,
 			}
 
 			lib.RenderPage(basePath, pagePath, homePageData, res)

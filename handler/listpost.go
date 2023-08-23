@@ -18,6 +18,7 @@ type ListPostsPageData struct {
 	Limit         int
 	TopUsers      []models.TopUser
 	Categories    []*models.Category
+	Allposts      []*models.Post
 }
 
 func ListPost(res http.ResponseWriter, req *http.Request) {
@@ -71,6 +72,10 @@ func ListPost(res http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			return
 		}
+		allPost, err := models.PostRepo.GetAllPosts("")
+		if err != nil {
+			return
+		}
 		homePageData := ListPostsPageData{
 			IsLoggedIn:    isSessionOpen,
 			CurrentUser:   *user,
@@ -79,6 +84,7 @@ func ListPost(res http.ResponseWriter, req *http.Request) {
 			TopUsers:      TopUsers,
 			Limit:         limit,
 			Categories:    cat,
+			Allposts:      allPost,
 		}
 
 		lib.RenderPage(basePath, pagePath, homePageData, res)
