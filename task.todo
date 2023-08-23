@@ -36,9 +36,9 @@
 5.  [x] Display the associated image when viewing the post.
 
 ### Todo List for "security" Project:
-1.  [ ] Implement HTTPS protocol using an SSL certificate.
-   -    [ ] Generate SSL certificates or use Certificate Authorities (CA's).
-   -    [ ] Set up encrypted connections.
+1.  [x] Implement HTTPS protocol using an SSL certificate.
+   -    [x] Generate SSL certificates or use Certificate Authorities (CA's).
+   -    [x] Set up encrypted connections.
 2.  [ ] Implement Rate Limiting to prevent abuse and DoS attacks.
 3.  [x] Encrypt client passwords and optionally encrypt the database.
 4.  [ ] Test sessions and cookies for security vulnerabilities.

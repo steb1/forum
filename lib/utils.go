@@ -57,6 +57,16 @@ func LoadEnv(path string) error {
 	return scanner.Err()
 }
 
+func RedirectToHTTPS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("X-Forwarded-Proto") != "https" {
+			http.Redirect(w, r, "https://"+r.Host+r.RequestURI, http.StatusPermanentRedirect)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 func ValidateRequest(req *http.Request, res http.ResponseWriter, url, method string) bool {
 	if strings.Contains(url, "*") {
 		_urlSplit := strings.Split(req.URL.Path, "/")

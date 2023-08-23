@@ -407,7 +407,16 @@ img.avatar.small {
     width: 41px;
     height: 41px;
     border: 5px solid white;
+}
+
+.avatars>* {
     margin-left: -1rem;
+    transition: all .25s ease-in-out;
+}
+
+.avatars > *:hover {
+    transform: scale(1.1);
+    z-index: 5;
 }
 
 .avatars img.avatar.big {
@@ -598,6 +607,7 @@ button.red {
     background-color: #e20c54 !important;
     color: white !important;
 }
+
 .btn.green,
 button.green {
     background-color: #14b97a !important;

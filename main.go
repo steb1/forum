@@ -1,9 +1,11 @@
 package main
 
 import (
+	"crypto/tls"
 	"forum/data/models"
 	"forum/handler"
 	"forum/handler/auth"
+	"forum/lib"
 	"log"
 	"net/http"
 	"os"
@@ -46,11 +48,31 @@ func main() {
 	http.HandleFunc("/dislike-comment/", handler.DislikeComment)
 	http.HandleFunc("/category/", handler.GetPostOfCategory)
 
+	httpsServer := http.Server{
+		Addr: PORT,
+		TLSConfig: &tls.Config{
+			MinVersion:               tls.VersionTLS12, // Minimum TLS version supported
+			PreferServerCipherSuites: true,             // Prefer the server's cipher suite order
+			CipherSuites: []uint16{
+				tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+				tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+				// Add more cipher suites as needed
+			},
+		},
+	}
+
 	go models.DeleteExpiredSessions()
+
+	go func() {
+		err := http.ListenAndServe(":8080", lib.RedirectToHTTPS(http.DefaultServeMux))
+		if err != nil {
+			panic(err)
+		}
+	}()
 
 	log.Print("Server started and running on ")
 	log.Println(ADDRESS + PORT)
-	if err := http.ListenAndServe(PORT, nil); err != nil {
+	if err := httpsServer.ListenAndServeTLS(os.Getenv("CERT_PATH"), os.Getenv("KEY_PATH")); err != nil {
 		log.Fatal(err)
 	}
 }
