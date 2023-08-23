@@ -178,8 +178,8 @@ func (ur *UserRepository) SelectRandomUsers(count int) ([]User, error) {
 		var user User
 		err := rows.Scan(
 			&user.ID,
-			&user.Email,
 			&user.Username,
+			&user.Email,
 			&user.Password,
 			&user.AvatarURL,
 			&user.Role,

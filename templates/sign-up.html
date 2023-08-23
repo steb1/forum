@@ -44,7 +44,9 @@
             <h1>Join 01-Forum</h1>
             <div class="avatars ml-1 mt-1 mb-1">
                 {{range .RandomUsers}}
-                <img class="avatar big" src="{{ .AvatarURL }}" alt="" srcset="">
+                <a href="/user/{{.Username}}">
+                    <img class="avatar big" src="{{ .AvatarURL }}" alt="" srcset="">
+                </a>
                 {{end}}
             </div>
             <p>Join these and 10,465 other photographers</p>
@@ -54,8 +56,10 @@
                 <input placeholder="Username" type="text" name="username" id="">
                 <input class="mb-1" placeholder="Password (min. 8 characters)" type="password" name="password" id="">
                 <button class="wfull mb-1 mt-1 " type="submit">Sign Up</button>
-                <a class="wfull mb-1 mt-1" href="/google-sign-in">Sign Up with Google </a>
-                <a class="wfull mb-1 mt-1" href="/github-sign-in">Sign Up with Github </a>  
+                <div class="row mb-1">
+                    <a class="btn alt mr-1" href="/google-sign-in">Sign Up with Google </a>
+                    <a class="btn alt" href="/github-sign-in">Sign Up with Github </a>
+                </div>
                 <p>Already a member? <a href="/sign-in-page">Sign In</a></p>
             </form>
         </section>

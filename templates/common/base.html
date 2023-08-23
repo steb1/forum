@@ -171,6 +171,7 @@
             right: 2rem;
             box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
         }
+
         .suggestionsList {
             width: 50%;
             position: absolute;
@@ -186,11 +187,6 @@
             border-radius: 30px;
             list-style-type: none;
             z-index: 9999;
-        }
-
-        a{
-            font-size: 20px;
-            color: black;
         }
 
         .suggestionsList li {
@@ -274,7 +270,7 @@
                             </g>
                         </svg>
                     </span>
-                    <img id="filePreview" src="" alt="File Preview" style="display: none;"/>
+                    <img id="filePreview" src="" alt="File Preview" style="display: none;" />
                     <span class="upload-area-title">
                         Drag file(s) here to upload.
                     </span>
@@ -392,39 +388,39 @@
 
         var container = document.querySelector("#category_list")
         var listCategory = []
-        {{range .Categories}}
-            listCategory = [...listCategory, {Name: `{{.Name}}`}]
-        {{end}}
-        
+        { { range.Categories } }
+        listCategory = [...listCategory, { Name: `{{.Name}}` }]
+        { { end } }
+
         function updateSuggestions() {
             let searchValue = document.getElementById('search').value
             console.log(searchValue)
             var suggestionsList = document.getElementById('suggestionsList')
             suggestionsList.innerHTML = ""
-        
+
             var filteredListCategory = listCategory.filter(category => {
-            return category.Name.toLowerCase().includes(searchValue.toLowerCase())
+                return category.Name.toLowerCase().includes(searchValue.toLowerCase())
             })
-        
+
             filteredListCategory.map(category => {
-            var suggestionItem = document.createElement('li')
-            var suggestionLink = document.createElement('a')
-            suggestionLink.setAttribute('href', '/category/' + category.Name)
-            suggestionLink.textContent = category.Name
-            suggestionItem.appendChild(suggestionLink)
-            suggestionItem.addEventListener('click', function () {
-                document.getElementById('search').value = category.Name
-                suggestionsList.innerHTML = "" // Clear suggestions
-                filterList() // Perform search
-            })
-            suggestionsList.appendChild(suggestionItem)
+                var suggestionItem = document.createElement('li')
+                var suggestionLink = document.createElement('a')
+                suggestionLink.setAttribute('href', '/category/' + category.Name)
+                suggestionLink.textContent = category.Name
+                suggestionItem.appendChild(suggestionLink)
+                suggestionItem.addEventListener('click', function () {
+                    document.getElementById('search').value = category.Name
+                    suggestionsList.innerHTML = "" // Clear suggestions
+                    filterList() // Perform search
+                })
+                suggestionsList.appendChild(suggestionItem)
             })
         }
 
-        document.addEventListener('click',function(event){
+        document.addEventListener('click', function (event) {
             var suggestionsList = document.getElementById('suggestionsList')
-            var targetElement=event.target;
-            if(!suggestionsList.contains(event.target)){
+            var targetElement = event.target;
+            if (!suggestionsList.contains(event.target)) {
                 suggestionsList.innerHTML = "";
             }
         });
