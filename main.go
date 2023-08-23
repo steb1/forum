@@ -22,11 +22,8 @@ func main() {
 	http.HandleFunc("/sign-up-page", auth.SignUpPage)
 	http.HandleFunc("/google-Sign-in", auth.HandleGoogleLogin)
 	http.HandleFunc("/github-Sign-in", auth.HandleGithubLoginHandler)
-	http.HandleFunc("/loggedin", func(w http.ResponseWriter, r *http.Request) {
-		auth.LoggedinHandler(w, r, "")
-	})
 	http.HandleFunc("/callback", auth.HandleCallback)
-	http.HandleFunc("/login/github/callback", auth.HandleGithubCallback)
+	http.HandleFunc("/github-callback", auth.HandleGithubCallback)
 	http.HandleFunc("/sign-in", auth.SignIn)
 	http.HandleFunc("/sign-in-page", auth.SignInPage)
 	http.HandleFunc("/logout", auth.Logout)
