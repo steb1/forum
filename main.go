@@ -9,44 +9,47 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 func main() {
 	PORT := ":" + os.Getenv("PORT")
 	ADDRESS := os.Getenv("ADDRESS")
 
+	rateLimiter := lib.NewRateLimiter(30*time.Second, 100) // Allow 5 requests per minute
+
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("./assets/styles/"))))
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("./assets/img/"))))
 	http.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads/"))))
 
-	http.HandleFunc("/", handler.Index)
-	http.HandleFunc("/sign-up", auth.SignUp)
-	http.HandleFunc("/sign-up-page", auth.SignUpPage)
-	http.HandleFunc("/google-sign-in", auth.HandleGoogleLogin)
-	http.HandleFunc("/github-sign-in", auth.HandleGithubLoginHandler)
-	http.HandleFunc("/callback", auth.HandleCallback)
-	http.HandleFunc("/github-callback", auth.HandleGithubCallback)
-	http.HandleFunc("/sign-in", auth.SignIn)
-	http.HandleFunc("/sign-in-page", auth.SignInPage)
-	http.HandleFunc("/logout", auth.Logout)
+	http.Handle("/", rateLimiter.Wrap(handler.Index))
+	http.Handle("/sign-up", rateLimiter.Wrap(auth.SignUp))
+	http.Handle("/sign-up-page", rateLimiter.Wrap(auth.SignUpPage))
+	http.Handle("/google-sign-in", rateLimiter.Wrap(auth.HandleGoogleLogin))
+	http.Handle("/github-sign-in", rateLimiter.Wrap(auth.HandleGithubLoginHandler))
+	http.Handle("/callback", rateLimiter.Wrap(auth.HandleCallback))
+	http.Handle("/github-callback", rateLimiter.Wrap(auth.HandleGithubCallback))
+	http.Handle("/sign-in", rateLimiter.Wrap(auth.SignIn))
+	http.Handle("/sign-in-page", rateLimiter.Wrap(auth.SignInPage))
+	http.Handle("/logout", rateLimiter.Wrap(auth.Logout))
 
-	http.HandleFunc("/profile", handler.ProfilePage)
-	http.HandleFunc("/edit-user", handler.EditUser)
-	http.HandleFunc("/edit-user-page", handler.EditUserPage)
+	http.Handle("/profile", rateLimiter.Wrap(handler.ProfilePage))
+	http.Handle("/edit-user", rateLimiter.Wrap(handler.EditUser))
+	http.Handle("/edit-user-page", rateLimiter.Wrap(handler.EditUserPage))
 
-	http.HandleFunc("/trending", handler.ListPost)
-	http.HandleFunc("/post", handler.CreatePost)
-	http.HandleFunc("/delete-post/", handler.DeletePost)
-	http.HandleFunc("/edit-post-page/", handler.EditPostPage)
-	http.HandleFunc("/edit-post/", handler.EditPost)
-	http.HandleFunc("/comment/", handler.Comment)
-	http.HandleFunc("/posts/", handler.GetPost)
-	http.HandleFunc("/user/", handler.UserProfilePage)
-	http.HandleFunc("/like/", handler.LikePost)
-	http.HandleFunc("/dislike/", handler.DislikePost)
-	http.HandleFunc("/like-comment/", handler.LikeComment)
-	http.HandleFunc("/dislike-comment/", handler.DislikeComment)
-	http.HandleFunc("/category/", handler.GetPostOfCategory)
+	http.Handle("/trending", rateLimiter.Wrap(handler.ListPost))
+	http.Handle("/post", rateLimiter.Wrap(handler.CreatePost))
+	http.Handle("/delete-post/", rateLimiter.Wrap(handler.DeletePost))
+	http.Handle("/edit-post-page/", rateLimiter.Wrap(handler.EditPostPage))
+	http.Handle("/edit-post/", rateLimiter.Wrap(handler.EditPost))
+	http.Handle("/comment/", rateLimiter.Wrap(handler.Comment))
+	http.Handle("/posts/", rateLimiter.Wrap(handler.GetPost))
+	http.Handle("/user/", rateLimiter.Wrap(handler.UserProfilePage))
+	http.Handle("/like/", rateLimiter.Wrap(handler.LikePost))
+	http.Handle("/dislike/", rateLimiter.Wrap(handler.DislikePost))
+	http.Handle("/like-comment/", rateLimiter.Wrap(handler.LikeComment))
+	http.Handle("/dislike-comment/", rateLimiter.Wrap(handler.DislikeComment))
+	http.Handle("/category/", rateLimiter.Wrap(handler.GetPostOfCategory))
 
 	httpsServer := http.Server{
 		Addr: PORT,
