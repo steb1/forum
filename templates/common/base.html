@@ -279,12 +279,7 @@
                     </span>
                     <input type="file" id="fileInput" style="display: none;" name="image">
                 </label>
-<<<<<<< HEAD
-                <input type="file" id="fileInput" style="display: none;" name="image">
-                <input name="title" type="text" id="title" placeholder="Add title" class="title">
-=======
                 <input name="title" type="text" placeholder="Add title" class="title">
->>>>>>> cd51cb0f267d7316b16e1fc8ac62fd7a1422e0a1
                 <input name="categories" type="text" placeholder="Add tags with #">
                 <textarea name="description" cols="30" rows="10" placeholder="Describe your day..."></textarea>
                 <div class="row wfull">
@@ -292,8 +287,8 @@
                 </div>
             </form>
         </dialog>
-        <script>
-            // JavaScript code to trigger file input when button is clicked
+        <script defer type="text/javascript">
+            // defer javascript code to trigger file input when button is clicked
             const customFileButton = document.getElementById('customFileButton');
             const fileInput = document.getElementById('fileInput');
             const filePreview = document.getElementById('filePreview');
@@ -381,7 +376,7 @@
     <footer>
         Copyright make with <span class="heart">❤️</span> and ☕
     </footer>
-    <script>
+    <script defer type="text/javascript">
         const modal = document.getElementById('uploadModal');
         const aside = document.querySelector("aside");
         const body = document.querySelector("body");
@@ -404,9 +399,9 @@
 
         var container = document.querySelector("#category_list")
         var listCategory = []
-        { { range.Categories } }
+        {{ range.Categories }}
         listCategory = [...listCategory, { Name: `{{.Name}}` }]
-        { { end } }
+        {{ end }}
 
         function updateSuggestions() {
             let searchValue = document.getElementById('search').value
