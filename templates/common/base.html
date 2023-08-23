@@ -282,11 +282,11 @@
                     </span>
                 </label>
                 <input type="file" id="fileInput" style="display: none;" name="image">
-                <input name="title" type="text" placeholder="Add title" class="title">
+                <input name="title" type="text" id="title" placeholder="Add title" class="title">
                 <input name="categories" type="text" placeholder="Add tags with #">
                 <textarea name="description" cols="30" rows="10" placeholder="Describe your day..."></textarea>
                 <div class="row wfull">
-                    <button type="submit" class="wfull">Publish post</button>
+                    <button type="submit" class="wfull" onclick="checkRepeatedPost()">Publish post</button>
                 </div>
             </form>
         </dialog>
@@ -338,6 +338,17 @@
                 }
 
                 return `${size.toFixed(2)} ${units[index]}`;
+            }
+
+            function checkRepeatedPost(){
+                var allPost = []
+                {{range .Allposts}}
+                    allPost.push("{{.Title}}".toLowerCase())
+                {{end}}
+                var inputText=document.getElementById("title").value
+                if (allPost.includes(inputText.toLowerCase())) {
+                    alert("This Post TITLE already Exists !!!")
+                }
             }
 
             // Enable drag and drop file upload

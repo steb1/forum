@@ -18,6 +18,7 @@ type HomePageData struct {
 	Limit         int
 	TopUsers      []models.TopUser
 	Categories    []*models.Category
+	Allposts      []*models.Post
 }
 
 func Index(res http.ResponseWriter, req *http.Request) {
@@ -77,6 +78,10 @@ func Index(res http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			return
 		}
+		allPost, err := models.PostRepo.GetAllPosts("")
+		if err != nil {
+			return
+		}
 		homePageData := HomePageData{
 			IsLoggedIn:    isSessionOpen,
 			CurrentUser:   *user,
@@ -86,6 +91,7 @@ func Index(res http.ResponseWriter, req *http.Request) {
 			TopUsers:      TopUsers,
 			Limit:         limit,
 			Categories:    cat,
+			Allposts:      allPost,
 		}
 
 		lib.RenderPage(basePath, pagePath, homePageData, res)

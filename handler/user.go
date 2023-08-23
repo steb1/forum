@@ -17,6 +17,7 @@ type UserPageData struct {
 	TabIndex    int
 	PostsList   []models.PostItem
 	Categories  []*models.Category
+	Allposts    []*models.Post
 }
 
 func ProfilePage(res http.ResponseWriter, req *http.Request) {
@@ -72,12 +73,17 @@ func ProfilePage(res http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			return
 		}
+		allPost, err := models.PostRepo.GetAllPosts("")
+		if err != nil {
+			return
+		}
 		userPageData := UserPageData{
 			IsLoggedIn:  isSessionOpen,
 			CurrentUser: *user,
 			TabIndex:    TabIndex,
 			PostsList:   postsList,
 			Categories:  cat,
+			Allposts:    allPost,
 		}
 
 		lib.RenderPage(basePath, pagePath, userPageData, res)
