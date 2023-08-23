@@ -38,6 +38,8 @@ func main() {
 	http.HandleFunc("/trending", handler.ListPost)
 	http.HandleFunc("/post", handler.CreatePost)
 	http.HandleFunc("/delete-post/", handler.DeletePost)
+	http.HandleFunc("/edit-post-page/", handler.EditPostPage)
+	http.HandleFunc("/edit-post/", handler.EditPost)
 	http.HandleFunc("/comment/", handler.Comment)
 	http.HandleFunc("/posts/", handler.GetPost)
 	http.HandleFunc("/user/", handler.UserProfilePage)

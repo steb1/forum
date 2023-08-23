@@ -126,3 +126,9 @@ ORDER BY
 
 	return posts, nil
 }
+
+// Delete a category from the database
+func (cr *PostCategoryRepository) DeletePostCategory(categoryID, userID string) error {
+	_, err := cr.db.Exec("DELETE FROM post_category WHERE categoryID = ? AND postID = ?", categoryID, userID)
+	return err
+}

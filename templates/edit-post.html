@@ -3,8 +3,8 @@
 {{define "content"}}
 <main>
     <section class="center wfull">
-        <form method="PUT" class="blank" action="/edit-post/{{.Post.ID}}" enctype="multipart/form-data">
-            <label for="fileInput" class="upload-area mb-1" id="customFileButton">
+        <form method="POST" class="blank" action="/edit-post/{{.Post.ID}}" enctype="multipart/form-data">
+            <label for="fileInput1" class="upload-area mb-1" id="customFileButton1">
                 <span class="upload-area-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="340.531"
                         height="419.116" viewBox="0 0 340.531 419.116">
@@ -15,22 +15,95 @@
                         </g>
                     </svg>
                 </span>
-                <img id="filePreview" src="{{.Post.ImageURL}}" alt="File Preview" />
+                <img id="filePreview1" src="{{.Post.ImageURL}}" alt="File Preview" />
                 <span class="upload-area-title" style="display: none;">
                     Drag file(s) here to upload.
                 </span>
                 <span class="upload-area-description" style="display: none;">
                     Alternatively, you can select a file by <strong>clicking</strong> on this area
                 </span>
+                <input type="file" id="fileInput1" style="display: none;" name="image">
             </label>
-            <input type="file" id="fileInput" style="display: none;" name="image">
             <input name="title" type="text" placeholder="Add title" class="title" value="{{.Post.Title}}">
-            <input name="categories" type="text" placeholder="Add tags with #" value="{{.Post.}}">
-            <textarea name="description" cols="30" rows="10" placeholder="Describe your day..." value="{{.Post.Description}}"></textarea>
+            <input name="categories" type="text" placeholder="Add tags with #" value="{{.CategoriesString}}">
+            <textarea name="description" cols="30" rows="10"
+                placeholder="Describe your day...">{{.Post.Description}}</textarea>
             <div class="row wfull">
                 <button type="submit" class="wfull">Edit post</button>
             </div>
         </form>
     </section>
+    <script>
+        // JavaScript code to trigger file input when button is clicked
+        const customFileButton1 = document.getElementById('customFileButton1');
+        const fileInput1 = document.getElementById('fileInput1');
+        const filePreview1 = document.getElementById('filePreview1');
+
+        // Handle selected files
+        fileInput1.addEventListener('change', (event) => {
+            const selectedFiles = event.target.files;
+            if (selectedFiles.length > 0) {
+                displaySelectedFile(selectedFiles[0]);
+            }
+        });
+
+        // Display selected file
+        function displaySelectedFile(file) {
+            const uploadArea = document.getElementById('customFileButton1');
+            const uploadIcon = uploadArea.querySelector('.upload-area-icon');
+            const uploadTitle = uploadArea.querySelector('.upload-area-title');
+            const uploadDescription = uploadArea.querySelector('.upload-area-description');
+
+            // Update icon with file name
+            if (file.type.startsWith('image/')) {
+                uploadIcon.style.display = "none";
+                filePreview1.style.display = "block";
+                filePreview1.src = URL.createObjectURL(file);
+            }
+
+            // Update title with file name
+            uploadTitle.textContent = `${file.name} (${formatFileSize(file.size)})`;
+
+            // Update description with file name
+            uploadDescription.style.display = "none";
+
+            // You can add more styling or elements to further enhance the display
+        }
+
+        // Format file size for human-readable display
+        function formatFileSize(size) {
+            const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+            let index = 0;
+
+            while (size >= 1024 && index < units.length - 1) {
+                size /= 1024;
+                index++;
+            }
+
+            return `${size.toFixed(2)} ${units[index]}`;
+        }
+
+        // Enable drag and drop file upload
+        customFileButton1.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            customFileButton1.classList.add('dragover');
+        });
+
+        customFileButton1.addEventListener('dragleave', (event) => {
+            event.preventDefault();
+            customFileButton1.classList.remove('dragover');
+        });
+
+        customFileButton1.addEventListener('drop', (event) => {
+            event.preventDefault();
+            customFileButton1.classList.remove('dragover');
+
+            const droppedFiles = event.dataTransfer.files;
+            if (droppedFiles.length > 0) {
+                fileInput1.files = droppedFiles;
+                displaySelectedFile(droppedFiles[0]);
+            }
+        });
+    </script>
 </main>
 {{end}}
