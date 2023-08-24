@@ -39,7 +39,7 @@
 1.  [x] Implement HTTPS protocol using an SSL certificate.
    -    [x] Generate SSL certificates or use Certificate Authorities (CA's).
    -    [x] Set up encrypted connections.
-2.  [ ] Implement Rate Limiting to prevent abuse and DoS attacks.
+2.  [x] Implement Rate Limiting to prevent abuse and DoS attacks.
 3.  [x] Encrypt client passwords and optionally encrypt the database.
 4.  [ ] Test sessions and cookies for security vulnerabilities.
 

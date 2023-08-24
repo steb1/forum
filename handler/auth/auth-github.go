@@ -117,7 +117,6 @@ func HandleGithubCallback(w http.ResponseWriter, r *http.Request) {
 	var GithubUser GithubUser
 
 	json.Unmarshal(respbody, &GithubUser)
-	fmt.Println(GithubUser)
 
 	user := models.User{}
 
@@ -125,6 +124,7 @@ func HandleGithubCallback(w http.ResponseWriter, r *http.Request) {
 	user.Username = GithubUser.Name
 	user.AvatarURL = GithubUser.AvatarURL
 	user.Email = GithubUser.Email
+	user.Role = models.RoleUser
 
 	if _, exist := models.UserRepo.IsExisted(user.ID); !exist {
 		err := models.UserRepo.CreateUser(&user)
@@ -150,5 +150,5 @@ type GithubUser struct {
 	GravatarID string `json:"gravatar_id"`
 	URL        string `json:"url"`
 	Name       string `json:"name"`
-	Email      string    `json:"email"`
+	Email      string `json:"email"`
 }
