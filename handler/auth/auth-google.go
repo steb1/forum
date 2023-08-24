@@ -48,6 +48,10 @@ func HandleCallback(w http.ResponseWriter, r *http.Request) {
 
 	respbody, err := io.ReadAll(resp.Body)
 
+	if string(respbody) == "" {
+		return
+	}
+
 	if err != nil {
 		http.Error(w, "Failed to get data", http.StatusInternalServerError)
 		return
@@ -82,12 +86,18 @@ func HandleCallback(w http.ResponseWriter, r *http.Request) {
 
 	json.Unmarshal(userInfo, &Data)
 
+	email := getGoogleEmail(w , r , accessToken)
+
 	user := models.User{}
 
 	user.ID = Data.ID
 	user.Username = Data.Name
 	user.AvatarURL = Data.ImageURL
 	user.Role = models.RoleUser
+	if email != "" {
+		user.Email = email
+	}
+	
 
 	if _, exist := models.UserRepo.IsExisted(Data.ID); !exist {
 		err := models.UserRepo.CreateUser(&user)
@@ -114,4 +124,52 @@ type GoogleUser struct {
 
 type Token struct {
 	AccessToken string `json:"access_token"`
+}
+
+func getGoogleEmail(w http.ResponseWriter, r *http.Request, token string) string {
+	const userInfoURL = "https://people.googleapis.com/v1/people/me?personFields=emailAddresses"
+
+	accessToken := token // Remplacez par le vrai token d'accès
+
+	client := &http.Client{}
+
+	req, err := http.NewRequest("GET", userInfoURL, nil)
+	if err != nil {
+		fmt.Println("Erreur lors de la création de la requête:", err)
+		return ""
+	}
+
+	req.Header.Add("Authorization", "Bearer "+accessToken)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Erreur lors de l'envoi de la requête:", err)
+		return ""
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("Erreur lors de la lecture de la réponse:", err)
+		return ""
+	}
+
+	var userData map[string]interface{}
+	err = json.Unmarshal(body, &userData)
+	if err != nil {
+		fmt.Println("Erreur lors du décodage de la réponse JSON:", err)
+		return ""
+	}
+
+	email := ""
+
+	emailAddresses := userData["emailAddresses"].([]interface{})
+	if len(emailAddresses) > 0 {
+		email = emailAddresses[0].(map[string]interface{})["value"].(string)
+		fmt.Println("Adresse e-mail de l'utilisateur:", email)
+	} else {
+		fmt.Println("Aucune adresse e-mail trouvée.")
+	}
+
+	return email
 }
