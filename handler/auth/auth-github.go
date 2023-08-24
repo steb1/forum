@@ -118,12 +118,48 @@ func HandleGithubCallback(w http.ResponseWriter, r *http.Request) {
 
 	json.Unmarshal(respbody, &GithubUser)
 
+	//////////////////////////////
+
+	client2 := &http.Client{}
+
+
+	req2, err := http.NewRequest("GET", "https://api.github.com/user/emails", nil)
+    if err != nil {
+        return 
+    }
+
+	req2.Header.Add("Authorization", "Bearer "+ githubAccessToken)
+    resp2, err := client2.Do(req2)
+    if err != nil {
+        return
+    }
+    defer resp2.Body.Close()
+
+    var emails []struct {
+        Email string `json:"email"`
+		Primary  bool   `json:"primary"`
+		Verified bool   `json:"verified"`		
+    }
+    if err := json.NewDecoder(resp2.Body).Decode(&emails); err != nil {
+        return 
+    }
+
+    var userPrimaryEmail string
+    for _, email := range emails {
+        if email.Primary {
+            userPrimaryEmail = email.Email
+            break
+        }
+    }
+
+	/////////////////
+
 	user := models.User{}
 
 	user.ID = GithubUser.ID
 	user.Username = GithubUser.Name
 	user.AvatarURL = GithubUser.AvatarURL
-	user.Email = GithubUser.Email
+	user.Email = userPrimaryEmail 
 	user.Role = models.RoleUser
 
 	if _, exist := models.UserRepo.IsExisted(user.ID); !exist {
