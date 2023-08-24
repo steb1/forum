@@ -100,3 +100,13 @@ CREATE TABLE IF NOT EXISTS "category" (
     createDate DATE,
     modifiedDate DATE
 );
+CREATE TABLE IF NOT EXISTS "notification"(
+    id VARCHAR PRIMARY KEY,
+    authorID VARCHAR,
+    postID VARCHAR,
+    postOwnerID VARCHAR,
+    notif_type VARCHAR,
+    time VARCHAR,
+    FOREIGN KEY (authorID) REFERENCES user(id),
+    FOREIGN KEY (postID) REFERENCES post(id)
+)

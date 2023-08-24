@@ -86,7 +86,6 @@ func (ur *UserRepository) GetUserByEmail(email string) (*User, error) {
 	return &user, nil
 }
 
-
 // Get a user by email from the database
 func (ur *UserRepository) GetUserByUsername(username string) (*User, error) {
 	var user User
@@ -287,4 +286,17 @@ func (ur *UserRepository) TopUsers() ([]TopUser, error) {
 		user = append(user, tab)
 	}
 	return user, nil
+}
+func (ur *UserRepository) GetUserByPostID(PostID string) (*User, error) {
+	post, err := PostRepo.GetPostByID(PostID)
+	if err == nil {
+		user, err := ur.GetUserByID(post.AuthorID)
+		if err != nil {
+			return nil, err
+		} else {
+			return user, nil
+		}
+	} else {
+		return nil, err
+	}
 }

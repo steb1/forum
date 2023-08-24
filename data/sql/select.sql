@@ -140,3 +140,7 @@ FROM "post" p
 LEFT JOIN "view" v on v.postid = p.id
 WHERE v.rate = 2
 GROUP BY p.id;
+
+SELECT p.id AS post_id,
+FROM "user" u
+LEFT JOIN "post" p on u.id= 2;
