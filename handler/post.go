@@ -126,6 +126,18 @@ func EditPost(res http.ResponseWriter, req *http.Request) {
 
 			// Update user information
 			title := req.FormValue("title")
+			posts, err := models.PostRepo.GetAllPosts("")
+			if err != nil {
+				return
+			}
+			if posts != nil {
+				for j := 0; j < len(posts); j++ {
+					if strings.EqualFold(posts[j].Title, title) {
+						lib.RedirectToPreviousURL(res, req)
+						return
+					}
+				}
+			}
 			description := req.FormValue("description")
 			_categories := req.FormValue("categories")
 			categories := strings.Split(_categories, "#")
