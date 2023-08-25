@@ -276,7 +276,7 @@ func (pr *PostRepository) GetUserReaction(userID string) (map[Post][]Comment, er
 	commentMap := make(map[Post][]Comment)
 	// var posts []Post
 	// var comments []Comment
-	rows, err := pr.db.Query("SELECT p.*, c.* FROM post p JOIN comment c ON p.id = c.postID JOIN user u ON c.authorID = u.id WHERE u.id = ?", userID)
+	rows, err := pr.db.Query("SELECT p.*, c.* FROM post p JOIN comment c ON p.id = c.postID JOIN user u ON c.authorID = u.id WHERE u.id = ? ORDER BY c.modifieddate DESC", userID)
 	if err != nil {
 		fmt.Println("1", err)
 		return nil, err
