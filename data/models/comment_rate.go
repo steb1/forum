@@ -13,6 +13,7 @@ type CommentRate struct {
 	Rate      RATE
 	AuthorID  string
 	CommentID string
+	Notifications []*Notification
 }
 
 type CommentRateRepository struct {

@@ -235,6 +235,11 @@ func FormatDate(DateAndTime string) string {
 	hour = strconv.Itoa(inthour)
 	minute += suf
 	TimeFormatted := strings.Join([]string{hour, minute}, ":")
-	TheDate := fmt.Sprintf("%s, %sth, %s, at %d time", month, day, year, TimeFormatted)
+	TheDate := fmt.Sprintf("%s, %sth, %s, at %s time", month, day, year, TimeFormatted)
 	return TheDate
 }
+
+// func FormatNotifications(Notifications []models.Notification) []string {
+// 	var FormatedNotif []string
+// 	for i:=
+// }

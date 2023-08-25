@@ -292,6 +292,9 @@ func (pr *PostRepository) GetUserReaction(userID string) (map[Post][]Comment, er
 			return nil, err
 		}
 		pos, err := UserRepo.GetUserByID(post.AuthorID)
+		if err!=nil {
+			return nil, err
+		}
 		post.AuthorID = pos.Username
 
 		comment.ModifiedDate = lib.FormatDateDB(comment.ModifiedDate)
@@ -394,4 +397,11 @@ func (pr *PostRepository) UpdatePost(post *Post) error {
 func (pr *PostRepository) DeletePost(postID string) error {
 	_, err := pr.db.Exec("DELETE FROM post WHERE id = ?", postID)
 	return err
+}
+func (pr *PostRepository) GetPostByCommentID(CommentID string) (*Post, error){
+	Comment,err := CommentRepo.GetCommentByID(CommentID)
+	if err != nil {
+		return nil, err
+	}
+ 	return pr.GetPostByID(Comment.PostID)
 }

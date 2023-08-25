@@ -74,7 +74,7 @@ func LikePost(res http.ResponseWriter, req *http.Request) {
 						AuthorID:    user.ID,
 						PostID:      post.ID,
 						PostOwnerID: postOwner.ID,
-						Notif_type:  "dislike",
+						Notif_type:  "like",
 						Time:        timeago,
 					}
 					fmt.Println()
@@ -180,34 +180,42 @@ func DislikePost(res http.ResponseWriter, req *http.Request) {
 				lib.RedirectToPreviousURL(res, req)
 			} else {
 				if view.Rate == 0 || view.Rate == 1 {
-					// u, err := uuid.NewV4()
-					// if err != nil {
-					// 	log.Fatalf("❌ Failed to generate UUID: %v", err)
-					// }
-					// postOwner, _ := models.UserRepo.GetUserByPostID(post.ID)
-					// time := time.Now().Format("2006-01-02 15:04:05")
-					// timeago := lib.TimeSinceCreation(time)
-					// notif := models.Notification{
-					// 	ID:          u.String(),
-					// 	AuthorID:    user.ID,
-					// 	PostID:      post.ID,
-					// 	PostOwnerID: postOwner.ID,
-					// 	Notif_type:  "dislike",
-					// 	Time:        timeago,
-					// }
-					// err = models.NotifRepo.CreateNotification(&notif)
-					// if err != nil {
-					// 	res.WriteHeader(http.StatusInternalServerError)
-					// 	log.Println("❌ error Insert Notification")
-					// 	return
-					// }
-					// notifications, _ := models.NotifRepo.GetAllNotifs()
+					u, err := uuid.NewV4()
+					if err != nil {
+						log.Fatalf("❌ Failed to generate UUID: %v", err)
+					}
+					postOwner, _ := models.UserRepo.GetUserByPostID(post.ID)
+					time := time.Now().Format("2006-01-02 15:04:05")
+					timeago := lib.TimeSinceCreation(time)
+					notif := models.Notification{
+						ID:          u.String(),
+						AuthorID:    user.ID,
+						PostID:      post.ID,
+						PostOwnerID: postOwner.ID,
+						Notif_type:  "dislike",
+						Time:        timeago,
+					}
+					fmt.Println()
+					fmt.Println("Notif-----------------------------\n", &notif)
+					err = models.NotifRepo.CreateNotification(&notif)
+					if err != nil {
+						res.WriteHeader(http.StatusInternalServerError)
+						log.Println("❌ error Insert Notification")
+						return
+					}
+					notifications, err := models.NotifRepo.GetAllNotifs()
+					if err != nil {
+						res.WriteHeader(http.StatusInternalServerError)
+						log.Println("❌ no NOtigg")
+						return
+					}
 					UpdateView := models.View{
 						ID:           view.ID,
 						IsBookmarked: false,
 						Rate:         2,
 						AuthorID:     user.ID,
 						PostID:       post.ID,
+						Notification: notifications,
 					}
 					err = models.ViewRepo.UpdateView(&UpdateView)
 					if err != nil {
