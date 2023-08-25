@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"forum/data/models"
 	"forum/lib"
 	"log"
@@ -276,7 +275,6 @@ func EditPostPage(res http.ResponseWriter, req *http.Request) {
 }
 
 func DeletePost(res http.ResponseWriter, req *http.Request) {
-	fmt.Println("IN")
 	if lib.ValidateRequest(req, res, "/delete-post/*", http.MethodGet) {
 		isSessionOpen := models.ValidSession(req)
 		if isSessionOpen {

@@ -1,0 +1,13 @@
+{{define "title"}} | Notification{{end}}
+
+{{define "content"}}
+{{ range .UserAuthor }}
+<p>{{.Username}}</p>
+{{end}}
+{{ range .Notifications }}
+<p>{{.Notif_type}}</p>
+{{end}}
+{{ range .Posts }}
+<p>{{.Title}}</p>
+{{end}}
+{{end}}

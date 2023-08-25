@@ -14,7 +14,6 @@ type View struct {
 	Rate         RATE
 	AuthorID     string
 	PostID       string
-	Notification []*Notification
 }
 
 type RATE int
