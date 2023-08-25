@@ -11,13 +11,14 @@ import (
 )
 
 type UserPageData struct {
-	IsLoggedIn  bool
-	CurrentUser models.User
-	Author      models.User
-	TabIndex    int
-	PostsList   []models.PostItem
-	Categories  []*models.Category
-	Allposts    []*models.Post
+	IsLoggedIn     bool
+	CurrentUser    models.User
+	Author         models.User
+	TabIndex       int
+	PostsList      []models.PostItem
+	Categories     []*models.Category
+	Allposts       []*models.Post
+	PostsCommented map[models.Post][]models.Comment
 }
 
 func ProfilePage(res http.ResponseWriter, req *http.Request) {
@@ -38,6 +39,9 @@ func ProfilePage(res http.ResponseWriter, req *http.Request) {
 		}
 		isSessionOpen := models.ValidSession(req)
 		user := models.GetUserFromSession(req)
+		// posts := []models.Post{}
+		// comments := []models.Comment{}
+		commentMap := make(map[models.Post][]models.Comment)
 		switch TabIndex {
 		case 1:
 			_postListed, err := models.PostRepo.GetUserOwnPosts(user.ID, user.Username)
@@ -63,6 +67,16 @@ func ProfilePage(res http.ResponseWriter, req *http.Request) {
 				return
 			}
 			postsList = _postListed
+		case 4:
+			Map, err := models.PostRepo.GetUserReaction(user.ID)
+			if err != nil {
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ Can't get")
+				return
+			}
+			commentMap = Map
+			// posts = postsComment
+			// comments = commentary
 		}
 		if postsList != nil {
 			for j := 0; j < len(postsList); j++ {
@@ -78,12 +92,13 @@ func ProfilePage(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 		userPageData := UserPageData{
-			IsLoggedIn:  isSessionOpen,
-			CurrentUser: *user,
-			TabIndex:    TabIndex,
-			PostsList:   postsList,
-			Categories:  cat,
-			Allposts:    allPost,
+			IsLoggedIn:     isSessionOpen,
+			CurrentUser:    *user,
+			TabIndex:       TabIndex,
+			PostsList:      postsList,
+			Categories:     cat,
+			Allposts:       allPost,
+			PostsCommented: commentMap,
 		}
 
 		lib.RenderPage(basePath, pagePath, userPageData, res)

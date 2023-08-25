@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"forum/lib"
 	"log"
 	"strconv"
@@ -268,6 +269,43 @@ func (pr *PostRepository) GetAllPosts(more string) ([]*Post, error) {
 	}
 
 	return posts, nil
+}
+
+//Get user's comment by post
+func (pr *PostRepository) GetUserReaction(userID string) (map[Post][]Comment, error) {
+	commentMap := make(map[Post][]Comment)
+	// var posts []Post
+	// var comments []Comment
+	rows, err := pr.db.Query("SELECT p.*, c.* FROM post p JOIN comment c ON p.id = c.postID JOIN user u ON c.authorID = u.id WHERE u.id = ?", userID)
+	if err != nil {
+		fmt.Println("1", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var post Post
+		var comment Comment
+		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate, &comment.ID, &comment.Text, &comment.AuthorID, &comment.PostID, &comment.ParentID, &comment.CreateDate, &comment.ModifiedDate)
+		if err != nil {
+			fmt.Println("2", err)
+			return nil, err
+		}
+		pos, err := UserRepo.GetUserByID(post.AuthorID)
+		post.AuthorID = pos.Username
+
+		comment.ModifiedDate = lib.FormatDateDB(comment.ModifiedDate)
+		post.ModifiedDate = lib.FormatDateDB(post.ModifiedDate)
+		commentMap[post] = append(commentMap[post], comment)
+		// posts = append(posts, post)
+		// comments = append(comments, comment)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return commentMap, nil
 }
 
 // Get all posts from database

@@ -111,8 +111,40 @@
                 {{end}}
                 {{else if eq .TabIndex 4}}
                 <p>My Activities</p>
-                <p>Feature not yet available</p>
+                {{range $post, $comments := .PostsCommented}}
+                <article class="list">
+                    <div class="row center">
+                        <img class="avatar big mr-1" src="{{ $post.ImageURL }}" alt="">
+                        <div class="col ml-1 new">
+                            <a class="black wfull" href="/posts/{{ $post.Slug }}">
+                                <h2>
+                                    {{ $post.Title }}
+                                </h2>
+                            </a>
+                            <div class="row">
+                                <span>
+                                    <a href="/user/{{$post.AuthorID}}">
+                                    {{ $post.AuthorID }}
+                                    </a>
+                                </span>
+                                <span>{{ $post.ModifiedDate }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                {{range $comment := $comments}}
+                <div class="col mb-1 pl-1 border-left" style="margin-left: 10%;">
+                    <p class="black">
+                        {{ $comment.Text }}
+                    </p>
+                    <p class="mb-0">{{$comment.ModifiedDate}}</p>
+                    </div>
+                 </div>
+                </div>
                 {{end}}
+                {{end}}
+                {{end}}
+
             </div>
         </section>
     </section>

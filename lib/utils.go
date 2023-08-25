@@ -28,6 +28,14 @@ func Slugify(input string) string {
 	return input
 }
 
+func FormatDateDB(str string) string {
+	str = strings.ReplaceAll(str, "T", " ")
+	str = strings.ReplaceAll(str, "Z", "")
+	str = TimeSinceCreation(str)
+
+	return str
+}
+
 func RedirectToPreviousURL(res http.ResponseWriter, req *http.Request) {
 	// Get the Referer header from the request
 	previousPage := req.Header.Get("Referer")
