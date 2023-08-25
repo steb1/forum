@@ -1,55 +1,30 @@
 package handler
 
 import (
+	"fmt"
 	"forum/data/models"
 	"forum/lib"
 	"log"
 	"net/http"
-	"sort"
 	"strings"
 	"text/template"
 	"time"
 )
 
 type PostPageData struct {
-	IsLoggedIn     bool
-	CurrentUser    models.User
-	Post           models.Post
-	Comments       []*models.CommentItem
-	UserPoster     *models.User
-	NbrComment     int
-	CategoriesPost []models.Category
+	IsLoggedIn       bool
+	CurrentUser      models.User
+	Post             models.Post
+	Comment          models.Comment
+	Comments         []*models.CommentItem
+	UserPoster       *models.User
+	NbrComment       int
+	CategoriesPost   []models.Category
 	CategoriesString string
-	NbrLike        int
-	NbrDislike     int
-	Categories     []*models.Category
-	Allposts       []*models.Post
-}
-
-func SortComments(comments []*models.CommentItem) []*models.CommentItem {
-	commentMap := make(map[string][]*models.CommentItem)
-
-	for _, comment := range comments {
-		commentMap[comment.ParentID] = append(commentMap[comment.ParentID], comment)
-	}
-
-	var sortedComments []*models.CommentItem
-	var dfs func(string, int)
-	dfs = func(parentID string, depth int) {
-		children := commentMap[parentID]
-		sort.SliceStable(children, func(i, j int) bool {
-			return children[i].Index < children[j].Index
-		})
-		for _, child := range children {
-			child.Index = depth
-			child.Depth = strings.Repeat(`<span class="ml-1"></span>`, child.Index)
-			sortedComments = append(sortedComments, child)
-			dfs(child.ID, depth+1)
-		}
-	}
-
-	dfs("", 0)
-	return sortedComments
+	NbrLike          int
+	NbrDislike       int
+	Categories       []*models.Category
+	Allposts         []*models.Post
 }
 
 func CreatePost(res http.ResponseWriter, req *http.Request) {
@@ -249,14 +224,17 @@ func EditPostPage(res http.ResponseWriter, req *http.Request) {
 		path := req.URL.Path
 		pathPart := strings.Split(path, "/")
 		if len(pathPart) == 3 && pathPart[1] == "edit-post-page" && pathPart[2] != "" {
-			id := pathPart[2]
-			post, err := models.PostRepo.GetPostByID(id)
+			slug := pathPart[2]
+			post, err := models.PostRepo.GetPostBySlug(slug)
+			if post == nil {
+				return
+			}
 			if err != nil {
 				res.WriteHeader(http.StatusInternalServerError)
 				log.Println("❌ error DB")
 				return
 			}
-			categories, err := models.PostCategoryRepo.GetCategoriesOfPost(id)
+			categories, err := models.PostCategoryRepo.GetCategoriesOfPost(post.ID)
 			if err != nil {
 				res.WriteHeader(http.StatusInternalServerError)
 				log.Println("❌ error DB")
@@ -266,11 +244,16 @@ func EditPostPage(res http.ResponseWriter, req *http.Request) {
 			for _, category := range categories {
 				_categories += "#" + category.Name + " "
 			}
+			allPost, err := models.PostRepo.GetAllPosts("")
+			if err != nil {
+				return
+			}
 			userPageData := PostPageData{
 				IsLoggedIn:       isSessionOpen,
 				CurrentUser:      *user,
 				Post:             *post,
 				CategoriesString: _categories,
+				Allposts:         allPost,
 			}
 
 			lib.RenderPage(basePath, pagePath, userPageData, res)
@@ -281,6 +264,7 @@ func EditPostPage(res http.ResponseWriter, req *http.Request) {
 }
 
 func DeletePost(res http.ResponseWriter, req *http.Request) {
+	fmt.Println("IN")
 	if lib.ValidateRequest(req, res, "/delete-post/*", http.MethodGet) {
 		isSessionOpen := models.ValidSession(req)
 		if isSessionOpen {
@@ -404,43 +388,5 @@ func GetPost(res http.ResponseWriter, req *http.Request) {
 			lib.RenderPage("base", "404", nil, res)
 			log.Println("404 ❌ - Page not found ", req.URL.Path)
 		}
-	}
-}
-
-func Comment(res http.ResponseWriter, req *http.Request) {
-	if lib.ValidateRequest(req, res, "/comment/*", http.MethodPost) {
-		err := req.ParseForm()
-		if err != nil {
-			http.Error(res, err.Error(), http.StatusBadRequest)
-			return
-		}
-		text := strings.TrimSpace(req.FormValue("text"))
-		parentID := strings.TrimSpace(req.FormValue("parentID"))
-		path := req.URL.Path
-		pathPart := strings.Split(path, "/")
-		if text != "" {
-			if len(pathPart) == 3 && pathPart[1] == "comment" {
-				creationDate := time.Now().Format("2006-01-02 15:04:05")
-				modifDate := time.Now().Format("2006-01-02 15:04:05")
-
-				authorID := models.GetUserFromSession(req).ID
-				postID := pathPart[2]
-
-				commentStruct := models.Comment{
-					Text:         text,
-					AuthorID:     authorID,
-					PostID:       postID,
-					ParentID:     parentID,
-					CreateDate:   creationDate,
-					ModifiedDate: modifDate,
-				}
-
-				models.CommentRepo.CreateComment(&commentStruct)
-				lib.RedirectToPreviousURL(res, req)
-			}
-		} else {
-			lib.RedirectToPreviousURL(res, req)
-		}
-
 	}
 }

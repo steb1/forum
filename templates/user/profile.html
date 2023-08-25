@@ -56,7 +56,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <a href="/edit-post-page/{{.ID}}" class="btn alt mr-1">Edit</a>
+                        <a href="/edit-post-page/{{.Slug}}" class="btn alt mr-1">Edit</a>
                         <a href="/delete-post/{{.ID}}" class="btn red">Delete</a>
                     </div>
                 </article>
@@ -140,6 +140,9 @@
                     <p class="mb-0">{{$comment.ModifiedDate}}</p>
                     </div>
                  </div>
+                 <div class="row" style="margin-left: 10%; margin-bottom: 3%;">
+                    <a href="/edit-comment-page/{{$comment.ID}}" class="btn alt mr-1">Edit</a>
+                    <a href="/delete-comment/{{$comment.ID}}" class="btn red">Delete</a>
                 </div>
                 {{end}}
                 {{end}}

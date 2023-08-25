@@ -24,12 +24,12 @@
                 </span>
                 <input type="file" id="fileInput1" style="display: none;" name="image">
             </label>
-            <input name="title" type="text" placeholder="Add title" class="title" value="{{.Post.Title}}">
+            <input name="title" type="text" id="title" placeholder="Add title" class="title" value="{{.Post.Title}}">
             <input name="categories" type="text" placeholder="Add tags with #" value="{{.CategoriesString}}">
             <textarea name="description" cols="30" rows="10"
                 placeholder="Describe your day...">{{.Post.Description}}</textarea>
             <div class="row wfull">
-                <button type="submit" class="wfull">Edit post</button>
+                <button type="submit" class="wfull" onclick="checkRepeatedPost()">Edit post</button>
             </div>
         </form>
     </section>
