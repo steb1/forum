@@ -3,7 +3,7 @@
 {{define "content"}}
 
 {{ range $index, $value := .UserAuthor }}
-    <p>{{ index $.UserAuthor $index }} A {{ index $.NotificationsType $index }} LE POST TITLE {{ index $.Posts $index }}</p>
+    <p>{{ index $.UserAuthor $index }} A {{ index $.NotificationsType $index }} Votre post {{ index $.Posts $index }}</p>
 {{ end }}
 
 {{end}}

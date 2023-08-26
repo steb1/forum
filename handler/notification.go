@@ -68,6 +68,7 @@ func GetNotifs(res http.ResponseWriter, req *http.Request) {
 
 			lib.RenderPage(basePath, pagePath, notifpagedata, res)
 			log.Println("✅ Notification page get with success")
+			//log.Println(lib.FormatNotifications(notifications))
 		}
 	}
 }
