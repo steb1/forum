@@ -9,12 +9,13 @@ import (
 )
 
 type NotifPageData struct {
-	IsLoggedIn    bool
-	CurrentUser   models.User
-	Notifications []models.Notification
-	UserAuthor    []models.User
-	Posts         []models.Post
-	Allposts      []*models.Post
+	IsLoggedIn        bool
+	CurrentUser       models.User
+	NotifsID          []string
+	NotificationsType []string
+	UserAuthor        []string
+	Posts             []string
+	Allposts          []*models.Post
 }
 
 func GetNotifs(res http.ResponseWriter, req *http.Request) {
@@ -39,25 +40,30 @@ func GetNotifs(res http.ResponseWriter, req *http.Request) {
 				log.Println("❌ Can't get notifs")
 				return
 			}
-			posts := []models.Post{}
-			users := []models.User{}
+			tabNotifType := []string{}
+			tabNotifID := []string{}
+			posts := []string{}
+			users := []string{}
 			for i := 0; i < len(notifications); i++ {
 				post, _ := models.PostRepo.GetPostByID(notifications[i].PostID)
-				posts = append(posts, *post)
+				posts = append(posts, *&post.Title)
 				userAuthor, _ := models.UserRepo.GetUserByID(notifications[i].AuthorID)
-				users = append(users, *userAuthor)
+				users = append(users, *&userAuthor.Username)
+				tabNotifType = append(tabNotifType, notifications[i].Notif_type)
+				tabNotifID = append(tabNotifID, notifications[i].ID)
 			}
 			allPost, err := models.PostRepo.GetAllPosts("")
 			if err != nil {
 				return
 			}
 			notifpagedata := NotifPageData{
-				IsLoggedIn:    isSessionOpen,
-				CurrentUser:   *user,
-				Notifications: notifications,
-				UserAuthor:    users,
-				Posts:         posts,
-				Allposts:      allPost,
+				IsLoggedIn:        isSessionOpen,
+				CurrentUser:       *user,
+				NotifsID:          tabNotifID,
+				NotificationsType: tabNotifType,
+				UserAuthor:        users,
+				Posts:             posts,
+				Allposts:          allPost,
 			}
 
 			lib.RenderPage(basePath, pagePath, notifpagedata, res)
