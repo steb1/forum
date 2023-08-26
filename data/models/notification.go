@@ -87,3 +87,28 @@ func (nr *NotificationRepository) CreateNotification(notification *Notification)
 		notification.ID, notification.AuthorID, notification.PostID, notification.PostOwnerID, notification.Notif_type, notification.Time)
 	return err
 }
+func FormatNotifications(Notifications []Notification) []string {
+	var FormatedNotif []string
+	for _, notification := range Notifications {
+		var motif string
+		if notification.Notif_type == "like" {
+			motif = "have liked your post"
+		}
+		if notification.Notif_type == "Comment_like" {
+			motif = "have liked your comment"
+		}
+		if notification.Notif_type == "dislike" {
+			motif = "have disliked your post"
+		}
+		if notification.Notif_type == "Comment_dislike" {
+			motif = "have disliked your comment"
+		}
+		if notification.Notif_type == "comment" {
+			motif = "have commented your post"
+		}
+		author, _ := UserRepo.GetUserByID(notification.AuthorID)
+		notif := fmt.Sprintf("%s %s   %s", author.Username, motif, notification.Time)
+		FormatedNotif = append(FormatedNotif, notif)
+	}
+	return FormatedNotif
+}
