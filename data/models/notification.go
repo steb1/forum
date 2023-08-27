@@ -103,7 +103,7 @@ func FormatNotifications(Notifications []Notification) []string {
 		if notification.Notif_type == "Comment_dislike" {
 			motif = "have disliked your comment"
 		}
-		if notification.Notif_type == "comment" {
+		if notification.Notif_type == "Comment" {
 			motif = "have commented your post"
 		}
 		author, _ := UserRepo.GetUserByID(notification.AuthorID)
@@ -111,4 +111,11 @@ func FormatNotifications(Notifications []Notification) []string {
 		FormatedNotif = append(FormatedNotif, notif)
 	}
 	return FormatedNotif
+}
+func ListNotifications(notifications []string) (s string) {
+	for i := len(notifications)-1; i >= 0; i-- {
+		s += notifications[i]
+		s += "\\n"
+	}
+	return s
 }

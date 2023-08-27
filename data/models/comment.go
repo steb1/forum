@@ -19,6 +19,7 @@ type Comment struct {
 	ParentID     string
 	CreateDate   string
 	ModifiedDate string
+	Notifications      []*Notification
 }
 
 type CommentItem struct {
@@ -33,6 +34,7 @@ type CommentItem struct {
 	LastModifiedDate   string
 	NbrLikesComment    int
 	NbrDislikesComment int
+	
 }
 
 type CommentRepository struct {

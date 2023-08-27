@@ -2,8 +2,8 @@
 
 {{define "content"}}
 
-{{ range $index, $value := .UserAuthor }}
-    <p>{{ index $.UserAuthor $index }} A {{ index $.NotificationsType $index }} Votre post {{ index $.Posts $index }}</p>
+{{ range $index, $value := .FormatedNotif }}
+    <p>{{.}}</p>
 {{ end }}
 
 {{end}}
