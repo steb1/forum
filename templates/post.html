@@ -54,11 +54,19 @@
                         <a href="/sign-in-page">👎</a>
                     {{end}}
                 </p>
+                
                 <p>
-                    Mark
-                    <a href="#">
+                    {{ .NbrBookmarks }}
+                    {{if .IsLoggedIn }}
+                        <a href="/bookmark/{{.Post.Slug}}">
+                            
+                            🔖 
+                        </a>
+                    {{else}}
+                    <a href="/sign-in-page">
                         🔖
                     </a>
+                    {{end}}
                 </p>
             </div>
             {{if .IsLoggedIn}}
@@ -151,6 +159,7 @@
             replyMessageSection.textContent = "";
             parentIDInput.value = "";
         }
+
     </script>
 </main>
 {{end}}

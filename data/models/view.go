@@ -87,6 +87,32 @@ func (vr *ViewRepository) GetDislikesByPost(postID string) (int, error) {
 	return nbrDislike, nil
 }
 
+func (vr *ViewRepository) GetNbrOfBookmarks (postID string) (int, error) {
+	var NbrOfBookmarks int
+	row := vr.db.QueryRow("SELECT COUNT(*) FROM view WHERE isbookmarked = true AND postid = ? ", postID)
+	err := row.Scan(&NbrOfBookmarks)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return 0, nil // View not found
+		}
+		return 0, err
+	}
+	return NbrOfBookmarks, nil
+}
+
+func (vr *ViewRepository) GetNbrOfUnBookmarks (postID string) (int, error) {
+	var NbrOfUnBookmarks int
+	row := vr.db.QueryRow("SELECT COUNT(*) FROM view WHERE isBookmarked = false")
+	err := row.Scan(&NbrOfUnBookmarks)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return 0, nil // View not found
+		}
+		return 0, err
+	}
+	return NbrOfUnBookmarks, nil
+}
+
 // Get a view by ID from the database
 func (vr *ViewRepository) GetViewByAuthorIDandPostID(authorID string, postID string) (*View, error) {
 	var view View

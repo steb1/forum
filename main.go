@@ -32,6 +32,7 @@ func main() {
 	http.Handle("/sign-in", rateLimiter.Wrap(auth.SignIn))
 	http.Handle("/sign-in-page", rateLimiter.Wrap(auth.SignInPage))
 	http.Handle("/logout", rateLimiter.Wrap(auth.Logout))
+	http.Handle("/bookmark/", rateLimiter.Wrap(handler.Bookmark))
 
 	http.Handle("/profile", rateLimiter.Wrap(handler.ProfilePage))
 	http.Handle("/edit-user", rateLimiter.Wrap(handler.EditUser))

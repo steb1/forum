@@ -24,6 +24,8 @@ type PostPageData struct {
 	NbrDislike       int
 	Categories       []*models.Category
 	Allposts         []*models.Post
+	NbrBookmarks     int
+	IsBookmarked     bool
 }
 
 func CreatePost(res http.ResponseWriter, req *http.Request) {
@@ -378,6 +380,9 @@ func GetPost(res http.ResponseWriter, req *http.Request) {
 			if err != nil {
 				return
 			}
+
+			NbrOfBookmarks, err := models.ViewRepo.GetNbrOfBookmarks(post.ID)
+
 			PostPageData := PostPageData{
 				IsLoggedIn:     isSessionOpen,
 				Post:           *post,
@@ -390,6 +395,7 @@ func GetPost(res http.ResponseWriter, req *http.Request) {
 				NbrDislike:     nbrDislike,
 				Categories:     cat,
 				Allposts:       allPost,
+				NbrBookmarks:   NbrOfBookmarks,
 			}
 			lib.RenderPage(basePath, pagePath, PostPageData, res)
 			log.Println("✅ Post page get with success")

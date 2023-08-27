@@ -393,7 +393,7 @@ func (pr *PostRepository) UpdatePost(post *Post) error {
 	return err
 }
 
-// Delete a post from the database
+// Delete a post from the databaseNbrDislike
 func (pr *PostRepository) DeletePost(postID string) error {
 	_, err := pr.db.Exec("DELETE FROM post WHERE id = ?", postID)
 	return err

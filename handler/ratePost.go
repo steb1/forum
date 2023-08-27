@@ -104,7 +104,7 @@ func LikePost(res http.ResponseWriter, req *http.Request) {
 					}
 					UpdateView := models.View{
 						ID:           view.ID,
-						IsBookmarked: false,
+						IsBookmarked: view.IsBookmarked,
 						Rate:         1,
 						AuthorID:     user.ID,
 						PostID:       post.ID,
@@ -120,7 +120,7 @@ func LikePost(res http.ResponseWriter, req *http.Request) {
 				} else if view.Rate == 1 {
 					UpdateView := models.View{
 						ID:           view.ID,
-						IsBookmarked: false,
+						IsBookmarked: view.IsBookmarked,
 						Rate:         0,
 						AuthorID:     user.ID,
 						PostID:       post.ID,
@@ -232,7 +232,7 @@ func DislikePost(res http.ResponseWriter, req *http.Request) {
 					}
 					UpdateView := models.View{
 						ID:           view.ID,
-						IsBookmarked: false,
+						IsBookmarked: view.IsBookmarked,
 						Rate:         2,
 						AuthorID:     user.ID,
 						PostID:       post.ID,
@@ -247,7 +247,7 @@ func DislikePost(res http.ResponseWriter, req *http.Request) {
 				} else if view.Rate == 2 {
 					UpdateView := models.View{
 						ID:           view.ID,
-						IsBookmarked: false,
+						IsBookmarked: view.IsBookmarked,
 						Rate:         0,
 						AuthorID:     user.ID,
 						PostID:       post.ID,
