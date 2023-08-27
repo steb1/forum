@@ -9,12 +9,14 @@ import (
 )
 
 type NotifPageData struct {
-	IsLoggedIn    bool
-	CurrentUser   models.User
-	Notifications []models.Notification
-	UserAuthor    []models.User
-	Posts         []models.Post
-	Allposts      []*models.Post
+	IsLoggedIn        bool
+	CurrentUser       models.User
+	NotifsID          []string
+	NotificationsType []string
+	UserAuthor        []string
+	Posts             []string
+	Allposts          []*models.Post
+	FormatedNotif     []string
 }
 
 func GetNotifs(res http.ResponseWriter, req *http.Request) {
@@ -39,29 +41,47 @@ func GetNotifs(res http.ResponseWriter, req *http.Request) {
 				log.Println("❌ Can't get notifs")
 				return
 			}
-			posts := []models.Post{}
-			users := []models.User{}
+			tabNotifType := []string{}
+			tabNotifID := []string{}
+			posts := []string{}
+			users := []string{}
+			FormatedNotif := []string{}
 			for i := 0; i < len(notifications); i++ {
 				post, _ := models.PostRepo.GetPostByID(notifications[i].PostID)
-				posts = append(posts, *post)
+				posts = append(posts, *&post.Title)
 				userAuthor, _ := models.UserRepo.GetUserByID(notifications[i].AuthorID)
-				users = append(users, *userAuthor)
+				users = append(users, *&userAuthor.Username)
+				tabNotifType = append(tabNotifType, notifications[i].Notif_type)
+				tabNotifID = append(tabNotifID, notifications[i].ID)
+
 			}
+			FormatedNotif = (models.FormatNotifications(notifications))
 			allPost, err := models.PostRepo.GetAllPosts("")
 			if err != nil {
 				return
 			}
 			notifpagedata := NotifPageData{
-				IsLoggedIn:    isSessionOpen,
-				CurrentUser:   *user,
-				Notifications: notifications,
-				UserAuthor:    users,
-				Posts:         posts,
-				Allposts:      allPost,
+				IsLoggedIn:        isSessionOpen,
+				CurrentUser:       *user,
+				NotifsID:          tabNotifID,
+				NotificationsType: tabNotifType,
+				UserAuthor:        users,
+				Posts:             posts,
+				Allposts:          allPost,
+				FormatedNotif:     FormatedNotif,
 			}
 
 			lib.RenderPage(basePath, pagePath, notifpagedata, res)
 			log.Println("✅ Notification page get with success")
+			notifs, _ := models.NotifRepo.GetAllNotifsByUser(id)
+			notif := models.FormatNotifications(notifs)
+			log.Println("----------------------------------------------------------------------\n")
+			for _, val := range notif {
+				log.Println(val)
+				log.Println()
+				log.Println("----------------------------------------------------------------------")
+			}
+
 		}
 	}
 }

@@ -3,6 +3,7 @@ package lib
 import (
 	"bufio"
 	"fmt"
+	//"forum/data/models"
 	"io"
 	"log"
 	"net/http"
@@ -241,5 +242,25 @@ func FormatDate(DateAndTime string) string {
 
 // func FormatNotifications(Notifications []models.Notification) []string {
 // 	var FormatedNotif []string
-// 	for i:=
+// 	for _, notification := range Notifications {
+// 		var motif string
+// 		if notification.Notif_type == "like" {
+// 			motif = "have liked your post"
+// 		}
+// 		if notification.Notif_type == "comment_like" {
+// 			motif = "have liked your comment"
+// 		}
+// 		if notification.Notif_type == "dislike" {
+// 			motif = "have disliked your post"
+// 		}
+// 		if notification.Notif_type == "comment_dislike" {
+// 			motif = "have disliked your comment"
+// 		}
+// 		if notification.Notif_type == "comment" {
+// 			motif = "have commented your post"
+// 		}
+// 		notif := fmt.Sprintf("%s %s   %s", notification.AuthorID, motif, notification.Time)
+// 		FormatedNotif = append(FormatedNotif, notif)
+// 	}
+// 	return FormatedNotif
 // }

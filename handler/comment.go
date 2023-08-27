@@ -9,6 +9,8 @@ import (
 	"strings"
 	"text/template"
 	"time"
+
+	"github.com/gofrs/uuid"
 )
 
 func SortComments(comments []*models.CommentItem) []*models.CommentItem {
@@ -67,6 +69,57 @@ func Comment(res http.ResponseWriter, req *http.Request) {
 
 				models.CommentRepo.CreateComment(&commentStruct)
 				lib.RedirectToPreviousURL(res, req)
+				u, err := uuid.NewV4()
+				if err != nil {
+					log.Fatalf("❌ Failed to generate UUID: %v", err)
+				}
+				post, err := models.PostRepo.GetPostByCommentID(commentStruct.ID)
+				if err != nil {
+					res.WriteHeader(http.StatusInternalServerError)
+					log.Println("❌ error Finding the Post")
+					return
+				}
+				postOwner, _ := models.UserRepo.GetUserByPostID(post.ID)
+				time := time.Now().Format("2006-01-02 15:04:05")
+				timeago := lib.TimeSinceCreation(time)
+				notif := models.Notification{
+					ID:          u.String(),
+					AuthorID:    commentStruct.AuthorID,
+					PostID:      post.ID,
+					PostOwnerID: postOwner.ID,
+					Notif_type:  "Comment",
+					Time:        timeago,
+				}
+				err = models.NotifRepo.CreateNotification(&notif)
+				if err != nil {
+					res.WriteHeader(http.StatusInternalServerError)
+					log.Println("❌ error Insert Notification")
+					return
+				}
+				notifications, err := models.NotifRepo.GetAllNotifs()
+				Update := models.Comment{
+					ID:            commentStruct.ID,
+					Text:          text,
+					AuthorID:      commentStruct.AuthorID,
+					PostID:        postID,
+					ParentID:      parentID,
+					CreateDate:    creationDate,
+					ModifiedDate:  modifDate,
+					Notifications: notifications,
+				}
+				if err != nil {
+					res.WriteHeader(http.StatusInternalServerError)
+					log.Println("❌ no notifications")
+					return
+				}
+				err = models.CommentRepo.UpdateComment(&Update)
+				if err != nil {
+					res.WriteHeader(http.StatusInternalServerError)
+					log.Println("❌ error Update comment rate")
+					return
+				}
+				lib.RedirectToPreviousURL(res, req)
+
 			}
 		} else {
 			lib.RedirectToPreviousURL(res, req)
