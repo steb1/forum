@@ -106,7 +106,14 @@ CREATE TABLE IF NOT EXISTS "notification"(
     postID VARCHAR,
     postOwnerID VARCHAR,
     notif_type VARCHAR,
-    time VARCHAR,
+    time DATE,
     FOREIGN KEY (authorID) REFERENCES user(id),
     FOREIGN KEY (postID) REFERENCES post(id)
-)
+);
+CREATE TABLE IF NOT EXISTS "request"(
+    id VARCHAR PRIMARY KEY,
+    authorID VARCHAR,
+    motivation VARCHAR,
+    time DATE,
+    FOREIGN KEY (authorID) REFERENCES user(id)
+);
