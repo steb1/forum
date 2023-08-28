@@ -25,6 +25,11 @@
                     {{else}}
                     <a href="/edit-user-page?index=3">Avatar</a>
                     {{end}}
+                    {{if eq .TabIndex 4}}
+                    <a class="black" href="/edit-user-page?index=4">Status</a>
+                    {{else}}
+                    <a href="/edit-user-page?index=4">Status</a>
+                    {{end}}
                 </div>
             </div>
             <form action="/edit-user" method="post" class="wfull mt-1" enctype="multipart/form-data">
@@ -65,8 +70,15 @@
                     <button class="mb-1 mt-1" type="submit">Change image</button>
                     <p class="mb-0">Your profile: <a href="#">01-forum.com/{{.CurrentUser.Username}}</a></p>
                 </div>
-                {{end}}
             </form>
+            {{else if eq .TabIndex 4}}
+                <form method="POST" class="blank" action="/request/{{.CurrentUser.ID}}">
+                    <textarea name="motif" cols="30" rows="10" placeholder="Why do you want to become a moderator ?" required></textarea>
+                    <div class="row wfull">
+                        <button type="submit" class="wfull">Submit request to change status</button>
+                    </div>
+                </form>
+            {{end}}
         </section>
     </section>
 </main>
