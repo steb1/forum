@@ -75,8 +75,14 @@ func ProfilePage(res http.ResponseWriter, req *http.Request) {
 				return
 			}
 			commentMap = Map
-			// posts = postsComment
-			// comments = commentary
+		case 5:
+			_postListed, err := models.PostRepo.GetUserDislikedPosts(user.ID)
+			if err != nil {
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ Can't get users bookmarked post")
+				return
+			}
+			postsList = _postListed
 		}
 		if postsList != nil {
 			for j := 0; j < len(postsList); j++ {
