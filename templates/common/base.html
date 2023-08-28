@@ -199,6 +199,41 @@
             background-color: #f4f4f4;
             border-radius: 30px;
         }
+        .modal {
+            /* ... Autres styles ... */
+            display: none;
+            position: absolute;
+            width: 300px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            z-index: 3;
+        }
+
+        .modal.active {
+            display: block;
+        }
+
+        .notification-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .notification-list li {
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .notification-list li i {
+            cursor: pointer;
+        }
+
+        .close-button {
+            /* ... Autres styles ... */
+            top: 10px;
+            right: 10px;
+        }
     </style>
 </head>
 
@@ -249,6 +284,9 @@
                     d="M5 22C4.44772 22 4 21.5523 4 21V3C4 2.44772 4.44772 2 5 2H19C19.5523 2 20 2.44772 20 3V21C20 21.5523 19.5523 22 19 22H5ZM15 16L20 12L15 8V11H9V13H15V16Z"
                     fill="rgba(0,0,0,1)"></path>
             </svg>
+            <ul class="notification-list">
+                <li>Notification 1 <i class="fas fa-bell" onclick="openModal('modal1')"></i></li>
+            </ul>
         </a>
         {{else}}
         <a href="/sign-in-page" class="btn alt">Sign In</a>
@@ -372,6 +410,13 @@
         </script>
     </aside>
     {{end}}
+    <div class="modal" id="modal1">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('modal1')">&times;</span>
+            <h2>Notification 1</h2>
+            <p>Contenu de la première notification...</p>
+        </div>
+    </div>
     {{template "content" .}}
     <footer>
         Copyright make with <span class="heart">❤️</span> and ☕
