@@ -8,6 +8,8 @@ DELETE FROM comment;
 DELETE FROM post_category;
 DELETE FROM category;
 
+
+
 -- Insert 5 categories
 INSERT INTO "user" (id, username, email, password, avatarURL, role)
 VALUES

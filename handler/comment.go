@@ -81,14 +81,16 @@ func Comment(res http.ResponseWriter, req *http.Request) {
 				}
 				postOwner, _ := models.UserRepo.GetUserByPostID(post.ID)
 				time := creationDate
-
+				Author, _ := models.UserRepo.GetUserByID(commentStruct.AuthorID)
 				notif := models.Notification{
-					ID:          u.String(),
-					AuthorID:    commentStruct.AuthorID,
-					PostID:      post.ID,
-					PostOwnerID: postOwner.ID,
-					Notif_type:  "Comment",
-					Time:        time,
+					ID:         u.String(),
+					AuthorID:   Author.ID,
+					AuthorName: Author.Username,
+					PostID:     post.ID,
+					OwnerName:  postOwner.Username,
+					Notif_type: "a commente votre post",
+					Slug:       post.Slug,
+					Time:       time,
 				}
 				err = models.NotifRepo.CreateNotification(&notif)
 				if err != nil {

@@ -12,9 +12,11 @@ type NotifPageData struct {
 	IsLoggedIn        bool
 	CurrentUser       models.User
 	NotifsID          []string
+	AuthorsID         []string
 	NotificationsType []string
 	UserAuthor        []string
 	Posts             []string
+	Slugs             []string
 	Allposts          []*models.Post
 	FormatedNotif     []string
 }
@@ -45,15 +47,16 @@ func GetNotifs(res http.ResponseWriter, req *http.Request) {
 			tabNotifID := []string{}
 			posts := []string{}
 			users := []string{}
-			
+			tabSlug := []string{}
+			tabAuthorId := []string{}
 			for i := 0; i < len(notifications); i++ {
 				post, _ := models.PostRepo.GetPostByID(notifications[i].PostID)
 				posts = append(posts, post.Title)
-				userAuthor, _ := models.UserRepo.GetUserByID(notifications[i].AuthorID)
-				users = append(users, userAuthor.Username)
+				users = append(users, notifications[i].AuthorName)
 				tabNotifType = append(tabNotifType, notifications[i].Notif_type)
 				tabNotifID = append(tabNotifID, notifications[i].ID)
-
+				tabSlug = append(tabSlug, notifications[i].Slug)
+				tabAuthorId = append(tabAuthorId, notifications[i].AuthorID)
 			}
 			FormatedNotif := (models.FormatNotifications(notifications))
 			allPost, err := models.PostRepo.GetAllPosts("")
@@ -64,8 +67,10 @@ func GetNotifs(res http.ResponseWriter, req *http.Request) {
 				IsLoggedIn:        isSessionOpen,
 				CurrentUser:       *user,
 				NotifsID:          tabNotifID,
+				AuthorsID:         tabAuthorId,
 				NotificationsType: tabNotifType,
 				UserAuthor:        users,
+				Slugs:             tabSlug,
 				Posts:             posts,
 				Allposts:          allPost,
 				FormatedNotif:     FormatedNotif,

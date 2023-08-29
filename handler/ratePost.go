@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"forum/data/models"
 	"forum/lib"
 	"log"
@@ -64,12 +65,14 @@ func LikePost(res http.ResponseWriter, req *http.Request) {
 				postOwner, _ := models.UserRepo.GetUserByPostID(post.ID)
 				time := time.Now().Format("2006-01-02 15:04:05")
 				notif := models.Notification{
-					ID:          u.String(),
-					AuthorID:    user.ID,
-					PostID:      post.ID,
-					PostOwnerID: postOwner.ID,
-					Notif_type:  "like",
-					Time:        time,
+					ID:         u.String(),
+					AuthorID:   user.ID,
+					AuthorName: user.Username,
+					PostID:     post.ID,
+					OwnerName:  postOwner.Username,
+					Notif_type: "a like ❤️ votre post",
+					Slug:       post.Slug,
+					Time:       lib.FormatDateDB(time),
 				}
 				err = models.NotifRepo.CreateNotification(&notif)
 				if err != nil {
@@ -87,13 +90,16 @@ func LikePost(res http.ResponseWriter, req *http.Request) {
 					postOwner, _ := models.UserRepo.GetUserByPostID(post.ID)
 					time := time.Now().Format("2006-01-02 15:04:05")
 					notif := models.Notification{
-						ID:          u.String(),
-						AuthorID:    user.ID,
-						PostID:      post.ID,
-						PostOwnerID: postOwner.ID,
-						Notif_type:  "like",
-						Time:        time,
+						ID:         u.String(),
+						AuthorID:   user.ID,
+						AuthorName: user.Username,
+						PostID:     post.ID,
+						OwnerName:  postOwner.Username,
+						Notif_type: "a like ❤️ votre post",
+						Slug:       post.Slug,
+						Time:       time,
 					}
+					fmt.Println(notif.Time)
 					err = models.NotifRepo.CreateNotification(&notif)
 					if err != nil {
 						res.WriteHeader(http.StatusInternalServerError)
@@ -190,12 +196,14 @@ func DislikePost(res http.ResponseWriter, req *http.Request) {
 				postOwner, _ := models.UserRepo.GetUserByPostID(post.ID)
 				time := time.Now().Format("2006-01-02 15:04:05")
 				notif := models.Notification{
-					ID:          u.String(),
-					AuthorID:    user.ID,
-					PostID:      post.ID,
-					PostOwnerID: postOwner.ID,
-					Notif_type:  "dislike",
-					Time:        time,
+					ID:         u.String(),
+					AuthorID:   user.ID,
+					AuthorName: user.Username,
+					PostID:     post.ID,
+					OwnerName:  postOwner.Username,
+					Notif_type: "a dislike 👎 votre post",
+					Slug:       post.Slug,
+					Time:       time,
 				}
 				err = models.NotifRepo.CreateNotification(&notif)
 				if err != nil {
@@ -213,12 +221,14 @@ func DislikePost(res http.ResponseWriter, req *http.Request) {
 					postOwner, _ := models.UserRepo.GetUserByPostID(post.ID)
 					time := time.Now().Format("2006-01-02 15:04:05")
 					notif := models.Notification{
-						ID:          u.String(),
-						AuthorID:    user.ID,
-						PostID:      post.ID,
-						PostOwnerID: postOwner.ID,
-						Notif_type:  "dislike",
-						Time:        time,
+						ID:         u.String(),
+						AuthorID:   user.ID,
+						AuthorName: user.Username,
+						PostID:     post.ID,
+						OwnerName:  postOwner.Username,
+						Notif_type: "a dislike 👎 votre post",
+						Slug:       post.Slug,
+						Time:       time,
 					}
 					err = models.NotifRepo.CreateNotification(&notif)
 					if err != nil {

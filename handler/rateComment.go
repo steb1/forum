@@ -73,12 +73,14 @@ func LikeComment(res http.ResponseWriter, req *http.Request) {
 					time := time.Now().Format("2006-01-02 15:04:05")
 					timeago := lib.TimeSinceCreation(time)
 					notif := models.Notification{
-						ID:          u.String(),
-						AuthorID:    user.ID,
-						PostID:      post.ID,
-						PostOwnerID: postOwner.ID,
-						Notif_type:  "Comment_like",
-						Time:        timeago,
+						ID:         u.String(),
+						AuthorID:   user.ID,
+						AuthorName: user.Username,
+						PostID:     post.ID,
+						OwnerName:  postOwner.Username,
+						Notif_type: "a like ❤️ votre comment",
+						Slug:       post.Slug,
+						Time:       timeago,
 					}
 					err = models.NotifRepo.CreateNotification(&notif)
 					if err != nil {
@@ -190,14 +192,16 @@ func DislikeComment(res http.ResponseWriter, req *http.Request) {
 					}
 					postOwner, _ := models.UserRepo.GetUserByPostID(post.ID)
 					time := time.Now().Format("2006-01-02 15:04:05")
-					
+
 					notif := models.Notification{
-						ID:          u.String(),
-						AuthorID:    user.ID,
-						PostID:      post.ID,
-						PostOwnerID: postOwner.ID,
-						Notif_type:  "Comment_dislike",
-						Time:        time,
+						ID:         u.String(),
+						AuthorID:   user.ID,
+						AuthorName: user.Username,
+						PostID:     post.ID,
+						OwnerName:  postOwner.Username,
+						Notif_type: "a dislike 👎 votre comment",
+						Slug:       post.Slug,
+						Time:       time,
 					}
 					err = models.NotifRepo.CreateNotification(&notif)
 					if err != nil {
