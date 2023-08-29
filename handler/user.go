@@ -99,7 +99,6 @@ func ProfilePage(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 		notifications, err := models.NotifRepo.GetAllNotifs()
-
 			if err != nil {
 				return
 			}

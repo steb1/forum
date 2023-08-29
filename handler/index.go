@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"forum/data/models"
 	"forum/lib"
 	"log"
@@ -20,7 +19,7 @@ type HomePageData struct {
 	TopUsers      []models.TopUser
 	Categories    []*models.Category
 	Allposts      []*models.Post
-	Allnotifs []*models.Notification
+	Allnotifs     []*models.Notification
 }
 
 func Index(res http.ResponseWriter, req *http.Request) {
@@ -99,10 +98,10 @@ func Index(res http.ResponseWriter, req *http.Request) {
 			Limit:         limit,
 			Categories:    cat,
 			Allposts:      allPost,
-			Allnotifs: notifications,
+			Allnotifs:     notifications,
 		}
 
-		fmt.Fprint(res, homePageData)
+		//fmt.Fprint(res, homePageData)
 
 		lib.RenderPage(basePath, pagePath, homePageData, res)
 		log.Println("✅ Home page get with success")

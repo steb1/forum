@@ -69,7 +69,6 @@ func GetNotifs(res http.ResponseWriter, req *http.Request) {
 				Posts:             posts,
 				Allposts:          allPost,
 				FormatedNotif:     FormatedNotif,
-				
 			}
 
 			lib.RenderPage(basePath, pagePath, notifpagedata, res)
