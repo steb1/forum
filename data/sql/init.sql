@@ -113,7 +113,6 @@ CREATE TABLE IF NOT EXISTS "notification"(
 CREATE TABLE IF NOT EXISTS "request"(
     id VARCHAR PRIMARY KEY,
     authorID VARCHAR,
-    motivation VARCHAR,
     time DATE,
     FOREIGN KEY (authorID) REFERENCES user(id)
 );
