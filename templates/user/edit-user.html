@@ -41,7 +41,8 @@
                 <input placeholder="Email address" type="email" name="email" id="email" value="{{.CurrentUser.Email}}">
                 <div class="row space-between center wfull">
                     <button class="mb-1 mt-1" type="submit">Save changes</button>
-                    <p class="mb-0">Your profile: <a href="/user/{{.CurrentUser.Username}}">01-forum.com/user/{{.CurrentUser.Username}}</a></p>
+                    <p class="mb-0">Your profile: <a
+                            href="/user/{{.CurrentUser.Username}}">01-forum.com/user/{{.CurrentUser.Username}}</a></p>
                 </div>
                 {{else if eq .TabIndex 2}}
                 <label for="">Current password:</label>
@@ -52,7 +53,8 @@
                 <input placeholder="Confirm new password" type="password" name="confirm_password" value="">
                 <div class="row space-between center wfull">
                     <button class="mb-1 mt-1" type="submit">Change password</button>
-                    <p class="mb-0">Your profile: <a href="#">01-forum.com/{{.CurrentUser.Username}}</a></p>
+                    <p class="mb-0">Your profile: <a
+                            href="/user/{{.CurrentUser.Username}}">01-forum.com/user/{{.CurrentUser.Username}}</a></p>
                 </div>
                 {{else if eq .TabIndex 3}}
                 <div class="row mb-1 center">
@@ -68,7 +70,8 @@
                 </div>
                 <div class="row space-between center wfull">
                     <button class="mb-1 mt-1" type="submit">Change image</button>
-                    <p class="mb-0">Your profile: <a href="#">01-forum.com/{{.CurrentUser.Username}}</a></p>
+                    <p class="mb-0">Your profile: <a
+                            href="/user/{{.CurrentUser.Username}}">01-forum.com/user/{{.CurrentUser.Username}}</a></p>
                 </div>
                 {{else if eq .TabIndex 4}}
 

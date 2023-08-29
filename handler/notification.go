@@ -45,17 +45,17 @@ func GetNotifs(res http.ResponseWriter, req *http.Request) {
 			tabNotifID := []string{}
 			posts := []string{}
 			users := []string{}
-			FormatedNotif := []string{}
+			
 			for i := 0; i < len(notifications); i++ {
 				post, _ := models.PostRepo.GetPostByID(notifications[i].PostID)
-				posts = append(posts, *&post.Title)
+				posts = append(posts, post.Title)
 				userAuthor, _ := models.UserRepo.GetUserByID(notifications[i].AuthorID)
-				users = append(users, *&userAuthor.Username)
+				users = append(users, userAuthor.Username)
 				tabNotifType = append(tabNotifType, notifications[i].Notif_type)
 				tabNotifID = append(tabNotifID, notifications[i].ID)
 
 			}
-			FormatedNotif = (models.FormatNotifications(notifications))
+			FormatedNotif := (models.FormatNotifications(notifications))
 			allPost, err := models.PostRepo.GetAllPosts("")
 			if err != nil {
 				return

@@ -13,17 +13,6 @@ This project aims to create a web forum that allows users to communicate with ea
 5. **forum-moderation**: Implement a moderation system with user access levels and moderation functionalities.
 6. **forum-advanced-features**: Add advanced features like notifications, activity tracking, and post/comment editing/removal.
 
-## PROJECT OBJECTIVES
-
-- Allow users to register and login using email-based authentication, Google, or Github.
-- Enable users to create posts and associate them with one or more categories.
-- Implement liking and disliking of posts and comments.
-- Provide filtering options for posts based on categories, created posts, and liked posts.
-- Allow registered users to upload images when creating posts.
-- Implement security measures like HTTPS, Rate Limiting, and password encryption.
-- Enable moderation functionalities for authorized users.
-- Implement advanced features such as notifications, activity tracking, and post/comment editing/removal.
-
 ## INSTRUCTIONS
 
 - The project will use Go for server-side development and SQLite for data storage.
@@ -39,7 +28,7 @@ Follow these steps to set up and run the web forum:
 1. Clone the repository:
    ```
    git clone <repository-url>
-   cd web-forum
+   cd forum
    ```
 
 2. Install dependencies:
@@ -54,7 +43,7 @@ Follow these steps to set up and run the web forum:
 
 4. Run the application:
    ```
-   ./web-forum
+   ./forum
    ```
 
 5. Access the forum in your web browser at `http://localhost:8080`.

@@ -14,7 +14,7 @@ import (
 const (
 	clientID     = "889533868443-q0ih7c2vah44pbdn5ouag0437pfeb478.apps.googleusercontent.com"
 	clientSecret = "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"
-	redirectURL  = "https://localhost:8085/callback"
+	redirectURL  = "https://localhost:8080/callback"
 )
 
 var (
@@ -86,7 +86,7 @@ func HandleCallback(w http.ResponseWriter, r *http.Request) {
 
 	json.Unmarshal(userInfo, &Data)
 
-	email := getGoogleEmail(w , r , accessToken)
+	email := getGoogleEmail(w, r, accessToken)
 
 	user := models.User{}
 
@@ -97,7 +97,6 @@ func HandleCallback(w http.ResponseWriter, r *http.Request) {
 	if email != "" {
 		user.Email = email
 	}
-	
 
 	if _, exist := models.UserRepo.IsExisted(Data.ID); !exist {
 		err := models.UserRepo.CreateUser(&user)

@@ -39,7 +39,7 @@ func HandleGithubLoginHandler(w http.ResponseWriter, r *http.Request) {
 	redirectURL := fmt.Sprintf(
 		"https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s",
 		githubClientID,
-		"https://localhost:8085/github-callback")
+		"https://localhost:8080/github-callback")
 
 	http.Redirect(w, r, redirectURL, http.StatusTemporaryRedirect)
 }
@@ -122,35 +122,34 @@ func HandleGithubCallback(w http.ResponseWriter, r *http.Request) {
 
 	client2 := &http.Client{}
 
-
 	req2, err := http.NewRequest("GET", "https://api.github.com/user/emails", nil)
-    if err != nil {
-        return 
-    }
+	if err != nil {
+		return
+	}
 
-	req2.Header.Add("Authorization", "Bearer "+ githubAccessToken)
-    resp2, err := client2.Do(req2)
-    if err != nil {
-        return
-    }
-    defer resp2.Body.Close()
+	req2.Header.Add("Authorization", "Bearer "+githubAccessToken)
+	resp2, err := client2.Do(req2)
+	if err != nil {
+		return
+	}
+	defer resp2.Body.Close()
 
-    var emails []struct {
-        Email string `json:"email"`
+	var emails []struct {
+		Email    string `json:"email"`
 		Primary  bool   `json:"primary"`
-		Verified bool   `json:"verified"`		
-    }
-    if err := json.NewDecoder(resp2.Body).Decode(&emails); err != nil {
-        return 
-    }
+		Verified bool   `json:"verified"`
+	}
+	if err := json.NewDecoder(resp2.Body).Decode(&emails); err != nil {
+		return
+	}
 
-    var userPrimaryEmail string
-    for _, email := range emails {
-        if email.Primary {
-            userPrimaryEmail = email.Email
-            break
-        }
-    }
+	var userPrimaryEmail string
+	for _, email := range emails {
+		if email.Primary {
+			userPrimaryEmail = email.Email
+			break
+		}
+	}
 
 	/////////////////
 
@@ -159,7 +158,7 @@ func HandleGithubCallback(w http.ResponseWriter, r *http.Request) {
 	user.ID = GithubUser.ID
 	user.Username = GithubUser.Name
 	user.AvatarURL = GithubUser.AvatarURL
-	user.Email = userPrimaryEmail 
+	user.Email = userPrimaryEmail
 	user.Role = models.RoleUser
 
 	if _, exist := models.UserRepo.IsExisted(user.ID); !exist {

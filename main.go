@@ -13,6 +13,11 @@ import (
 )
 
 func main() {
+	// cmd := exec.Command("./init.sh")
+	// cmd.Stdout = os.Stdout
+	// cmd.Stderr = os.Stderr
+	// cmd.Run()
+	
 	PORT := ":" + os.Getenv("PORT")
 	ADDRESS := os.Getenv("ADDRESS")
 
@@ -71,13 +76,6 @@ func main() {
 	}
 
 	go models.DeleteExpiredSessions()
-
-	go func() {
-		err := http.ListenAndServe(":8080", lib.RedirectToHTTPS(http.DefaultServeMux))
-		if err != nil {
-			panic(err)
-		}
-	}()
 
 	log.Print("Server started and running on ")
 	log.Println(ADDRESS + PORT)

@@ -80,16 +80,15 @@ func Comment(res http.ResponseWriter, req *http.Request) {
 					return
 				}
 				postOwner, _ := models.UserRepo.GetUserByPostID(post.ID)
-				time := time.Now().Format("2006-01-02 15:04:05")
-				timeago := lib.TimeSinceCreation(time)
+				time := creationDate
+
 				notif := models.Notification{
 					ID:          u.String(),
 					AuthorID:    commentStruct.AuthorID,
 					PostID:      post.ID,
 					PostOwnerID: postOwner.ID,
 					Notif_type:  "Comment",
-					Time:        timeago,
-					Read: false,
+					Time:        time,
 				}
 				err = models.NotifRepo.CreateNotification(&notif)
 				if err != nil {
@@ -141,12 +140,15 @@ func EditCommentPage(res http.ResponseWriter, req *http.Request) {
 		if len(pathPart) == 3 && pathPart[1] == "edit-comment-page" && pathPart[2] != "" {
 			id := pathPart[2]
 			comment, err := models.CommentRepo.GetCommentByID(id)
-			if comment == nil {
+			if comment == nil || err != nil {
 				return
 			}
 			post, err := models.PostRepo.GetPostByID(comment.PostID)
-			nbrLike, err := models.ViewRepo.GetLikesByPost(post.ID)
-			nbrDislike, err := models.ViewRepo.GetDislikesByPost(post.ID)
+			nbrLike, err1 := models.ViewRepo.GetLikesByPost(post.ID)
+			nbrDislike, err2 := models.ViewRepo.GetDislikesByPost(post.ID)
+			if err != nil || err1 != nil || err2 != nil {
+				return
+			}
 			postCategories, err := models.PostCategoryRepo.GetCategoriesOfPost(post.ID)
 			post.Description = template.HTMLEscapeString(post.Description)
 			post.Title = template.HTMLEscapeString(post.Title)
@@ -177,7 +179,7 @@ func EditCommentPage(res http.ResponseWriter, req *http.Request) {
 				NbrLike:        nbrLike,
 				NbrDislike:     nbrDislike,
 				CategoriesPost: postCategories,
-				Allnotifs: notifications,
+				Allnotifs:      notifications,
 			}
 
 			lib.RenderPage(basePath, pagePath, userPageData, res)
