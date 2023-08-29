@@ -71,6 +71,7 @@ func LikePost(res http.ResponseWriter, req *http.Request) {
 					PostOwnerID: postOwner.ID,
 					Notif_type:  "like",
 					Time:        timeago,
+					Read: false,
 				}
 				err = models.NotifRepo.CreateNotification(&notif)
 				if err != nil {
@@ -95,6 +96,7 @@ func LikePost(res http.ResponseWriter, req *http.Request) {
 						PostOwnerID: postOwner.ID,
 						Notif_type:  "like",
 						Time:        timeago,
+						Read: false,
 					}
 					err = models.NotifRepo.CreateNotification(&notif)
 					if err != nil {
@@ -199,6 +201,7 @@ func DislikePost(res http.ResponseWriter, req *http.Request) {
 					PostOwnerID: postOwner.ID,
 					Notif_type:  "dislike",
 					Time:        timeago,
+					Read: false,
 				}
 				err = models.NotifRepo.CreateNotification(&notif)
 				if err != nil {
@@ -223,6 +226,7 @@ func DislikePost(res http.ResponseWriter, req *http.Request) {
 						PostOwnerID: postOwner.ID,
 						Notif_type:  "dislike",
 						Time:        timeago,
+						Read: false,
 					}
 					err = models.NotifRepo.CreateNotification(&notif)
 					if err != nil {

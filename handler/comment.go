@@ -89,6 +89,7 @@ func Comment(res http.ResponseWriter, req *http.Request) {
 					PostOwnerID: postOwner.ID,
 					Notif_type:  "Comment",
 					Time:        timeago,
+					Read: false,
 				}
 				err = models.NotifRepo.CreateNotification(&notif)
 				if err != nil {
@@ -162,6 +163,12 @@ func EditCommentPage(res http.ResponseWriter, req *http.Request) {
 				return
 			}
 
+			notifications, err := models.NotifRepo.GetAllNotifs()
+
+			if err != nil {
+				return
+			}
+
 			userPageData := PostPageData{
 				IsLoggedIn:     isSessionOpen,
 				CurrentUser:    *user,
@@ -170,6 +177,7 @@ func EditCommentPage(res http.ResponseWriter, req *http.Request) {
 				NbrLike:        nbrLike,
 				NbrDislike:     nbrDislike,
 				CategoriesPost: postCategories,
+				Allnotifs: notifications,
 			}
 
 			lib.RenderPage(basePath, pagePath, userPageData, res)
@@ -247,119 +255,3 @@ func DeleteComment(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 }
-
-// func EditComment(res http.ResponseWriter, req *http.Request) {
-// 	if lib.ValidateRequest(req, res, "/edit-comment/*", http.MethodPost) {
-// 		// Check if the user is logged in
-// 		currentUser := models.GetUserFromSession(req)
-// 		if currentUser == nil || currentUser.ID == "" {
-// 			http.Redirect(res, req, "/", http.StatusSeeOther)
-// 			return
-// 		}
-
-// 		err := req.ParseMultipartForm(32 << 20) // 32 MB limit
-// 		if err != nil {
-// 			log.Println("❌ Failed to parse form data", err.Error())
-// 			return
-// 		}
-
-// 		path := req.URL.Path
-// 		pathPart := strings.Split(path, "/")
-// 		if len(pathPart) == 3 && pathPart[1] == "edit-post" && pathPart[2] != "" {
-// 			idPost := pathPart[2]
-// 			post, err := models.PostRepo.GetPostByID(idPost)
-// 			if err != nil {
-// 				res.WriteHeader(http.StatusInternalServerError)
-// 				log.Println("❌ error DB")
-// 				return
-// 			}
-
-// 			// Update user information
-// 			title := req.FormValue("title")
-// 			description := req.FormValue("description")
-// 			_categories := req.FormValue("categories")
-// 			categories := strings.Split(_categories, "#")
-// 			isEdited := false
-// 			if title != "" && post.Title != title {
-// 				isEdited = true
-// 				post.Title = title
-// 				post.Slug = lib.Slugify(title)
-// 				post.ModifiedDate = time.Now().Format("2006-01-02 15:04:05")
-// 				log.Println("✅ Title changed successfully")
-// 			}
-// 			if description != "" && post.Description != description {
-// 				isEdited = true
-// 				post.Description = description
-// 				log.Println("✅ Description changed successfully")
-// 			}
-// 			imageURL := lib.UploadImage(req)
-// 			if imageURL != "" {
-// 				isEdited = true
-// 				post.ImageURL = imageURL
-// 				log.Println("✅ Image changed successfully")
-// 			}
-
-// 			// Update user information in the database
-
-// 			categoriesOfPost, err := models.PostCategoryRepo.GetCategoriesOfPost(idPost)
-// 			if err != nil {
-// 				log.Println("❌ Failed to update post information ", err.Error())
-// 				return
-// 			}
-
-// 			for i := 1; i < len(categories); i++ {
-// 				categories[i] = strings.TrimSpace(categories[i])
-// 				found := false
-// 				for _, cat := range categoriesOfPost {
-// 					if cat.Name == categories[i] {
-// 						found = true
-// 						break
-// 					}
-// 				}
-// 				if !found {
-// 					creationDate := time.Now().Format("2006-01-02 15:04:05")
-// 					modificationDate := time.Now().Format("2006-01-02 15:04:05")
-// 					category := &models.Category{
-// 						Name:         categories[i],
-// 						CreateDate:   creationDate,
-// 						ModifiedDate: modificationDate,
-// 					}
-// 					isEdited = true
-// 					models.CategoryRepo.CreateCategory(category)
-// 					models.PostCategoryRepo.CreatePostCategory(category.ID, post.ID)
-// 				}
-// 			}
-
-// 			for _, category := range categoriesOfPost {
-// 				found := false
-// 				for _, cat := range categories {
-// 					if category.Name == cat {
-// 						found = true
-// 						break
-// 					}
-// 				}
-// 				if !found {
-// 					isEdited = true
-// 					err = models.PostCategoryRepo.DeletePostCategory(category.ID, currentUser.ID)
-// 					if err != nil {
-// 						log.Println("❌ Failed to delete category post information ", err.Error())
-// 						return
-// 					}
-// 				}
-// 			}
-
-// 			if isEdited {
-// 				post.IsEdited = true
-// 				post.ModifiedDate = time.Now().Format("2006-01-02 15:04:05")
-// 				err = models.PostRepo.UpdatePost(post)
-// 				if err != nil {
-// 					log.Println("❌ Failed to update post information ", err.Error())
-// 					return
-// 				}
-// 			}
-
-// 			// Redirect to the user's profile page
-// 			http.Redirect(res, req, "/profile", http.StatusSeeOther)
-// 		}
-// 	}
-// }

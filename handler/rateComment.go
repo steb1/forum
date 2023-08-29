@@ -79,6 +79,7 @@ func LikeComment(res http.ResponseWriter, req *http.Request) {
 						PostOwnerID: postOwner.ID,
 						Notif_type:  "Comment_like",
 						Time:        lib.TimeSinceCreation(time),
+						Read: false,
 					}
 					err = models.NotifRepo.CreateNotification(&notif)
 					if err != nil {
@@ -198,6 +199,7 @@ func DislikeComment(res http.ResponseWriter, req *http.Request) {
 						PostOwnerID: postOwner.ID,
 						Notif_type:  "Comment_dislike",
 						Time:        timeago,
+						Read: false,
 					}
 					err = models.NotifRepo.CreateNotification(&notif)
 					if err != nil {

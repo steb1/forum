@@ -63,7 +63,7 @@ func HandleCallback(w http.ResponseWriter, r *http.Request) {
 
 	json.Unmarshal(respbody, &AccessToken)
 
-	//fmt.Println(AccessToken.AccessToken)
+	fmt.Println(AccessToken.AccessToken)
 
 	accessToken := AccessToken.AccessToken // Extract access token from response JSON
 
@@ -161,15 +161,19 @@ func getGoogleEmail(w http.ResponseWriter, r *http.Request, token string) string
 		return ""
 	}
 
-	email := ""
+	email := "@gmail.com"
 
-	emailAddresses := userData["emailAddresses"].([]interface{})
+	if userData == nil {
+		return ""
+	}
+
+	/* emailAddresses := userData["emailAddresses"].([]interface{})
 	if len(emailAddresses) > 0 {
 		email = emailAddresses[0].(map[string]interface{})["value"].(string)
 		fmt.Println("Adresse e-mail de l'utilisateur:", email)
 	} else {
 		fmt.Println("Aucune adresse e-mail trouvée.")
-	}
+	} */
 
 	return email
 }

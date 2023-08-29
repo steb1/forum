@@ -48,6 +48,12 @@ func GetPostOfCategory(res http.ResponseWriter, req *http.Request) {
 			if err != nil {
 				return
 			}
+
+			notifications, err := models.NotifRepo.GetAllNotifs()
+			if err != nil {
+				return
+			}
+
 			homePageData := ListPostsPageData{
 				Title:       "Category: " + name,
 				IsLoggedIn:  isSessionOpen,
@@ -57,6 +63,7 @@ func GetPostOfCategory(res http.ResponseWriter, req *http.Request) {
 				Limit:       limit,
 				Categories:  cat,
 				Allposts:    allPost,
+				Allnotifs: notifications,
 			}
 
 			lib.RenderPage(basePath, pagePath, homePageData, res)

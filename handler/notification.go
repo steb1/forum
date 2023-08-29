@@ -69,10 +69,20 @@ func GetNotifs(res http.ResponseWriter, req *http.Request) {
 				Posts:             posts,
 				Allposts:          allPost,
 				FormatedNotif:     FormatedNotif,
+				
 			}
 
 			lib.RenderPage(basePath, pagePath, notifpagedata, res)
 			log.Println("✅ Notification page get with success")
+			notifs, _ := models.NotifRepo.GetAllNotifsByUser(id)
+			notif := models.FormatNotifications(notifs)
+			log.Println("----------------------------------------------------------------------")
+			for _, val := range notif {
+				log.Println(val)
+				log.Println()
+				log.Println("----------------------------------------------------------------------")
+			}
+
 		}
 	}
 }

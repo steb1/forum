@@ -199,41 +199,45 @@
             background-color: #f4f4f4;
             border-radius: 30px;
         }
-        .modal {
-            /* ... Autres styles ... */
+        .modal2 {
             display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 9999999999999999999999999999;
+        }
+
+        .modal-content {
+            display: flex;
+            flex-direction: column;
             position: absolute;
-            width: 300px;
+            text-align: center;
+            align-items: center;
+            top: 40%;
+            left: 70%;
+            width: 400px;
+            height: 450px;
+            overflow-y: scroll;
+            transform: translate(-50%, -50%);
             background-color: white;
+            margin: 20px;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-            z-index: 3;
-        }
-
-        .modal.active {
-            display: block;
-        }
-
-        .notification-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .notification-list li {
-            margin-bottom: 10px;
-            position: relative;
-        }
-
-        .notification-list li i {
-            cursor: pointer;
         }
 
         .close-button {
-            /* ... Autres styles ... */
+            position: absolute;
             top: 10px;
-            right: 10px;
+            right: 15px;
+            font-size: 20px;
+            cursor: pointer;
         }
+
+        
     </style>
 </head>
 
@@ -267,12 +271,13 @@
                 </path>
             </svg>
         </a>
-        <a href="/notification/{{ .CurrentUser.ID }}" class="icon">
+        <a onclick="openModal1()" href="#" class="icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path
                     d="M20 17H22V19H2V17H4V10C4 5.58172 7.58172 2 12 2C16.4183 2 20 5.58172 20 10V17ZM9 21H15V23H9V21Z">
                 </path>
             </svg>
+            
         </a>
         <button onclick="openModal()">Upload</button>
         <a href="/profile">
@@ -284,9 +289,7 @@
                     d="M5 22C4.44772 22 4 21.5523 4 21V3C4 2.44772 4.44772 2 5 2H19C19.5523 2 20 2.44772 20 3V21C20 21.5523 19.5523 22 19 22H5ZM15 16L20 12L15 8V11H9V13H15V16Z"
                     fill="rgba(0,0,0,1)"></path>
             </svg>
-            <ul class="notification-list">
-                <li>Notification 1 <i class="fas fa-bell" onclick="openModal('modal1')"></i></li>
-            </ul>
+            
         </a>
         {{else}}
         <a href="/sign-in-page" class="btn alt">Sign In</a>
@@ -410,18 +413,44 @@
         </script>
     </aside>
     {{end}}
-    <div class="modal" id="modal1">
+    
+    {{template "content" .}}
+    <div class="modal2" id="notificationModal">
         <div class="modal-content">
-            <span class="close-button" onclick="closeModal('modal1')">&times;</span>
-            <h2>Notification 1</h2>
-            <p>Contenu de la première notification...</p>
+            <span class="close-button" onclick="closeModal1()">&times;</span>
+            <h2>Notification</h2> <br>
+            <p>Contenu de la notification...</p>
+            <p>Contenu de la notification...</p>
+            <p>Contenu de la notification...</p>
+            <p>Contenu de la notification...</p>
+            <p>Contenu de la notification...</p>
+            <p>Contenu de la notification...</p>
+            <p>Contenu de la notification...</p>
+            <p>Contenu de la notification...</p>
+            <p>Contenu de la notification...</p>
+            <p>Contenu de la notification...</p>
+            <p>Contenu de la notification...</p>
+            <p>Contenu de la notification...</p>
+            <p>Contenu de la notification...</p>
+            <p>Contenu de la notification...</p>
+            <p>Contenu de la notification...</p>
+            <p>Contenu de la notification...</p>
+            <p>Contenu de la notification...</p>
         </div>
     </div>
-    {{template "content" .}}
     <footer>
         Copyright make with <span class="heart">❤️</span> and ☕
     </footer>
     <script defer type="text/javascript">
+        const modal1 = document.getElementById("notificationModal");
+
+        function openModal1() {
+            modal1.style.display = "block";
+        }
+
+        function closeModal1() {
+            modal1.style.display = "none";
+        }
         const modal = document.getElementById('uploadModal');
         const aside = document.querySelector("aside");
         const body = document.querySelector("body");

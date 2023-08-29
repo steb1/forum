@@ -19,6 +19,7 @@ type UserPageData struct {
 	Categories     []*models.Category
 	Allposts       []*models.Post
 	PostsCommented map[models.Post][]models.Comment
+	Allnotifs []*models.Notification
 }
 
 func ProfilePage(res http.ResponseWriter, req *http.Request) {
@@ -97,6 +98,11 @@ func ProfilePage(res http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			return
 		}
+		notifications, err := models.NotifRepo.GetAllNotifs()
+
+			if err != nil {
+				return
+			}
 		userPageData := UserPageData{
 			IsLoggedIn:     isSessionOpen,
 			CurrentUser:    *user,
@@ -105,6 +111,7 @@ func ProfilePage(res http.ResponseWriter, req *http.Request) {
 			Categories:     cat,
 			Allposts:       allPost,
 			PostsCommented: commentMap,
+			Allnotifs: notifications,
 		}
 
 		lib.RenderPage(basePath, pagePath, userPageData, res)
@@ -140,11 +147,17 @@ func UserProfilePage(res http.ResponseWriter, req *http.Request) {
 					postsList[j].Title = template.HTMLEscapeString(postsList[j].Title)
 				}
 			}
+			notifications, err := models.NotifRepo.GetAllNotifs()
+
+			if err != nil {
+				return
+			}
 			userPageData := UserPageData{
 				IsLoggedIn:  isSessionOpen,
 				CurrentUser: *user,
 				Author:      *_user,
 				PostsList:   postsList,
+				Allnotifs: notifications,
 			}
 
 			lib.RenderPage(basePath, pagePath, userPageData, res)
@@ -252,11 +265,18 @@ func EditUserPage(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 
+		notifications, err := models.NotifRepo.GetAllNotifs()
+
+			if err != nil {
+				return
+			}
+
 		userPageData := UserPageData{
 			IsLoggedIn:  isSessionOpen,
 			CurrentUser: *user,
 			TabIndex:    TabIndex,
 			Categories:  cat,
+			Allnotifs: notifications,
 		}
 
 		lib.RenderPage(basePath, pagePath, userPageData, res)

@@ -19,6 +19,7 @@ type ListPostsPageData struct {
 	TopUsers      []models.TopUser
 	Categories    []*models.Category
 	Allposts      []*models.Post
+	Allnotifs []*models.Notification
 }
 
 func ListPost(res http.ResponseWriter, req *http.Request) {
@@ -76,6 +77,11 @@ func ListPost(res http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			return
 		}
+		notifications, err := models.NotifRepo.GetAllNotifs()
+		if err != nil {
+			return
+		}
+
 		homePageData := ListPostsPageData{
 			IsLoggedIn:    isSessionOpen,
 			CurrentUser:   *user,
@@ -85,8 +91,8 @@ func ListPost(res http.ResponseWriter, req *http.Request) {
 			Limit:         limit,
 			Categories:    cat,
 			Allposts:      allPost,
+			Allnotifs: notifications,
 		}
-
 		lib.RenderPage(basePath, pagePath, homePageData, res)
 		log.Println("✅ Home page get with success")
 	}
