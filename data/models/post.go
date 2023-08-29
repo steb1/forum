@@ -172,6 +172,55 @@ WHERE v.authorID = ?`, userId)
 	return posts, nil
 }
 
+func (pr *PostRepository) GetUserDislikedPosts(userId string) ([]PostItem, error) {
+	var posts []PostItem
+	rows, err := pr.db.Query(`SELECT
+    p.id AS ID,
+    p.title AS Title,
+    p.slug AS Slug,
+    u.username AS AuthorName,
+    p.imageURL AS ImageURL,
+    p.modifiedDate AS LastEditionDate,
+    COALESCE(cmt.comment_count, 0) AS NumberOfComments,
+    COALESCE(cmt.commentators, '') AS ListOfCommentator
+FROM "post" p
+LEFT JOIN "user" u ON p.authorID = u.id
+LEFT JOIN (
+    SELECT
+        c.postID,
+        COUNT(c.id) AS comment_count,
+        GROUP_CONCAT(u.username) AS commentators
+    FROM "comment" c
+    JOIN "user" u ON c.authorID = u.id
+    GROUP BY c.postID
+) cmt ON p.id = cmt.postID
+JOIN "view" v ON p.id = v.postID AND v.rate = '2'
+WHERE v.authorID = ?`, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var post PostItem
+		var commentators string
+		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.AuthorName, &post.ImageURL, &post.LastEditionDate, &post.NumberOfComments, &commentators)
+		if err != nil {
+			return nil, err
+		}
+		post.LastEditionDate = strings.ReplaceAll(post.LastEditionDate, "T", " ")
+		post.LastEditionDate = lib.TimeSinceCreation(strings.ReplaceAll(post.LastEditionDate, "Z", ""))
+		post.ListOfCommentator = strings.Split(commentators, ",")
+		posts = append(posts, post)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return posts, nil
+}
+
 func (pr *PostRepository) GetUserBookmarkedPosts(userId string) ([]PostItem, error) {
 	var posts []PostItem
 	rows, err := pr.db.Query(`SELECT
@@ -292,7 +341,7 @@ func (pr *PostRepository) GetUserReaction(userID string) (map[Post][]Comment, er
 			return nil, err
 		}
 		pos, err := UserRepo.GetUserByID(post.AuthorID)
-		if err!=nil {
+		if err != nil {
 			return nil, err
 		}
 		post.AuthorID = pos.Username
@@ -398,10 +447,10 @@ func (pr *PostRepository) DeletePost(postID string) error {
 	_, err := pr.db.Exec("DELETE FROM post WHERE id = ?", postID)
 	return err
 }
-func (pr *PostRepository) GetPostByCommentID(CommentID string) (*Post, error){
-	Comment,err := CommentRepo.GetCommentByID(CommentID)
+func (pr *PostRepository) GetPostByCommentID(CommentID string) (*Post, error) {
+	Comment, err := CommentRepo.GetCommentByID(CommentID)
 	if err != nil {
 		return nil, err
 	}
- 	return pr.GetPostByID(Comment.PostID)
+	return pr.GetPostByID(Comment.PostID)
 }

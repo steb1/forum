@@ -22,9 +22,7 @@ func Bookmark(res http.ResponseWriter, req *http.Request) {
 		pathPart := strings.Split(path, "/")
 		if len(pathPart) == 3 && pathPart[1] == "bookmark" && pathPart[2] != "" {
 			slug := pathPart[2]
-			fmt.Println("Slug", slug)
-
-			post, err := models.PostRepo.GetPostBySlug(slug)			
+			post, err := models.PostRepo.GetPostBySlug(slug)
 
 			if post == nil {
 				res.WriteHeader(http.StatusNotFound)
@@ -37,8 +35,6 @@ func Bookmark(res http.ResponseWriter, req *http.Request) {
 				log.Println("❌ error DB...")
 				return
 			}
-
-			fmt.Println("Post", post.ID, post.AuthorID)
 
 			user := models.GetUserFromSession(req)
 			if user == nil {
@@ -54,7 +50,7 @@ func Bookmark(res http.ResponseWriter, req *http.Request) {
 			if view == nil {
 				u, _ := uuid.NewV4()
 				NewView := models.View{
-					ID: u.String(),
+					ID:           u.String(),
 					IsBookmarked: true,
 					Rate:         0,
 					AuthorID:     user.ID,
@@ -98,7 +94,7 @@ func Bookmark(res http.ResponseWriter, req *http.Request) {
 					}
 					lib.RedirectToPreviousURL(res, req)
 				}
-				
+
 			}
 		}
 		lib.RedirectToPreviousURL(res, req)

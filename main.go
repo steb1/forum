@@ -13,6 +13,11 @@ import (
 )
 
 func main() {
+	// cmd := exec.Command("./init.sh")
+	// cmd.Stdout = os.Stdout
+	// cmd.Stderr = os.Stderr
+	// cmd.Run()
+	
 	PORT := ":" + os.Getenv("PORT")
 	ADDRESS := os.Getenv("ADDRESS")
 
@@ -35,6 +40,7 @@ func main() {
 	http.Handle("/bookmark/", rateLimiter.Wrap(handler.Bookmark))
 
 	http.Handle("/profile", rateLimiter.Wrap(handler.ProfilePage))
+	http.Handle("/request/", rateLimiter.Wrap(handler.CreateRequest))
 	http.Handle("/edit-user", rateLimiter.Wrap(handler.EditUser))
 	http.Handle("/edit-user-page", rateLimiter.Wrap(handler.EditUserPage))
 

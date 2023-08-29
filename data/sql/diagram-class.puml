@@ -91,6 +91,7 @@ frame "cl: Class Diagram - User" {
         AuthorID: VARCHAR
         PostID: VARCHAR
         PostOwnerID VARCHAR
+        Read BOOLEAN
         Notif_type VARCHAR
         Time VARCHAR
     }
