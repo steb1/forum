@@ -41,8 +41,6 @@ func RedirectToPreviousURL(res http.ResponseWriter, req *http.Request) {
 	// Get the Referer header from the request
 	previousPage := req.Header.Get("Referer")
 
-	fmt.Println(previousPage)
-
 	// Perform the redirection
 	http.Redirect(res, req, previousPage, http.StatusSeeOther)
 }
@@ -177,8 +175,12 @@ func TimeSinceCreation(creationDate string) string {
 	currentTime := time.Now()
 	elapsedTime := currentTime.Sub(creationTime)
 
-	if elapsedTime < time.Hour {
-		return "Recently"
+	if elapsedTime < time.Hour/60 {
+		secondes := int(elapsedTime.Hours()* 60 *60)
+		return fmt.Sprintf("%d seconde%s ago", secondes, pluralize(secondes))
+	}else if elapsedTime < time.Hour {
+		minutes := int(elapsedTime.Hours()* 60)
+		return fmt.Sprintf("%d minute%s ago", minutes, pluralize(minutes))
 	} else if elapsedTime < 24*time.Hour {
 		hours := int(elapsedTime.Hours())
 		return fmt.Sprintf("%d hour%s ago", hours, pluralize(hours))

@@ -13,6 +13,11 @@ import (
 )
 
 func main() {
+	// cmd := exec.Command("./init.sh")
+	// cmd.Stdout = os.Stdout
+	// cmd.Stderr = os.Stderr
+	// cmd.Run()
+	
 	PORT := ":" + os.Getenv("PORT")
 	ADDRESS := os.Getenv("ADDRESS")
 

@@ -63,15 +63,13 @@ func LikePost(res http.ResponseWriter, req *http.Request) {
 				}
 				postOwner, _ := models.UserRepo.GetUserByPostID(post.ID)
 				time := time.Now().Format("2006-01-02 15:04:05")
-				timeago := lib.TimeSinceCreation(time)
 				notif := models.Notification{
 					ID:          u.String(),
 					AuthorID:    user.ID,
 					PostID:      post.ID,
 					PostOwnerID: postOwner.ID,
 					Notif_type:  "like",
-					Time:        timeago,
-					Read: false,
+					Time:        time,
 				}
 				err = models.NotifRepo.CreateNotification(&notif)
 				if err != nil {
@@ -88,15 +86,13 @@ func LikePost(res http.ResponseWriter, req *http.Request) {
 					}
 					postOwner, _ := models.UserRepo.GetUserByPostID(post.ID)
 					time := time.Now().Format("2006-01-02 15:04:05")
-					timeago := lib.TimeSinceCreation(time)
 					notif := models.Notification{
 						ID:          u.String(),
 						AuthorID:    user.ID,
 						PostID:      post.ID,
 						PostOwnerID: postOwner.ID,
 						Notif_type:  "like",
-						Time:        timeago,
-						Read: false,
+						Time:        time,
 					}
 					err = models.NotifRepo.CreateNotification(&notif)
 					if err != nil {
@@ -193,15 +189,13 @@ func DislikePost(res http.ResponseWriter, req *http.Request) {
 				}
 				postOwner, _ := models.UserRepo.GetUserByPostID(post.ID)
 				time := time.Now().Format("2006-01-02 15:04:05")
-				timeago := lib.TimeSinceCreation(time)
 				notif := models.Notification{
 					ID:          u.String(),
 					AuthorID:    user.ID,
 					PostID:      post.ID,
 					PostOwnerID: postOwner.ID,
 					Notif_type:  "dislike",
-					Time:        timeago,
-					Read: false,
+					Time:        time,
 				}
 				err = models.NotifRepo.CreateNotification(&notif)
 				if err != nil {
@@ -218,15 +212,13 @@ func DislikePost(res http.ResponseWriter, req *http.Request) {
 					}
 					postOwner, _ := models.UserRepo.GetUserByPostID(post.ID)
 					time := time.Now().Format("2006-01-02 15:04:05")
-					timeago := lib.TimeSinceCreation(time)
 					notif := models.Notification{
 						ID:          u.String(),
 						AuthorID:    user.ID,
 						PostID:      post.ID,
 						PostOwnerID: postOwner.ID,
 						Notif_type:  "dislike",
-						Time:        timeago,
-						Read: false,
+						Time:        time,
 					}
 					err = models.NotifRepo.CreateNotification(&notif)
 					if err != nil {
