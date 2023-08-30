@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS "notification" (
     authorID VARCHAR,
     author_name VARCHAR,
     postID VARCHAR,
-    owner_name VARCHAR,
+    ownerID VARCHAR,
     notif_type VARCHAR,
     slug VARCHAR,
     time VARCHAR,

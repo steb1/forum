@@ -87,7 +87,7 @@ func Comment(res http.ResponseWriter, req *http.Request) {
 					AuthorID:   Author.ID,
 					AuthorName: Author.Username,
 					PostID:     post.ID,
-					OwnerName:  postOwner.Username,
+					OwnerID:    postOwner.ID,
 					Notif_type: "have commented (" + commentStruct.Text + ") your post",
 					Slug:       post.Slug,
 					Time:       lib.FormatDate(time),

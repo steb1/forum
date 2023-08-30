@@ -21,7 +21,7 @@ type Notification struct {
 	AuthorID   string
 	AuthorName string
 	PostID     string
-	OwnerName  string
+	OwnerID  string
 	Notif_type string
 	Slug       string
 	Time       string
@@ -30,8 +30,8 @@ type Notification struct {
 
 func (nr *NotificationRepository) GetNotificationByID(NotificationID string) (*Notification, error) {
 	var notification Notification
-	row := nr.db.QueryRow("SELECT id, authorID,author_name, postID, owner_name, notif_type, slug, time, readed FROM notification WHERE id = ?", NotificationID)
-	err := row.Scan(&notification.ID, &notification.AuthorID, &notification.AuthorName, &notification.PostID, &notification.OwnerName, &notification.Notif_type, &notification.Slug, &notification.Time, &notification.Read)
+	row := nr.db.QueryRow("SELECT id, authorID,author_name, postID, ownerID, notif_type, slug, time, readed FROM notification WHERE id = ?", NotificationID)
+	err := row.Scan(&notification.ID, &notification.AuthorID, &notification.AuthorName, &notification.PostID, &notification.OwnerID, &notification.Notif_type, &notification.Slug, &notification.Time, &notification.Read)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil // Post not found
@@ -43,7 +43,7 @@ func (nr *NotificationRepository) GetNotificationByID(NotificationID string) (*N
 
 func (nr *NotificationRepository) GetAllNotifs() ([]*Notification, error) {
 	var notifications []*Notification
-	rows, err := nr.db.Query("SELECT id, authorID,author_name, postID, owner_name, notif_type, slug, time, readed FROM notification")
+	rows, err := nr.db.Query("SELECT id, authorID,author_name, postID, ownerID, notif_type, slug, time, readed FROM notification")
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil // Post not found
@@ -52,7 +52,7 @@ func (nr *NotificationRepository) GetAllNotifs() ([]*Notification, error) {
 	}
 	for rows.Next() {
 		var notif Notification
-		err := rows.Scan(&notif.ID, &notif.AuthorID, &notif.AuthorName, &notif.PostID, &notif.OwnerName, &notif.Notif_type, &notif.Slug, &notif.Time, &notif.Read)
+		err := rows.Scan(&notif.ID, &notif.AuthorID, &notif.AuthorName, &notif.PostID, &notif.OwnerID, &notif.Notif_type, &notif.Slug, &notif.Time, &notif.Read)
 		if err != nil {
 			fmt.Println("2", err)
 			return nil, err
@@ -64,7 +64,7 @@ func (nr *NotificationRepository) GetAllNotifs() ([]*Notification, error) {
 
 func (nr *NotificationRepository) GetAllNotifsByUser(userID string) ([]Notification, error) {
 	var notifications []Notification
-	rows, err := nr.db.Query("SELECT n.id, n.authorID,n.author_name, n.postID, n.owner_name, n.notif_type, slug, n.time, n.readed FROM notification n JOIN user u ON n.authorid=u.id JOIN post p ON n.postid=p.id WHERE n.postownerid = ?", userID)
+	rows, err := nr.db.Query("SELECT n.id, n.authorID,n.author_name, n.postID, n.ownerID, n.notif_type, n.slug, n.time, n.readed FROM notification n JOIN user u ON n.authorid=u.id JOIN post p ON n.postid=p.id WHERE n.postownerid = ?", userID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -74,7 +74,7 @@ func (nr *NotificationRepository) GetAllNotifsByUser(userID string) ([]Notificat
 	}
 	for rows.Next() {
 		var notif Notification
-		err := rows.Scan(&notif.ID, &notif.AuthorID,&notif.AuthorName, &notif.PostID, &notif.OwnerName, &notif.Notif_type, &notif.Slug, &notif.Time, &notif.Read)
+		err := rows.Scan(&notif.ID, &notif.AuthorID, &notif.AuthorName, &notif.PostID, &notif.OwnerID, &notif.Notif_type, &notif.Slug, &notif.Time, &notif.Read)
 		if err != nil {
 			return nil, err
 		}
@@ -87,8 +87,8 @@ func (nr *NotificationRepository) GetAllNotifsByUser(userID string) ([]Notificat
 
 func (nr *NotificationRepository) CreateNotification(notification *Notification) error {
 
-	_, err := nr.db.Exec("INSERT INTO notification (id,authorID, author_name, postID, owner_name, notif_type, slug, time, readed) VALUES (? ,?,? , ?, ?, ?, ?, ?, ?)",
-		notification.ID, notification.AuthorID, notification.AuthorName, notification.PostID, notification.OwnerName, notification.Notif_type, notification.Slug, notification.Time, notification.Read)
+	_, err := nr.db.Exec("INSERT INTO notification (id,authorID, author_name, postID, ownerID, notif_type, slug, time, readed) VALUES (? ,?,? , ?, ?, ?, ?, ?, ?)",
+		notification.ID, notification.AuthorID, notification.AuthorName, notification.PostID, notification.OwnerID, notification.Notif_type, notification.Slug, notification.Time, notification.Read)
 	return err
 }
 func FormatNotifications(Notifications []Notification) []string {

@@ -455,7 +455,7 @@
             <span class="close-button" onclick="closeModal1()">&times;</span>
             <h2>Notification</h2> <br>
             {{range .Allnotifs}}
-            {{if ne .AuthorName .OwnerName}}
+            {{if eq $.CurrentUser.ID .OwnerID}}
             <div id="notif">
                 {{.AuthorName}} {{.Notif_type}} : <a href="/posts/{{.Slug}}">  {{.Slug}} </a> 
             </div>
