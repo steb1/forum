@@ -33,6 +33,7 @@ type Post struct {
 	IsEdited     bool
 	CreateDate   string
 	ModifiedDate string
+	Validate bool
 }
 
 type PostRepository struct {
@@ -52,16 +53,16 @@ func (pr *PostRepository) CreatePost(post *Post) error {
 		log.Fatalf("❌ Failed to generate UUID: %v", err)
 	}
 	post.ID = ID.String()
-	_, err = pr.db.Exec("INSERT INTO post (id, title, slug, description, imageURL, authorID, isEdited, createDate, modifiedDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-		post.ID, post.Title, post.Slug, post.Description, post.ImageURL, post.AuthorID, post.IsEdited, post.CreateDate, post.ModifiedDate)
+	_, err = pr.db.Exec("INSERT INTO post (id, title, slug, description, imageURL, authorID, isEdited, createDate, modifiedDate, validate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+		post.ID, post.Title, post.Slug, post.Description, post.ImageURL, post.AuthorID, post.IsEdited, post.CreateDate, post.ModifiedDate, post.Validate)
 	return err
 }
 
 // Get a post by ID from the database
 func (pr *PostRepository) GetPostByID(postID string) (*Post, error) {
 	var post Post
-	row := pr.db.QueryRow("SELECT id, title, slug, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post WHERE id = ?", postID)
-	err := row.Scan(&post.ID, &post.Title, &post.Slug, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate)
+	row := pr.db.QueryRow("SELECT id, title, slug, description, imageURL, authorID, isEdited, createDate, modifiedDate, validate FROM post WHERE id = ? AND validate = true", postID)
+	err := row.Scan(&post.ID, &post.Title, &post.Slug, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate, &post.Validate)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil // Post not found
@@ -76,10 +77,11 @@ func (pr *PostRepository) GetUserOwnPosts(userId, userName string) ([]PostItem, 
 	var numberComments []int
 
 	rows, err := pr.db.Query(`
-	SELECT p.id AS id, title, slug, description, imageURL, p.authorID AS authorID, isEdited, p.createDate AS createDate, p.modifiedDate AS modifiedDate, COUNT(*) AS numberComment FROM post p
-LEFT JOIN comment c ON c.postID = p.ID
-WHERE p.authorID = ?
-GROUP BY p.ID ;
+	SELECT p.id AS id, title, slug, description, imageURL, p.authorID AS authorID, isEdited, p.createDate AS createDate, p.validate AS validate , p.modifiedDate AS modifiedDate, COUNT(*) AS numberComment FROM post p
+	LEFT JOIN comment c ON c.postID = p.ID
+	WHERE p.authorID = ? 
+	AND p.validate = true
+	GROUP BY p.ID ;
 	`, userId)
 	if err != nil {
 		return nil, err
@@ -89,7 +91,7 @@ GROUP BY p.ID ;
 	for rows.Next() {
 		var post Post
 		var nbComment int
-		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate, &nbComment)
+		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.Validate ,&post.ModifiedDate, &nbComment)
 		if err != nil {
 			return nil, err
 		}
@@ -289,13 +291,13 @@ func (pr *PostRepository) GetAllPosts(more string) ([]*Post, error) {
 	var posts []*Post
 	requete := ""
 	if more == "" {
-		requete = "SELECT id, title, slug, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post"
+		requete = "SELECT id, title, slug, description, imageURL, authorID, isEdited, createDate, modifiedDate, validate FROM post WHERE validate = true"
 	} else {
 		_, err := strconv.Atoi(more)
 		if err != nil {
 			return nil, err
 		}
-		requete = "SELECT id, title, slug, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post LIMIT ?" + more
+		requete = "SELECT id, title, slug, description, imageURL, authorID, isEdited, createDate, modifiedDate, validate FROM post WHERE validate = true LIMIT ?" + more
 	}
 
 	rows, err := pr.db.Query(requete)
@@ -306,7 +308,7 @@ func (pr *PostRepository) GetAllPosts(more string) ([]*Post, error) {
 
 	for rows.Next() {
 		var post Post
-		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate)
+		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate, &post.Validate)
 		if err != nil {
 			return nil, err
 		}
@@ -364,7 +366,7 @@ func (pr *PostRepository) GetUserReaction(userID string) (map[Post][]Comment, er
 func (pr *PostRepository) GetAllPostsItems(morePost int) ([]PostItem, error) {
 	var posts []*Post
 
-	rows, err := pr.db.Query("SELECT id, title, slug, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post ORDER BY createDate DESC LIMIT ?", morePost)
+	rows, err := pr.db.Query("SELECT id, title, slug, description, imageURL, authorID, isEdited, createDate, modifiedDate, validate FROM post WHERE validate = true ORDER BY createDate DESC LIMIT ?", morePost)
 	if err != nil {
 		return nil, err
 	}
@@ -372,7 +374,7 @@ func (pr *PostRepository) GetAllPostsItems(morePost int) ([]PostItem, error) {
 
 	for rows.Next() {
 		var post Post
-		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate)
+		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate, &post.Validate)
 		if err != nil {
 			return nil, err
 		}
@@ -427,7 +429,7 @@ func (pr *PostRepository) GetAllPostsItems(morePost int) ([]PostItem, error) {
 func (pr *PostRepository) GetNumberOfPosts() int {
 	var numberOfPosts int
 
-	row := pr.db.QueryRow("SELECT COUNT(*) FROM post")
+	row := pr.db.QueryRow("SELECT COUNT(*) FROM post WHERE validate = true")
 	err := row.Scan(&numberOfPosts)
 	if err != nil {
 		return 0
@@ -437,8 +439,8 @@ func (pr *PostRepository) GetNumberOfPosts() int {
 
 // Update a post in the database
 func (pr *PostRepository) UpdatePost(post *Post) error {
-	_, err := pr.db.Exec("UPDATE post SET title = ?, slug = ?, description = ?, imageURL = ?, authorID = ?, isEdited = ?, createDate = ?, modifiedDate = ? WHERE id = ?",
-		post.Title, post.Slug, post.Description, post.ImageURL, post.AuthorID, post.IsEdited, post.CreateDate, post.ModifiedDate, post.ID)
+	_, err := pr.db.Exec("UPDATE post SET title = ?, slug = ?, description = ?, imageURL = ?, authorID = ?, isEdited = ?, createDate = ?, modifiedDate = ?, validate = ? WHERE id = ?",
+		post.Title, post.Slug, post.Description, post.ImageURL, post.AuthorID, post.IsEdited, post.CreateDate, post.ModifiedDate, post.ID, post.Validate)
 	return err
 }
 

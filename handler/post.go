@@ -71,6 +71,7 @@ func CreatePost(res http.ResponseWriter, req *http.Request) {
 				IsEdited:     false,
 				CreateDate:   creationDate,
 				ModifiedDate: modificationDate,
+				Validate: false,
 			}
 
 			err = models.PostRepo.CreatePost(&post)

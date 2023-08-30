@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS "post" (
     isEdited BOOLEAN,
     createDate DATE,
     modifiedDate DATE,
+    validate BOOLEAN,
     FOREIGN KEY (authorID) REFERENCES user(id)
 );
 
