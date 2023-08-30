@@ -21,7 +21,7 @@ type Notification struct {
 	AuthorID   string
 	AuthorName string
 	PostID     string
-	OwnerID  string
+	OwnerID    string
 	Notif_type string
 	Slug       string
 	Time       string

