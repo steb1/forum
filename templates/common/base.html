@@ -246,14 +246,18 @@
             background-color: #ececf8;
             margin: 5px;
             text-align: center;
-            font-size: 20px;
-            padding : 5px;
+            font-size: 12px;
+            padding-left : 5%;
+            padding-right: 5%;
             color: #0d0f21;
             font-family: Verdana, Geneva, Tahoma, sans-serif;
         }
 
         #notif a {
             font-style: none;
+        }
+        #time {
+            font-size: 12px;
         }
 
 
@@ -444,9 +448,8 @@
             {{if ne .AuthorName .OwnerName}}
             <div id="notif">
                 {{.AuthorName}} {{.Notif_type}} : <a href="/posts/{{.Slug}}">  {{.Slug}} </a> 
-                {{.Time}}
-
             </div>
+            <p id="time"> {{.Time}}</p>
             {{end}}
             {{end}}
         </div>
