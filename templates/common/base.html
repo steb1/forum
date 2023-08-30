@@ -456,10 +456,12 @@
             <h2>Notification</h2> <br>
             {{range .Allnotifs}}
             {{if eq $.CurrentUser.ID .OwnerID}}
+            {{if ne $.CurrentUser.ID .AuthorID}}
             <div id="notif">
-                {{.AuthorName}} {{.Notif_type}} : <a href="/posts/{{.Slug}}">  {{.Slug}} </a> 
+                {{.AuthorName}} {{.Notif_type}} : <a href="/posts/{{.Slug}}">  {{.Slug}} </a>   
             </div>
             <p id="time"> {{.Time}}</p>
+            {{end}}
             {{end}}
             {{end}}
         </div>

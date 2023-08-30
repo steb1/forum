@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"forum/data/models"
 	"forum/lib"
 	"log"
@@ -41,7 +40,6 @@ func Bookmark(res http.ResponseWriter, req *http.Request) {
 				return
 			}
 			view, err := models.ViewRepo.GetViewByAuthorIDandPostID(user.ID, post.ID)
-			fmt.Println("View : ", view)
 			if err != nil {
 				res.WriteHeader(http.StatusInternalServerError)
 				log.Println("❌ error Reading from View")

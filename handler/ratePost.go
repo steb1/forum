@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"forum/data/models"
 	"forum/lib"
 	"log"
@@ -99,7 +98,6 @@ func LikePost(res http.ResponseWriter, req *http.Request) {
 						Slug:       post.Slug,
 						Time:       lib.FormatDate(time),
 					}
-					fmt.Println(notif.Time)
 					err = models.NotifRepo.CreateNotification(&notif)
 					if err != nil {
 						res.WriteHeader(http.StatusInternalServerError)
