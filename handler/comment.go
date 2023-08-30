@@ -88,9 +88,9 @@ func Comment(res http.ResponseWriter, req *http.Request) {
 					AuthorName: Author.Username,
 					PostID:     post.ID,
 					OwnerName:  postOwner.Username,
-					Notif_type: "a commente votre post",
+					Notif_type: "have commented (" + commentStruct.Text + ") your post",
 					Slug:       post.Slug,
-					Time:       time,
+					Time:       lib.FormatDate(time),
 				}
 				err = models.NotifRepo.CreateNotification(&notif)
 				if err != nil {

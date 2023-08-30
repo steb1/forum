@@ -70,9 +70,9 @@ func LikePost(res http.ResponseWriter, req *http.Request) {
 					AuthorName: user.Username,
 					PostID:     post.ID,
 					OwnerName:  postOwner.Username,
-					Notif_type: "a like ❤️ votre post",
+					Notif_type: "has liked ❤️ your post",
 					Slug:       post.Slug,
-					Time:       lib.FormatDateDB(time),
+					Time:      lib.FormatDate(time),
 				}
 				err = models.NotifRepo.CreateNotification(&notif)
 				if err != nil {
@@ -95,9 +95,9 @@ func LikePost(res http.ResponseWriter, req *http.Request) {
 						AuthorName: user.Username,
 						PostID:     post.ID,
 						OwnerName:  postOwner.Username,
-						Notif_type: "a like ❤️ votre post",
+						Notif_type: "has liked ❤️ your post",
 						Slug:       post.Slug,
-						Time:       time,
+						Time:       lib.FormatDate(time),
 					}
 					fmt.Println(notif.Time)
 					err = models.NotifRepo.CreateNotification(&notif)
@@ -201,9 +201,9 @@ func DislikePost(res http.ResponseWriter, req *http.Request) {
 					AuthorName: user.Username,
 					PostID:     post.ID,
 					OwnerName:  postOwner.Username,
-					Notif_type: "a dislike 👎 votre post",
+					Notif_type: "has disliked 👎 your post",
 					Slug:       post.Slug,
-					Time:       time,
+					Time:       lib.FormatDate(time),
 				}
 				err = models.NotifRepo.CreateNotification(&notif)
 				if err != nil {
@@ -226,9 +226,9 @@ func DislikePost(res http.ResponseWriter, req *http.Request) {
 						AuthorName: user.Username,
 						PostID:     post.ID,
 						OwnerName:  postOwner.Username,
-						Notif_type: "a dislike 👎 votre post",
+						Notif_type: "has disliked 👎 your post",
 						Slug:       post.Slug,
-						Time:       time,
+						Time:       lib.FormatDate(time),
 					}
 					err = models.NotifRepo.CreateNotification(&notif)
 					if err != nil {

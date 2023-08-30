@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS "notification" (
     owner_name VARCHAR,
     notif_type VARCHAR,
     slug VARCHAR,
-    time DATE,
+    time VARCHAR,
     Readed BOOLEAN,
     FOREIGN KEY (postID) REFERENCES post(id)
 );
