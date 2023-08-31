@@ -157,6 +157,9 @@ func DislikePost(res http.ResponseWriter, req *http.Request) {
 			slug := pathPart[2]
 			post, err := models.PostRepo.GetPostBySlug(slug)
 			if post == nil {
+				res.WriteHeader(http.StatusNotFound)
+				lib.RenderPage("base", "", nil, res)
+				log.Println("404 ❌ - Page not found ", req.URL.Path)
 				return
 			}
 			if err != nil {
@@ -166,6 +169,9 @@ func DislikePost(res http.ResponseWriter, req *http.Request) {
 			}
 			user := models.GetUserFromSession(req)
 			if user == nil {
+				res.WriteHeader(http.StatusNotFound)
+				lib.RenderPage("base", "", nil, res)
+				log.Println("404 ❌ - Page not found ", req.URL.Path)
 				return
 			}
 			view, err := models.ViewRepo.GetViewByAuthorIDandPostID(user.ID, post.ID)

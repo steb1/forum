@@ -52,6 +52,20 @@ func (rr *RequestRepository) GetRequestByID(requestID string) (*Request, error) 
 	return &request, nil
 }
 
+// Get a report by ID from the database
+func (rr *RequestRepository) GetRequestByUser(userID string) (*Request, error) {
+	var request Request
+	row := rr.db.QueryRow("SELECT id, authorID, time, username, imageurl FROM request WHERE authorID = ?", userID)
+	err := row.Scan(&request.ID, &request.AuthorID, &request.Time, &request.Username, &request.ImageURL)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil // Report not found
+		}
+		return nil, err
+	}
+	return &request, nil
+}
+
 // Select All Requestss
 func (rr *RequestRepository) GetAllRequest() ([]Request, error) {
 	var request []Request

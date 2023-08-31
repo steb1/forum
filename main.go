@@ -62,6 +62,8 @@ func main() {
 	http.Handle("/dislike-comment/", rateLimiter.Wrap(handler.DislikeComment))
 	http.Handle("/category/", rateLimiter.Wrap(handler.GetPostOfCategory))
 	http.Handle("/notification/", rateLimiter.Wrap(handler.GetNotifs))
+	http.Handle("/validate/", rateLimiter.Wrap(handler.Validate))
+	http.Handle("/invalidate/", rateLimiter.Wrap(handler.GetNotifs))
 
 	httpsServer := http.Server{
 		Addr: PORT,
