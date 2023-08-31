@@ -14,6 +14,7 @@ type Request struct {
 	Time     string
 	Username string
 	ImageURL string
+	Role     ROLE
 }
 
 type RequestRepository struct {
@@ -33,16 +34,16 @@ func (rr *RequestRepository) CreateRequest(request *Request) error {
 		log.Fatalf("❌ Failed to generate UUID: %v", err)
 	}
 	request.ID = ID.String()
-	_, err = rr.db.Exec("INSERT INTO request (id, authorID, time, username, imageurl) VALUES (?, ?, ?, ?, ?)",
-		request.ID, request.AuthorID, request.Time, request.Username, request.ImageURL)
+	_, err = rr.db.Exec("INSERT INTO request (id, authorID, time, username, imageurl, role) VALUES (?, ?, ?, ?, ?, ?)",
+		request.ID, request.AuthorID, request.Time, request.Username, request.ImageURL, request.Role)
 	return err
 }
 
 // Get a report by ID from the database
 func (rr *RequestRepository) GetRequestByID(requestID string) (*Request, error) {
 	var request Request
-	row := rr.db.QueryRow("SELECT id, authorID, time, username, imageurl FROM request WHERE id = ?", requestID)
-	err := row.Scan(&request.ID, &request.AuthorID, &request.Time, &request.Username, &request.ImageURL)
+	row := rr.db.QueryRow("SELECT id, authorID, time, username, imageurl, role FROM request WHERE id = ?", requestID)
+	err := row.Scan(&request.ID, &request.AuthorID, &request.Time, &request.Username, &request.ImageURL, &request.Role)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil // Report not found
@@ -55,8 +56,8 @@ func (rr *RequestRepository) GetRequestByID(requestID string) (*Request, error) 
 // Get a report by ID from the database
 func (rr *RequestRepository) GetRequestByUser(userID string) (*Request, error) {
 	var request Request
-	row := rr.db.QueryRow("SELECT id, authorID, time, username, imageurl FROM request WHERE authorID = ?", userID)
-	err := row.Scan(&request.ID, &request.AuthorID, &request.Time, &request.Username, &request.ImageURL)
+	row := rr.db.QueryRow("SELECT id, authorID, time, username, imageurl, role FROM request WHERE authorID = ?", userID)
+	err := row.Scan(&request.ID, &request.AuthorID, &request.Time, &request.Username, &request.ImageURL, &request.Role)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil // Report not found
@@ -79,8 +80,9 @@ func (rr *RequestRepository) GetAllRequest() ([]Request, error) {
 		var Time string
 		var Username string
 		var ImageURL string
+		var Role ROLE
 
-		err = row.Scan(&ID, &AuthorID, &Time, &Username, &ImageURL)
+		err = row.Scan(&ID, &AuthorID, &Time, &Username, &ImageURL, &Role)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -91,6 +93,7 @@ func (rr *RequestRepository) GetAllRequest() ([]Request, error) {
 			Time:     Time,
 			Username: Username,
 			ImageURL: ImageURL,
+			Role:     Role,
 		}
 
 		request = append(request, tab)

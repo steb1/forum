@@ -119,5 +119,6 @@ CREATE TABLE IF NOT EXISTS "request"(
     time DATE,
     username VARCHAR,
     imageurl VARCHAR,
+    role VARCHAR,
     FOREIGN KEY (authorID) REFERENCES user(id)
 );

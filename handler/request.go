@@ -24,6 +24,7 @@ func CreateRequest(res http.ResponseWriter, req *http.Request) {
 				Time:     time.Now().Format("2006-01-02 15:04:05"),
 				Username: user.Username,
 				ImageURL: user.AvatarURL,
+				Role:     user.Role,
 			}
 			models.RequestRepo.CreateRequest(&request)
 			log.Println("✅ Request success")

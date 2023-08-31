@@ -84,17 +84,6 @@ func Validate(res http.ResponseWriter, req *http.Request) {
 				log.Println("❌ error Update user")
 				return
 			}
-			request, err := models.RequestRepo.GetRequestByUser(user.ID)
-			if request == nil {
-				res.WriteHeader(http.StatusNotFound)
-				lib.RenderPage("base", "", nil, res)
-				log.Println("404 ❌ - Page not found ", req.URL.Path)
-				return
-			}
-			if err != nil {
-				return
-			}
-			models.RequestRepo.DeleteRequest(request.ID)
 			lib.RedirectToPreviousURL(res, req)
 		} else {
 			res.WriteHeader(http.StatusNotFound)
