@@ -63,7 +63,7 @@ func main() {
 	http.Handle("/category/", rateLimiter.Wrap(handler.GetPostOfCategory))
 	http.Handle("/notification/", rateLimiter.Wrap(handler.GetNotifs))
 	http.Handle("/validate/", rateLimiter.Wrap(handler.Validate))
-	http.Handle("/invalidate/", rateLimiter.Wrap(handler.GetNotifs))
+	http.Handle("/invalidate/", rateLimiter.Wrap(handler.Invalidate))
 
 	httpsServer := http.Server{
 		Addr: PORT,

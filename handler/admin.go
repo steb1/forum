@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"forum/data/models"
 	"forum/lib"
 	"log"
@@ -41,6 +42,7 @@ func SeeRequests(res http.ResponseWriter, req *http.Request) {
 			Requests:    requests,
 			Allposts:    allPosts,
 		}
+		fmt.Println(requests)
 		lib.RenderPage(basePath, pagePath, requestPageData, res)
 		log.Println("✅ Home111 page get with success")
 	}
@@ -79,6 +81,24 @@ func Validate(res http.ResponseWriter, req *http.Request) {
 				Role:      models.RoleModerator,
 			}
 			err = models.UserRepo.UpdateUser(&UpdateUser)
+			if err != nil {
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ error Update user")
+				return
+			}
+			request, err := models.RequestRepo.GetRequestByUser(user.ID)
+			if err != nil {
+				return
+			}
+			UpdateRequest := models.Request{
+				ID:       request.ID,
+				AuthorID: request.AuthorID,
+				Time:     request.Time,
+				Username: request.Username,
+				ImageURL: request.ImageURL,
+				Role:     models.RoleModerator,
+			}
+			err = models.RequestRepo.UpdateRequest(&UpdateRequest)
 			if err != nil {
 				res.WriteHeader(http.StatusInternalServerError)
 				log.Println("❌ error Update user")

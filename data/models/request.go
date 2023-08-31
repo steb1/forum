@@ -106,3 +106,8 @@ func (rr *RequestRepository) DeleteRequest(requestID string) error {
 	_, err := rr.db.Exec("DELETE FROM request WHERE id = ?", requestID)
 	return err
 }
+func (rr *RequestRepository) UpdateRequest(request *Request) error {
+	_, err := rr.db.Exec("UPDATE request SET authorID = ?, time = ?, username = ?, imageurl = ?, role = ? WHERE id = ?",
+		request.AuthorID, request.Time, request.Username, request.ImageURL, request.Role, request.ID)
+	return err
+}
