@@ -34,7 +34,7 @@ func (rr *RequestRepository) CreateRequest(request *Request) error {
 	}
 	request.ID = ID.String()
 	_, err = rr.db.Exec("INSERT INTO request (id, authorID, time, username, imageurl) VALUES (?, ?, ?, ?, ?)",
-		request.ID, request.AuthorID, request.Time, request.Username, request.Time)
+		request.ID, request.AuthorID, request.Time, request.Username, request.ImageURL)
 	return err
 }
 

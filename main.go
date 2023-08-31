@@ -41,7 +41,7 @@ func main() {
 
 	http.Handle("/profile", rateLimiter.Wrap(handler.ProfilePage))
 	http.Handle("/request/", rateLimiter.Wrap(handler.CreateRequest))
-	http.Handle("/seerequests", rateLimiter.Wrap(handler.SeeRequests))
+	http.Handle("/requests", rateLimiter.Wrap(handler.SeeRequests))
 	http.Handle("/edit-user", rateLimiter.Wrap(handler.EditUser))
 	http.Handle("/edit-user-page", rateLimiter.Wrap(handler.EditUserPage))
 
