@@ -120,7 +120,7 @@ func Validate(res http.ResponseWriter, req *http.Request) {
 }
 
 func Invalidate(res http.ResponseWriter, req *http.Request) {
-	if lib.ValidateRequest(req, res, "/Invalidate/*", http.MethodGet) {
+	if lib.ValidateRequest(req, res, "/invalidate/*", http.MethodGet) {
 		isSessionOpen := models.ValidSession(req)
 		currentuser := models.GetUserFromSession(req)
 		if !isSessionOpen || currentuser.Role != 0 {
