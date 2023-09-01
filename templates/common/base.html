@@ -497,9 +497,9 @@
 
         var container = document.querySelector("#category_list")
         var listCategory = []
-        { { range.Categories } }
+        {{ range.Categories }}
         listCategory = [...listCategory, { Name: `{{.Name}}` }]
-        { { end } }
+        {{ end }}
 
         function updateSuggestions() {
             let searchValue = document.getElementById('search').value
