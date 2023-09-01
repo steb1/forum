@@ -439,7 +439,7 @@ func (pr *PostRepository) GetNumberOfPosts() int {
 // Update a post in the database
 func (pr *PostRepository) UpdatePost(post *Post) error {
 	_, err := pr.db.Exec("UPDATE post SET title = ?, slug = ?, description = ?, imageURL = ?, authorID = ?, isEdited = ?, createDate = ?, modifiedDate = ?, validate = ? WHERE id = ?",
-		post.Title, post.Slug, post.Description, post.ImageURL, post.AuthorID, post.IsEdited, post.CreateDate, post.ModifiedDate, post.ID, post.Validate)
+		post.Title, post.Slug, post.Description, post.ImageURL, post.AuthorID, post.IsEdited, post.CreateDate, post.ModifiedDate, post.Validate, post.ID)
 	return err
 }
 
