@@ -24,159 +24,158 @@
                     <a href="/profile?index=2">My Likes</a>
                     {{end}}
                     {{if eq .TabIndex 3}}
-                    <a class="black" href="/profile?index=3">My Bookmarks</a>
+                    <a class="black" href="/profile?index=3">My Dislikes</a>
                     {{else}}
-                    <a href="/profile?index=3">My Bookmarks</a>
+                    <a href="/profile?index=3">My Dislikes</a>
                     {{end}}
                     {{if eq .TabIndex 4}}
-                    <a class="black" href="/profile?index=4">My Activities</a>
+                    <a class="black" href="/profile?index=4">My Bookmarks</a>
                     {{else}}
-                    <a href="/profile?index=4">My Activities</a>
+                    <a href="/profile?index=4">My Bookmarks</a>
                     {{end}}
                     {{if eq .TabIndex 5}}
-                    <a class="black" href="/profile?index=5">My Dislikes</a>
+                    <a class="black" href="/profile?index=5">My Activities</a>
                     {{else}}
-                    <a href="/profile?index=5">My Dislikes</a>
+                    <a href="/profile?index=5">My Activities</a>
                     {{end}}
                     <a href="/edit-user-page">Settings</a>
                 </div>
             </div>
             <div class="col wfull mt-1">
                 {{if eq .TabIndex 1}}
-                {{range .PostsList}}
-                <article class="list">
-                    <div class="row center">
-                        <img class="avatar big mr-1" src="{{ .ImageURL }}" alt="">
-                        <div class="col ml-1 new">
-                            <a class="black wfull" href="/posts/{{ .Slug }}">
-                                <h2>
-                                    {{ .Title }}
-                                </h2>
-                            </a>
-                            <div class="row">
-                                <span>{{ .AuthorName }}</span>
-                                <span>{{ .LastEditionDate }}</span>
-                                <span>{{ .NumberOfComments }} replies</span>
+                    {{range .PostsList}}
+                    <article class="list">
+                        <div class="row center">
+                            <img class="avatar big mr-1" src="{{ .ImageURL }}" alt="">
+                            <div class="col ml-1 new">
+                                <a class="black wfull" href="/posts/{{ .Slug }}">
+                                    <h2>
+                                        {{ .Title }}
+                                    </h2>
+                                </a>
+                                <div class="row">
+                                    <span>{{ .AuthorName }}</span>
+                                    <span>{{ .LastEditionDate }}</span>
+                                    <span>{{ .NumberOfComments }} replies</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <a href="/edit-post-page/{{.Slug}}" class="btn alt mr-1">Edit</a>
-                        <a href="/delete-post/{{.ID}}" class="btn red">Delete</a>
-                    </div>
-                </article>
-                {{end}}
+                        <div class="row">
+                            <a href="/edit-post-page/{{.Slug}}" class="btn alt mr-1">Edit</a>
+                            <a href="/delete-post/{{.ID}}" class="btn red">Delete</a>
+                        </div>
+                    </article>
+                    {{end}}
                 {{else if eq .TabIndex 2}}
-                {{range .PostsList}}
-                <article class="list">
-                    <div class="row center">
-                        <img class="avatar big mr-1" src="{{ .ImageURL }}" alt="">
-                        <div class="col ml-1 new">
-                            <a class="black wfull" href="/posts/{{ .Slug }}">
-                                <h2>
-                                    {{ .Title }}
-                                </h2>
-                            </a>
-                            <div class="row">
-                                <span>
-                                    <a href="/user/{{.AuthorName}}">
-                                    {{ .AuthorName }}
-                                    </a>
-                                </span>
-                                <span>{{ .LastEditionDate }}</span>
-                                <span>{{ .NumberOfComments }} replies</span>
+                    {{range .PostsList}}
+                    <article class="list">
+                        <div class="row center">
+                            <img class="avatar big mr-1" src="{{ .ImageURL }}" alt="">
+                            <div class="col ml-1 new">
+                                <a class="black wfull" href="/posts/{{ .Slug }}">
+                                    <h2>
+                                        {{ .Title }}
+                                    </h2>
+                                </a>
+                                <div class="row">
+                                    <span>
+                                        <a href="/user/{{.AuthorName}}">
+                                            {{ .AuthorName }}
+                                        </a>
+                                    </span>
+                                    <span>{{ .LastEditionDate }}</span>
+                                    <span>{{ .NumberOfComments }} replies</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </article>
-                {{end}}
+                    </article>
+                    {{end}}
                 {{else if eq .TabIndex 3}}
-                {{range .PostsList}}
-                <article class="list">
-                    <div class="row center">
-                        <img class="avatar big mr-1" src="{{ .ImageURL }}" alt="">
-                        <div class="col ml-1 new">
-                            <a class="black wfull" href="/posts/{{ .Slug }}">
-                                <h2>
-                                    {{ .Title }}
-                                </h2>
-                            </a>
-                            <div class="row">
-                                <span>
-                                    <a href="/user/{{.AuthorName}}">
-                                    {{ .AuthorName }}
-                                    </a>
-                                </span>
-                                <span>{{ .LastEditionDate }}</span>
-                                <span>{{ .NumberOfComments }} replies</span>
+                    {{range .PostsList}}
+                    <article class="list">
+                        <div class="row center">
+                            <img class="avatar big mr-1" src="{{ .ImageURL }}" alt="">
+                            <div class="col ml-1 new">
+                                <a class="black wfull" href="/posts/{{ .Slug }}">
+                                    <h2>
+                                        {{ .Title }}
+                                    </h2>
+                                </a>
+                                <div class="row">
+                                    <span>
+                                        <a href="/user/{{.AuthorName}}">
+                                            {{ .AuthorName }}
+                                        </a>
+                                    </span>
+                                    <span>{{ .LastEditionDate }}</span>
+                                    <span>{{ .NumberOfComments }} replies</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </article>
-                {{end}}
+                    </article>
+                    {{end}}
                 {{else if eq .TabIndex 4}}
-                <p>My Activities</p>
-                {{range $post, $comments := .PostsCommented}}
-                <article class="list">
-                    <div class="row center">
-                        <img class="avatar big mr-1" src="{{ $post.ImageURL }}" alt="">
-                        <div class="col ml-1 new">
-                            <a class="black wfull" href="/posts/{{ $post.Slug }}">
-                                <h2>
-                                    {{ $post.Title }}
-                                </h2>
-                            </a>
-                            <div class="row">
-                                <span>
-                                    <a href="/user/{{$post.AuthorID}}">
-                                    {{ $post.AuthorID }}
-                                    </a>
-                                </span>
-                                <span>{{ $post.ModifiedDate }}</span>
+                    {{range .PostsList}}
+                    <article class="list">
+                        <div class="row center">
+                            <img class="avatar big mr-1" src="{{ .ImageURL }}" alt="">
+                            <div class="col ml-1 new">
+                                <a class="black wfull" href="/posts/{{ .Slug }}">
+                                    <h2>
+                                        {{ .Title }}
+                                    </h2>
+                                </a>
+                                <div class="row">
+                                    <span>
+                                        <a href="/user/{{.AuthorName}}">
+                                            {{ .AuthorName }}
+                                        </a>
+                                    </span>
+                                    <span>{{ .LastEditionDate }}</span>
+                                    <span>{{ .NumberOfComments }} replies</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </article>
-                {{range $comment := $comments}}
-                <div class="col mb-1 pl-1 border-left" style="margin-left: 10%;">
-                    <p class="black">
-                        {{ $comment.Text }}
-                    </p>
-                    <p class="mb-0">{{$comment.ModifiedDate}}</p>
-                    </div>
-                 </div>
-                 <div class="row" style="margin-left: 10%; margin-bottom: 3%;">
-                    <a href="/edit-comment-page/{{$comment.ID}}" class="btn alt mr-1">Edit</a>
-                    <a href="/delete-comment/{{$comment.ID}}" class="btn red">Delete</a>
-                </div>
-                {{end}}
-                {{end}}
+                    </article>
+                    {{end}}
                 {{else if eq .TabIndex 5}}
-                {{range .PostsList}}
-                <article class="list">
-                    <div class="row center">
-                        <img class="avatar big mr-1" src="{{ .ImageURL }}" alt="">
-                        <div class="col ml-1 new">
-                            <a class="black wfull" href="/posts/{{ .Slug }}">
-                                <h2>
-                                    {{ .Title }}
-                                </h2>
-                            </a>
-                            <div class="row">
-                                <span>
-                                    <a href="/user/{{.AuthorName}}">
-                                    {{ .AuthorName }}
-                                    </a>
-                                </span>
-                                <span>{{ .LastEditionDate }}</span>
-                                <span>{{ .NumberOfComments }} replies</span>
+                    <p>My Activities</p>
+                    {{range $post, $comments := .PostsCommented}}
+                    <article class="list">
+                        <div class="row center">
+                            <img class="avatar big mr-1" src="{{ $post.ImageURL }}" alt="">
+                            <div class="col ml-1 new">
+                                <a class="black wfull" href="/posts/{{ $post.Slug }}">
+                                    <h2>
+                                        {{ $post.Title }}
+                                    </h2>
+                                </a>
+                                <div class="row">
+                                    <span>
+                                        <a href="/user/{{$post.AuthorID}}">
+                                            {{ $post.AuthorID }}
+                                        </a>
+                                    </span>
+                                    <span>{{ $post.ModifiedDate }}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </article>
+                    </article>
+                    {{range $comment := $comments}}
+                        <div class="col mb-1 pl-1 border-left" style="margin-left: 10%;">
+                            <p class="black">
+                                {{ $comment.Text }}
+                            </p>
+                            <p class="mb-0">{{$comment.ModifiedDate}}</p>
+                        </div>
+                        </div>
+                        <div class="row" style="margin-left: 10%; margin-bottom: 3%;">
+                            <a href="/edit-comment-page/{{$comment.ID}}" class="btn alt mr-1">Edit</a>
+                            <a href="/delete-comment/{{$comment.ID}}" class="btn red">Delete</a>
+                        </div>
+                    {{end}}
                 {{end}}
-                {{end}}
-                
+            {{end}}
             </div>
         </section>
     </section>
