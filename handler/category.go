@@ -63,7 +63,7 @@ func GetPostOfCategory(res http.ResponseWriter, req *http.Request) {
 				Limit:       limit,
 				Categories:  cat,
 				Allposts:    allPost,
-				Allnotifs: notifications,
+				AllNotifs:   notifications,
 			}
 
 			lib.RenderPage(basePath, pagePath, homePageData, res)

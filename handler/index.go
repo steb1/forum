@@ -18,8 +18,8 @@ type HomePageData struct {
 	Limit         int
 	TopUsers      []models.TopUser
 	Categories    []*models.Category
-	Allposts      []*models.Post
-	Allnotifs     []*models.Notification
+	AllPosts      []*models.Post
+	AllNotifs     []*models.Notification
 }
 
 func Index(res http.ResponseWriter, req *http.Request) {
@@ -97,8 +97,8 @@ func Index(res http.ResponseWriter, req *http.Request) {
 			TopUsers:      TopUsers,
 			Limit:         limit,
 			Categories:    cat,
-			Allposts:      allPost,
-			Allnotifs:     notifications,
+			AllPosts:      allPost,
+			AllNotifs:     notifications,
 		}
 
 		lib.RenderPage(basePath, pagePath, homePageData, res)

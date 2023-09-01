@@ -19,7 +19,7 @@ type UserPageData struct {
 	Categories     []*models.Category
 	Allposts       []*models.Post
 	PostsCommented map[models.Post][]models.Comment
-	Allnotifs      []*models.Notification
+	AllNotifs      []*models.Notification
 }
 
 func ProfilePage(res http.ResponseWriter, req *http.Request) {
@@ -110,7 +110,7 @@ func ProfilePage(res http.ResponseWriter, req *http.Request) {
 			Categories:     cat,
 			Allposts:       allPost,
 			PostsCommented: commentMap,
-			Allnotifs:      notifications,
+			AllNotifs:      notifications,
 		}
 
 		lib.RenderPage(basePath, pagePath, userPageData, res)
@@ -156,7 +156,7 @@ func UserProfilePage(res http.ResponseWriter, req *http.Request) {
 				CurrentUser: *user,
 				Author:      *_user,
 				PostsList:   postsList,
-				Allnotifs:   notifications,
+				AllNotifs:   notifications,
 			}
 
 			lib.RenderPage(basePath, pagePath, userPageData, res)
@@ -275,7 +275,7 @@ func EditUserPage(res http.ResponseWriter, req *http.Request) {
 			CurrentUser: *user,
 			TabIndex:    TabIndex,
 			Categories:  cat,
-			Allnotifs:   notifications,
+			AllNotifs:   notifications,
 		}
 
 		lib.RenderPage(basePath, pagePath, userPageData, res)

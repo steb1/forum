@@ -248,7 +248,7 @@
             margin: 5px;
             text-align: center;
             font-size: 12px;
-            padding-left : 5%;
+            padding-left: 5%;
             padding-right: 5%;
             color: #0d0f21;
             font-family: Verdana, Geneva, Tahoma, sans-serif;
@@ -257,6 +257,7 @@
         #notif a {
             font-style: none;
         }
+
         #time {
             font-size: 12px;
         }
@@ -410,9 +411,9 @@
 
             function checkRepeatedPost() {
                 var allPost = []
-                {{ range.Allposts }}
+                { { range.Allposts } }
                 allPost.push("{{.Title}}".toLowerCase())
-                {{ end }}
+                { { end } }
                 var inputText = document.getElementById("title").value
                 if (allPost.includes(inputText.toLowerCase())) {
                     alert("This Post TITLE already Exists !!!")
@@ -449,11 +450,11 @@
         <div class="modal-content">
             <span class="close-button" onclick="closeModal1()">&times;</span>
             <h2>Notification</h2> <br>
-            {{range .Allnotifs}}
+            {{range .AllNotifs}}
             {{if eq $.CurrentUser.ID .OwnerID}}
             {{if ne $.CurrentUser.ID .AuthorID}}
             <div id="notif">
-                {{.AuthorName}} {{.Notif_type}} : <a href="/posts/{{.Slug}}">  {{.Slug}} </a>   
+                {{.AuthorName}} {{.Notif_type}} : <a href="/posts/{{.Slug}}"> {{.Slug}} </a>
             </div>
             <p id="time"> {{.Time}}</p>
             {{end}}
@@ -496,9 +497,9 @@
 
         var container = document.querySelector("#category_list")
         var listCategory = []
-        {{ range.Categories }}
+        { { range.Categories } }
         listCategory = [...listCategory, { Name: `{{.Name}}` }]
-        {{ end }}
+        { { end } }
 
         function updateSuggestions() {
             let searchValue = document.getElementById('search').value

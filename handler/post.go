@@ -26,7 +26,7 @@ type PostPageData struct {
 	Allposts         []*models.Post
 	NbrBookmarks     int
 	IsBookmarked     bool
-	Allnotifs []*models.Notification
+	AllNotifs        []*models.Notification
 }
 
 func CreatePost(res http.ResponseWriter, req *http.Request) {
@@ -71,7 +71,7 @@ func CreatePost(res http.ResponseWriter, req *http.Request) {
 				IsEdited:     false,
 				CreateDate:   creationDate,
 				ModifiedDate: modificationDate,
-				Validate: false,
+				Validate:     false,
 			}
 
 			err = models.PostRepo.CreatePost(&post)
@@ -274,7 +274,7 @@ func EditPostPage(res http.ResponseWriter, req *http.Request) {
 				Post:             *post,
 				CategoriesString: _categories,
 				Allposts:         allPost,
-				Allnotifs: notifications,
+				AllNotifs:        notifications,
 			}
 
 			lib.RenderPage(basePath, pagePath, userPageData, res)
@@ -401,7 +401,6 @@ func GetPost(res http.ResponseWriter, req *http.Request) {
 				return
 			}
 
-
 			PostPageData := PostPageData{
 				IsLoggedIn:     isSessionOpen,
 				Post:           *post,
@@ -415,7 +414,7 @@ func GetPost(res http.ResponseWriter, req *http.Request) {
 				Categories:     cat,
 				Allposts:       allPost,
 				NbrBookmarks:   NbrOfBookmarks,
-				Allnotifs: notifications,
+				AllNotifs:      notifications,
 			}
 			lib.RenderPage(basePath, pagePath, PostPageData, res)
 			log.Println("✅ Post page get with success")

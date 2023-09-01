@@ -181,7 +181,7 @@ func EditCommentPage(res http.ResponseWriter, req *http.Request) {
 				NbrLike:        nbrLike,
 				NbrDislike:     nbrDislike,
 				CategoriesPost: postCategories,
-				Allnotifs:      notifications,
+				AllNotifs:      notifications,
 			}
 
 			lib.RenderPage(basePath, pagePath, userPageData, res)
