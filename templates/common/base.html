@@ -199,6 +199,7 @@
             background-color: #f4f4f4;
             border-radius: 30px;
         }
+
         .modal2 {
             display: none;
             position: fixed;
@@ -259,10 +260,6 @@
         #time {
             font-size: 12px;
         }
-
-
-
-        
     </style>
 </head>
 
@@ -302,7 +299,6 @@
                     d="M20 17H22V19H2V17H4V10C4 5.58172 7.58172 2 12 2C16.4183 2 20 5.58172 20 10V17ZM9 21H15V23H9V21Z">
                 </path>
             </svg>
-            
         </a>
         <button onclick="openModal()">Upload</button>
         <a href="/profile">
@@ -314,7 +310,6 @@
                     d="M5 22C4.44772 22 4 21.5523 4 21V3C4 2.44772 4.44772 2 5 2H19C19.5523 2 20 2.44772 20 3V21C20 21.5523 19.5523 22 19 22H5ZM15 16L20 12L15 8V11H9V13H15V16Z"
                     fill="rgba(0,0,0,1)"></path>
             </svg>
-            
         </a>
         {{else}}
         <a href="/sign-in-page" class="btn alt">Sign In</a>
@@ -413,12 +408,12 @@
                 return `${size.toFixed(2)} ${units[index]}`;
             }
 
-            function checkRepeatedPost(){
+            function checkRepeatedPost() {
                 var allPost = []
-                {{range .Allposts}}
-                    allPost.push("{{.Title}}".toLowerCase())
-                {{end}}
-                var inputText=document.getElementById("title").value
+                {{ range.Allposts }}
+                allPost.push("{{.Title}}".toLowerCase())
+                {{ end }}
+                var inputText = document.getElementById("title").value
                 if (allPost.includes(inputText.toLowerCase())) {
                     alert("This Post TITLE already Exists !!!")
                 }
@@ -448,7 +443,7 @@
         </script>
     </aside>
     {{end}}
-    
+
     {{template "content" .}}
     <div class="modal2" id="notificationModal">
         <div class="modal-content">
