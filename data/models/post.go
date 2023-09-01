@@ -80,7 +80,6 @@ func (pr *PostRepository) GetUserOwnPosts(userId, userName string) ([]PostItem, 
 	SELECT p.id AS id, title, slug, description, imageURL, p.authorID AS authorID, isEdited, p.createDate AS createDate, p.validate AS validate , p.modifiedDate AS modifiedDate, COUNT(*) AS numberComment FROM post p
 	LEFT JOIN comment c ON c.postID = p.ID
 	WHERE p.authorID = ? 
-	AND p.validate = true
 	GROUP BY p.ID ;
 	`, userId)
 	if err != nil {
@@ -474,14 +473,14 @@ func (pr *PostRepository) GetAllNoValidedPosts() ([]PostItem, error) {
 		if err != nil {
 			return nil, err
 		}
-		postItem := PostItem {
-			ID : post.ID,
-			Title : post.Title,
-			Slug : post.Slug,
-			AuthorName : user.Username,
-			ImageURL : user.AvatarURL,
-			LastEditionDate: post.ModifiedDate,
-			NumberOfComments: 0,
+		postItem := PostItem{
+			ID:                post.ID,
+			Title:             post.Title,
+			Slug:              post.Slug,
+			AuthorName:        user.Username,
+			ImageURL:          user.AvatarURL,
+			LastEditionDate:   post.ModifiedDate,
+			NumberOfComments:  0,
 			ListOfCommentator: nil,
 		}
 		PostItems = append(PostItems, postItem)

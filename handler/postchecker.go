@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"forum/data/models"
 	"forum/lib"
 	"log"
@@ -9,11 +8,16 @@ import (
 )
 
 type RequestPostPageData struct {
-	AllPost []models.PostItem
+	IsLoggedIn  bool
+	CurrentUser models.User
+	PostsList   []models.PostItem
+	AllPosts    []*models.Post
 }
 
 func SeePosts(res http.ResponseWriter, req *http.Request) {
 	if lib.ValidateRequest(req, res, "/posts", http.MethodGet) {
+		basePath := "base"
+		pagePath := "admin/posts"
 		isSessionOpen := models.ValidSession(req)
 		currentuser := models.GetUserFromSession(req)
 		if !isSessionOpen || currentuser.Role != 1 {
@@ -27,11 +31,18 @@ func SeePosts(res http.ResponseWriter, req *http.Request) {
 			log.Println("Error getting no valided posts ", req.URL.Path)
 			return
 		}
-		PostPage := RequestPostPageData{
-			AllPost: tabPostItems,
+		allPost, err := models.PostRepo.GetAllPosts("")
+		if err != nil {
+			return
 		}
-		fmt.Println(PostPage)
-
+		PostPage := RequestPostPageData{
+			IsLoggedIn:  isSessionOpen,
+			CurrentUser: *currentuser,
+			PostsList:   tabPostItems,
+			AllPosts:    allPost,
+		}
+		lib.RenderPage(basePath, pagePath, PostPage, res)
+		log.Println("✅ success")
 	} else {
 		res.WriteHeader(http.StatusNotFound)
 		lib.RenderPage("base", "", nil, res)
