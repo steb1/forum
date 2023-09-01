@@ -8,20 +8,23 @@ import (
 
 type RateLimiter struct {
 	WindowDuration time.Duration
-	Limit          int
+	Limits         map[string]int
 	Requests       map[string][]time.Time
 	Mutex          sync.Mutex
 }
 
-func NewRateLimiter(window time.Duration, limit int) *RateLimiter {
+func NewRateLimiter(window time.Duration) *RateLimiter {
 	return &RateLimiter{
 		WindowDuration: window,
-		Limit:          limit,
-		Requests:       make(map[string][]time.Time),
+		Limits: map[string]int{
+			"api":         300,  // 300 requests per minute for API endpoints
+			"auth":       10,   // 10 requests per minute for authentication endpoints
+		},
+		Requests: make(map[string][]time.Time),
 	}
 }
 
-func (rl *RateLimiter) Wrap(next http.HandlerFunc) http.HandlerFunc {
+func (rl *RateLimiter) Wrap(limitType string, next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		remoteIP := r.RemoteAddr
 
@@ -38,7 +41,8 @@ func (rl *RateLimiter) Wrap(next http.HandlerFunc) http.HandlerFunc {
 		}
 		rl.Requests[remoteIP] = validRequests
 
-		if len(rl.Requests[remoteIP]) >= rl.Limit {
+		limit := rl.Limits[limitType]
+		if len(rl.Requests[remoteIP]) >= limit {
 			http.Error(w, "Rate limit exceeded", http.StatusTooManyRequests)
 			return
 		}
@@ -48,4 +52,3 @@ func (rl *RateLimiter) Wrap(next http.HandlerFunc) http.HandlerFunc {
 		next(w, r)
 	}
 }
-
