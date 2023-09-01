@@ -33,7 +33,7 @@ type Post struct {
 	IsEdited     bool
 	CreateDate   string
 	ModifiedDate string
-	Validate bool
+	Validate     bool
 }
 
 type PostRepository struct {
@@ -91,7 +91,7 @@ func (pr *PostRepository) GetUserOwnPosts(userId, userName string) ([]PostItem, 
 	for rows.Next() {
 		var post Post
 		var nbComment int
-		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.Validate ,&post.ModifiedDate, &nbComment)
+		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.Validate, &post.ModifiedDate, &nbComment)
 		if err != nil {
 			return nil, err
 		}
@@ -322,7 +322,7 @@ func (pr *PostRepository) GetAllPosts(more string) ([]*Post, error) {
 	return posts, nil
 }
 
-//Get user's comment by post
+// Get user's comment by post
 func (pr *PostRepository) GetUserReaction(userID string) (map[Post][]Comment, error) {
 	commentMap := make(map[Post][]Comment)
 	// var posts []Post
@@ -455,4 +455,36 @@ func (pr *PostRepository) GetPostByCommentID(CommentID string) (*Post, error) {
 		return nil, err
 	}
 	return pr.GetPostByID(Comment.PostID)
+}
+func (pr *PostRepository) GetAllNoValidedPosts() ([]PostItem, error) {
+	var PostItems []PostItem
+	rows, err := pr.db.Query("SELECT id, title, slug, description, imageURL, authorID, isEdited, createDate, modifiedDate, validate FROM post WHERE validate = false")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var post Post
+		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate, &post.Validate)
+		if err != nil {
+			return nil, err
+		}
+		defer rows.Close()
+		user, err := UserRepo.GetUserByID(post.AuthorID)
+		if err != nil {
+			return nil, err
+		}
+		postItem := PostItem {
+			ID : post.ID,
+			Title : post.Title,
+			Slug : post.Slug,
+			AuthorName : user.Username,
+			ImageURL : user.AvatarURL,
+			LastEditionDate: post.ModifiedDate,
+			NumberOfComments: 0,
+			ListOfCommentator: nil,
+		}
+		PostItems = append(PostItems, postItem)
+	}
+	return PostItems, nil
 }
