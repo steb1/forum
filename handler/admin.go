@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"forum/data/models"
 	"forum/lib"
 	"log"
@@ -42,7 +41,6 @@ func SeeRequests(res http.ResponseWriter, req *http.Request) {
 			Requests:    requests,
 			Allposts:    allPosts,
 		}
-		fmt.Println(requests)
 		lib.RenderPage(basePath, pagePath, requestPageData, res)
 		log.Println("✅ Home111 page get with success")
 	}
