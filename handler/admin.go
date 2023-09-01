@@ -12,7 +12,7 @@ type RequestPageData struct {
 	IsLoggedIn  bool
 	CurrentUser models.User
 	Requests    []models.Request
-	Allposts    []*models.Post
+	AllPosts    []*models.Post
 }
 
 func SeeRequests(res http.ResponseWriter, req *http.Request) {
@@ -39,7 +39,7 @@ func SeeRequests(res http.ResponseWriter, req *http.Request) {
 			IsLoggedIn:  isSessionOpen,
 			CurrentUser: *currentuser,
 			Requests:    requests,
-			Allposts:    allPosts,
+			AllPosts:    allPosts,
 		}
 		lib.RenderPage(basePath, pagePath, requestPageData, res)
 		log.Println("✅ Home111 page get with success")

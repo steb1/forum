@@ -18,7 +18,7 @@ type ListPostsPageData struct {
 	Limit         int
 	TopUsers      []models.TopUser
 	Categories    []*models.Category
-	Allposts      []*models.Post
+	AllPosts      []*models.Post
 	AllNotifs     []*models.Notification
 }
 
@@ -90,7 +90,7 @@ func ListPost(res http.ResponseWriter, req *http.Request) {
 			TopUsers:      TopUsers,
 			Limit:         limit,
 			Categories:    cat,
-			Allposts:      allPost,
+			AllPosts:      allPost,
 			AllNotifs:     notifications,
 		}
 		lib.RenderPage(basePath, pagePath, homePageData, res)

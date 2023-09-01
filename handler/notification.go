@@ -17,7 +17,7 @@ type NotifPageData struct {
 	UserAuthor        []string
 	Posts             []string
 	Slugs             []string
-	Allposts          []*models.Post
+	AllPosts          []*models.Post
 	FormatedNotif     []string
 }
 
@@ -72,7 +72,7 @@ func GetNotifs(res http.ResponseWriter, req *http.Request) {
 				UserAuthor:        users,
 				Slugs:             tabSlug,
 				Posts:             posts,
-				Allposts:          allPost,
+				AllPosts:          allPost,
 				FormatedNotif:     FormatedNotif,
 			}
 

@@ -62,7 +62,7 @@ func GetPostOfCategory(res http.ResponseWriter, req *http.Request) {
 				TopUsers:    TopUsers,
 				Limit:       limit,
 				Categories:  cat,
-				Allposts:    allPost,
+				AllPosts:    allPost,
 				AllNotifs:   notifications,
 			}
 

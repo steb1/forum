@@ -411,9 +411,9 @@
 
             function checkRepeatedPost() {
                 var allPost = []
-                { { range.Allposts } }
+                {{ range.AllPosts }}
                 allPost.push("{{.Title}}".toLowerCase())
-                { { end } }
+                {{ end }}
                 var inputText = document.getElementById("title").value
                 if (allPost.includes(inputText.toLowerCase())) {
                     alert("This Post TITLE already Exists !!!")

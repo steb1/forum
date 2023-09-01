@@ -17,7 +17,7 @@ type UserPageData struct {
 	TabIndex       int
 	PostsList      []models.PostItem
 	Categories     []*models.Category
-	Allposts       []*models.Post
+	AllPosts       []*models.Post
 	PostsCommented map[models.Post][]models.Comment
 	AllNotifs      []*models.Notification
 }
@@ -108,7 +108,7 @@ func ProfilePage(res http.ResponseWriter, req *http.Request) {
 			TabIndex:       TabIndex,
 			PostsList:      postsList,
 			Categories:     cat,
-			Allposts:       allPost,
+			AllPosts:       allPost,
 			PostsCommented: commentMap,
 			AllNotifs:      notifications,
 		}

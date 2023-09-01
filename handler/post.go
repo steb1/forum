@@ -23,7 +23,7 @@ type PostPageData struct {
 	NbrLike          int
 	NbrDislike       int
 	Categories       []*models.Category
-	Allposts         []*models.Post
+	AllPosts         []*models.Post
 	NbrBookmarks     int
 	IsBookmarked     bool
 	AllNotifs        []*models.Notification
@@ -273,7 +273,7 @@ func EditPostPage(res http.ResponseWriter, req *http.Request) {
 				CurrentUser:      *user,
 				Post:             *post,
 				CategoriesString: _categories,
-				Allposts:         allPost,
+				AllPosts:         allPost,
 				AllNotifs:        notifications,
 			}
 
@@ -412,7 +412,7 @@ func GetPost(res http.ResponseWriter, req *http.Request) {
 				NbrLike:        nbrLike,
 				NbrDislike:     nbrDislike,
 				Categories:     cat,
-				Allposts:       allPost,
+				AllPosts:       allPost,
 				NbrBookmarks:   NbrOfBookmarks,
 				AllNotifs:      notifications,
 			}
