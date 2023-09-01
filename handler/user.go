@@ -60,7 +60,7 @@ func ProfilePage(res http.ResponseWriter, req *http.Request) {
 				return
 			}
 			postsList = _postListed
-		case 3:
+		case 4:
 			_postListed, err := models.PostRepo.GetUserBookmarkedPosts(user.ID)
 			if err != nil {
 				res.WriteHeader(http.StatusInternalServerError)
@@ -68,7 +68,7 @@ func ProfilePage(res http.ResponseWriter, req *http.Request) {
 				return
 			}
 			postsList = _postListed
-		case 4:
+		case 5:
 			Map, err := models.PostRepo.GetUserReaction(user.ID)
 			if err != nil {
 				res.WriteHeader(http.StatusInternalServerError)
@@ -76,7 +76,7 @@ func ProfilePage(res http.ResponseWriter, req *http.Request) {
 				return
 			}
 			commentMap = Map
-		case 5:
+		case 3:
 			_postListed, err := models.PostRepo.GetUserDislikedPosts(user.ID)
 			if err != nil {
 				res.WriteHeader(http.StatusInternalServerError)
