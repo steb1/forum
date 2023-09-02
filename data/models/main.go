@@ -18,6 +18,7 @@ var (
 	PostCategoryRepo *PostCategoryRepository
 	NotifRepo        *NotificationRepository
 	RequestRepo      *RequestRepository
+	ReportRepo *ReportRepository
 )
 
 func init() {
@@ -49,6 +50,7 @@ func init() {
 	CategoryRepo = NewCategoryRepository(db)
 	PostCategoryRepo = NewPostCategoryRepository(db)
 	RequestRepo = NewRequestRepository(db)
+	ReportRepo = NewReportRepository(db)
 
 	log.Println("✅ Database init with success")
 }

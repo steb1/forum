@@ -163,12 +163,52 @@
 
     </script>
 </main>
-{{ if ne .CurrentUser.Role 2 }}
+{{ if .Reported }}
+<p>This Post is already Reported to the admin</p>
+    {{else}}
+    {{ if ne .CurrentUser.Role 2 }}
 <div class="reportButtons"> 
-    <button class="report">Report</button>
-    <button class="Delete">Delete</button>
+    <button id="ouvrirFormulaire" class="report">Report</button>
+    <a href="/deletePost"><button class="Delete">Delete</button></a>
+</div>
+<div id="formulaireContainer" class="caché">
+    <form method="post" action="/reportPost/{{.Post.ID}}">
+        <!-- Vos champs de formulaire ici -->
+        <label for="cause">Why do you report this post :</label>
+        <input type="text-area"  id="cause" name="cause">
+        <br>
+        <label for="type">Type :</label>
+        <select name="type" id="type">
+            <option value="Nude">Nude</option>
+            <option value="Harassment">Harassment</option>
+            <option value="Misoginy">Misoginy</option>
+            <option value="Violence">Promote Violence</option>
+        </select>
+        <br>
+        <input type="submit" value="Report">
+    </form>
 </div>
 <style>
+    select {
+        width: 100px;
+        height: 40px;
+        font-size: 15px;
+        border: 2px solid black;
+        border-radius: 10px;
+        background-color: aliceblue;
+    }
+    input {
+        cursor: pointer;
+    }
+    input[type="submit"]:hover {
+        background-color: brown;
+    }
+    label {
+        font-size: 15px;
+    }
+    .caché {
+        display: none;
+    }
     .reportButtons {
         display: flex;
         flex-direction: row;
@@ -178,8 +218,26 @@
         margin: 15px;
         width: 100px;
         height: 50px;
-        background-color: brown;font-size: medium;
+        background-color: brown;
+        font-size: 20px;
+    }
+    .report:hover {
+        background-color: rgb(114, 112, 112);
+    }
+    .Delete:hover {
+        background-color: rgb(114, 111, 111);
     }
 </style>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const boutonOuvrirFormulaire = document.getElementById("ouvrirFormulaire");
+    const formulaireContainer = document.getElementById("formulaireContainer");
+
+    boutonOuvrirFormulaire.addEventListener("click", function () {
+        formulaireContainer.style.display = "block"; // Afficher le formulaire
+    });
+});
+</script>
+{{end}}
 {{end}}
 {{end}}

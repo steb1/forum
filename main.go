@@ -68,6 +68,7 @@ func main() {
 	http.Handle("/requests", rateLimiter.Wrap("api", handler.SeeRequests))
 	http.Handle("/posts", rateLimiter.Wrap("api", handler.SeePosts))
 	http.Handle("/publish/", rateLimiter.Wrap("api", handler.Publish))
+	http.Handle("/reportPost/", rateLimiter.Wrap("api", handler.SeeReports))
 
 	httpsServer := http.Server{
 		Addr: PORT,

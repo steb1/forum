@@ -6,6 +6,10 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"text/template"
+	"time"
+
+	"github.com/gofrs/uuid"
 )
 
 type RequestPageData struct {
@@ -43,6 +47,173 @@ func SeeRequests(res http.ResponseWriter, req *http.Request) {
 		}
 		lib.RenderPage(basePath, pagePath, requestPageData, res)
 		log.Println("✅ Home111 page get with success")
+	}
+}
+func SeeReports(res http.ResponseWriter, req *http.Request) {
+	if lib.ValidateRequest(req, res, "/reportPost/*", http.MethodPost) {
+		base := "base"
+		PagePath := "post"
+		isSessionOpen := models.ValidSession(req)
+		currentuser := models.GetUserFromSession(req)
+		if !isSessionOpen || currentuser.Role == 0 || currentuser.Role == 2 {
+			res.WriteHeader(http.StatusNotFound)
+			lib.RenderPage("base", "", nil, res)
+			log.Println("404 ❌ - Page not found ", req.URL.Path)
+			return
+		}
+		path := req.URL.Path
+		pathPart := strings.Split(path, "/")
+		if len(pathPart) == 3 && pathPart[1] == "reportPost" && pathPart[2] != "" {
+			idPost := pathPart[2]
+			user, err := models.UserRepo.GetUserByPostID(idPost)
+			if user == nil {
+				res.WriteHeader(http.StatusNotFound)
+				lib.RenderPage("base", "", nil, res)
+				log.Println("404 ❌ - Page not found ", req.URL.Path)
+				return
+			}
+			post, err := models.PostRepo.GetPostByID(idPost)
+			if post == nil {
+				res.WriteHeader(http.StatusNotFound)
+				lib.RenderPage("base", "404", nil, res)
+				log.Println("404 ❌ - Page not found ", req.URL.Path)
+				return
+			}
+			if err != nil {
+				log.Println("❌ error DB", err.Error())
+				return
+			}
+			if err != nil {
+				return
+			}
+
+			IDreport, err := uuid.NewV4()
+
+			if err != nil {
+				log.Println("❌ Failed to generate uuid")
+			}
+
+			creationDate := time.Now().Format("2006-01-02 15:04:05")
+			modificationDate := time.Now().Format("2006-01-02 15:04:05")
+
+			cause := req.FormValue("cause")
+			typeReport := req.FormValue("type")
+
+			if cause == "" || typeReport == "" {
+				res.WriteHeader(http.StatusBadRequest)
+				lib.RenderPage("base", "", nil, res)
+				log.Println("404 ❌ - Page not found ", req.URL.Path)
+				return
+			}
+
+			report := models.Report{
+				ID:           IDreport.String(),
+				AuthorID:     user.ID,
+				ReportedID:   idPost,
+				Cause:        cause,
+				Type:         typeReport,
+				CreateDate:   creationDate,
+				ModifiedDate: modificationDate,
+			}
+
+			err = models.ReportRepo.CreateReport(&report)
+
+			if err != nil {
+				log.Println("❌ Failed to create report")
+			}
+
+			PostComments, err := models.CommentRepo.GetCommentsOfPost(post.ID, "15")
+			if err != nil {
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ error DB", err.Error())
+				return
+			}
+			PostComments = SortComments(PostComments)
+			post.ModifiedDate = strings.ReplaceAll(post.ModifiedDate, "T", " ")
+			post.ModifiedDate = strings.ReplaceAll(post.ModifiedDate, "Z", "")
+			post.ModifiedDate = lib.TimeSinceCreation(post.ModifiedDate)
+			userPost, err := models.UserRepo.GetUserByID(post.AuthorID)
+			if err != nil {
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ error reading from user", err.Error())
+				return
+			}
+			postCategories, err := models.PostCategoryRepo.GetCategoriesOfPost(post.ID)
+			if err != nil {
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ error reading from category", err.Error())
+				return
+			}
+			nbrLike, err := models.ViewRepo.GetLikesByPost(post.ID)
+			if err != nil {
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ error reading from View", err.Error())
+				return
+			}
+			nbrDislike, err := models.ViewRepo.GetDislikesByPost(post.ID)
+			if err != nil {
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ error reading from View", err.Error())
+				return
+			}
+			post.Description = template.HTMLEscapeString(post.Description)
+			post.Title = template.HTMLEscapeString(post.Title)
+			if postCategories != nil {
+				for k := 0; k < len(postCategories); k++ {
+					postCategories[k].Name = template.HTMLEscapeString(postCategories[k].Name)
+				}
+			}
+
+			if PostComments != nil {
+				for j := 0; j < len(PostComments); j++ {
+					PostComments[j].Text = template.HTMLEscapeString(PostComments[j].Text)
+				}
+			}
+			userPost.IsLoggedIn = "Offline"
+			if models.CheckIfSessionExist(userPost.Username) {
+				userPost.IsLoggedIn = "Online"
+			}
+			cat, err := models.CategoryRepo.GetAllCategory()
+			if err != nil {
+				return
+			}
+			allPost, err := models.PostRepo.GetAllPosts("")
+			if err != nil {
+				return
+			}
+
+			notifications, err := models.NotifRepo.GetAllNotifs()
+
+			if err != nil {
+				return
+			}
+
+			NbrOfBookmarks, err := models.ViewRepo.GetNbrOfBookmarks(post.ID)
+
+			if err != nil {
+				return
+			}
+
+			PostPageData := PostPageData{
+				IsLoggedIn:     isSessionOpen,
+				Post:           *post,
+				CurrentUser:    *(models.GetUserFromSession(req)),
+				UserPoster:     userPost,
+				Comments:       PostComments,
+				NbrComment:     len(PostComments),
+				CategoriesPost: postCategories,
+				NbrLike:        nbrLike,
+				NbrDislike:     nbrDislike,
+				Categories:     cat,
+				AllPosts:       allPost,
+				NbrBookmarks:   NbrOfBookmarks,
+				AllNotifs:      notifications,
+				Reported: true,
+			}
+			log.Println("Report Created")
+			lib.RenderPage(base, PagePath, PostPageData, res)
+			log.Println("✅ Post page get with success")
+		}
 	}
 }
 
