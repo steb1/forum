@@ -135,6 +135,7 @@
                 </div>
         </section>
     </section>
+    
     <script defer>
         const resetBtn = document.getElementById("resetBtn");
         const parentIDInput = document.getElementById("parentID");
@@ -162,4 +163,23 @@
 
     </script>
 </main>
+{{ if ne .CurrentUser.Role 2 }}
+<div class="reportButtons"> 
+    <button class="report">Report</button>
+    <button class="Delete">Delete</button>
+</div>
+<style>
+    .reportButtons {
+        display: flex;
+        flex-direction: row;
+        position: relative;
+    }
+    .report, .Delete {
+        margin: 15px;
+        width: 100px;
+        height: 50px;
+        background-color: brown;font-size: medium;
+    }
+</style>
+{{end}}
 {{end}}
