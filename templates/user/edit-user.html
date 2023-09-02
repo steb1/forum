@@ -76,11 +76,13 @@
                     <p class="mb-0">Your profile: <a
                             href="/user/{{.CurrentUser.Username}}">01-forum.com/user/{{.CurrentUser.Username}}</a></p>
                 </div>
-                {{if eq .CurrentUser.Role 2}}
+                
+                
                 {{else if eq .TabIndex 4}}
+                    {{if eq .CurrentUser.Role 2}}
                     <p>The "Request to Become a Moderator" button allows you to express your interest in becoming a moderator within our online community, helping to maintain a positive and respectful environment for all members.</p>
                     <button class="wfull" style="margin-top: 5%;" id="request"><a href="/request/{{.CurrentUser.ID}}" style="color: white">request to change status</a></button>
-                {{end}}
+                    {{end}}
                 {{end}}
             </form>
             <script>
