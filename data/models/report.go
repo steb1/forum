@@ -32,8 +32,8 @@ func NewReportRepository(db *sql.DB) *ReportRepository {
 	}
 }
 
-func (rr *ReportRepository) GetAllReports() ([]*Report, error) {
-	var reports []*Report
+func (rr *ReportRepository) GetAllReports() ([]Report, error) {
+	var reports []Report
 	rows, err := rr.db.Query("SELECT id, authorID, reportedID, ReportedName, cause, type, createDate, modifiedDate, reported, ImageURL FROM report")
 	
 	if err != nil {
@@ -49,7 +49,7 @@ func (rr *ReportRepository) GetAllReports() ([]*Report, error) {
 			return nil, err
 		}
 
-		reports = append(reports, &report)
+		reports = append(reports, report)
 	}
 
 	return reports, nil

@@ -1,26 +1,72 @@
 {{define "title"}} | Admin{{end}}
 
 {{define "content"}}
-{{ range .Reports}}
+<h2>Reports</h2>
+{{range .Reports}}
+<a href="/seeReport/{{.ReportedID}}">
 <div class="container">
     <div class="img">
-        <img src="{{.ImageUrl}}" alt="">
+        <img src="{{.ImageURL}}" alt="image">
     </div>
     <div class="content">
         <div class="Username">
-            <a href="post/{{.ReportedID}}">{{.ReportedName}}</a>
+            {{.ReportedName}}
         </div>
-        <div class="Description">
-            <a href="post/{{.ReportedID}}">{{.Cause}}</a>
+        <div class="Type">
+            {{.Type}}
         </div>
     </div>
     <div class="buttons">
-        <button></button>
-        <button></button>
+        <button>Repondre</button>
+        <button>Supprimer</button>
     </div>
 </div>
-{{ end }}
+</a>
 <style>
-
+    .container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        border: 1px rgb(197, 197, 197) solid;
+        margin: 10px;
+        width: 700px;
+        align-items: center;
+        height: 100px;
+        padding: 10px;
+        border-radius: 30px ;
+    }
+    
+    img {
+        width: 60px;
+        height: 60px;
+        border-radius: 30px;
+    }
+    .Type {
+        font-size: 15px;
+        font-weight: bold;
+        color: rgb(179, 15, 9);
+    }
+    .img {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+    }
+    .content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        align-items: center;
+    }
+    button {
+        margin: 10px;
+    }
+    .content .Username {
+        font-size: 25px;
+        font-weight: bold;
+        color: rgb(9, 96, 179);
+    }
 </style>
+{{end}}
 {{end}}

@@ -39,14 +39,16 @@ func SeeRequests(res http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			return
 		}
+
 		requestPageData := RequestPageData{
 			IsLoggedIn:  isSessionOpen,
 			CurrentUser: *currentuser,
 			Requests:    requests,
 			AllPosts:    allPosts,
 		}
+
 		lib.RenderPage(basePath, pagePath, requestPageData, res)
-		log.Println("✅ Home111 page get with success")
+		log.Println("✅ Request page get with success")
 	}
 }
 func ReportPost(res http.ResponseWriter, req *http.Request) {
@@ -65,7 +67,7 @@ func ReportPost(res http.ResponseWriter, req *http.Request) {
 		pathPart := strings.Split(path, "/")
 		if len(pathPart) == 3 && pathPart[1] == "reportPost" && pathPart[2] != "" {
 			idPost := pathPart[2]
-			
+
 			post, err := models.PostRepo.GetPostByID(idPost)
 			if post == nil {
 				res.WriteHeader(http.StatusNotFound)
@@ -82,7 +84,7 @@ func ReportPost(res http.ResponseWriter, req *http.Request) {
 				return
 			}
 			user, err := models.UserRepo.GetUserByPostID(idPost)
-			if err != nil  {
+			if err != nil {
 				log.Fatal("Can't get user by postID")
 			}
 			if user == nil {
@@ -120,8 +122,8 @@ func ReportPost(res http.ResponseWriter, req *http.Request) {
 				Type:         typeReport,
 				CreateDate:   creationDate,
 				ModifiedDate: modificationDate,
-				Reported: true,
-				ImageURL: post.ImageURL,
+				Reported:     true,
+				ImageURL:     post.ImageURL,
 			}
 
 			_, err = models.ReportRepo.GetReportByIDPost(idPost)
@@ -224,7 +226,7 @@ func ReportPost(res http.ResponseWriter, req *http.Request) {
 				AllPosts:       allPost,
 				NbrBookmarks:   NbrOfBookmarks,
 				AllNotifs:      notifications,
-				Reported: true,
+				Reported:       true,
 			}
 
 			UpdatePost := models.Post{
@@ -254,7 +256,7 @@ func ReportPost(res http.ResponseWriter, req *http.Request) {
 type ReportPageData struct {
 	IsLoggedIn  bool
 	CurrentUser models.User
-	Reports     []*models.Report
+	Reports     []models.Report
 	AllPosts    []*models.Post
 }
 
@@ -270,29 +272,28 @@ func SeeReports(res http.ResponseWriter, req *http.Request) {
 			log.Println("404 ❌ - Page not found ", req.URL.Path)
 			return
 		}
-			AllReports, err := models.ReportRepo.GetAllReports()
+		AllReports, err := models.ReportRepo.GetAllReports()
 
-			if err != nil {
-				log.Fatal("No Reports")
-			}
-
-			allPosts, err := models.PostRepo.GetAllPosts("")
-			if err != nil {
-				log.Fatal("Cannot Get Posts")
-				return
-			}
-			ReportPageData := ReportPageData{
-				IsLoggedIn:  isSessionOpen,
-				CurrentUser: *currentuser,
-				Reports:    AllReports,
-				AllPosts:    allPosts,
-			}
-			lib.RenderPage(base, PagePath, ReportPageData, res)
-			log.Println("✅ Home111 page get with success")
+		if err != nil {
+			log.Fatal("No Reports")
 		}
+
+		allPosts, err := models.PostRepo.GetAllPosts("")
+		if err != nil {
+			log.Fatal("Cannot Get Posts")
+			return
+		}
+
+		ReportPageData := ReportPageData{
+			IsLoggedIn:  isSessionOpen,
+			CurrentUser: *currentuser,
+			Reports:     AllReports,
+			AllPosts:    allPosts,
+		}
+		lib.RenderPage(base, PagePath, ReportPageData, res)
+		log.Println("✅ Home111 page get with success")
 	}
-
-
+}
 
 func Validate(res http.ResponseWriter, req *http.Request) {
 	if lib.ValidateRequest(req, res, "/validate/*", http.MethodGet) {
