@@ -27,7 +27,7 @@ type PostPageData struct {
 	NbrBookmarks     int
 	IsBookmarked     bool
 	AllNotifs        []*models.Notification
-	Reported 		bool
+	Reported         bool
 }
 
 func CreatePost(res http.ResponseWriter, req *http.Request) {
@@ -276,7 +276,6 @@ func EditPostPage(res http.ResponseWriter, req *http.Request) {
 				CategoriesString: _categories,
 				AllPosts:         allPost,
 				AllNotifs:        notifications,
-				Reported: false,
 			}
 
 			lib.RenderPage(basePath, pagePath, userPageData, res)
@@ -298,6 +297,23 @@ func DeletePost(res http.ResponseWriter, req *http.Request) {
 
 				log.Println("✅ Post created with success")
 				lib.RedirectToPreviousURL(res, req)
+			}
+		}
+	}
+}
+func DeletePostAdmin(res http.ResponseWriter, req *http.Request) {
+	if lib.ValidateRequest(req, res, "/delete-Postt/*", http.MethodGet) {
+		
+		isSessionOpen := models.ValidSession(req)
+		if isSessionOpen {
+			path := req.URL.Path
+			pathPart := strings.Split(path, "/")
+			if len(pathPart) == 3 && pathPart[1] == "delete-Postt" && pathPart[2] != "" {
+				id := pathPart[2]
+				models.PostRepo.DeletePost(id)
+
+				log.Println("✅ Post deleted with success")
+				http.Redirect(res, req, "/", http.StatusSeeOther)
 			}
 		}
 	}
@@ -417,7 +433,6 @@ func GetPost(res http.ResponseWriter, req *http.Request) {
 				AllPosts:       allPost,
 				NbrBookmarks:   NbrOfBookmarks,
 				AllNotifs:      notifications,
-				Reported: false,
 			}
 			lib.RenderPage(basePath, pagePath, PostPageData, res)
 			log.Println("✅ Post page get with success")

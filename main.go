@@ -49,6 +49,7 @@ func main() {
 	http.Handle("/trending", rateLimiter.Wrap("api", handler.ListPost))
 	http.Handle("/post", rateLimiter.Wrap("api", handler.CreatePost))
 	http.Handle("/delete-post/", rateLimiter.Wrap("api", handler.DeletePost))
+	http.Handle("/delete-Postt/", rateLimiter.Wrap("api", handler.DeletePostAdmin))
 	http.Handle("/delete-comment/", rateLimiter.Wrap("api", handler.DeleteComment))
 	http.Handle("/edit-post-page/", rateLimiter.Wrap("api", handler.EditPostPage))
 	http.Handle("/edit-post/", rateLimiter.Wrap("api", handler.EditPost))
@@ -68,7 +69,8 @@ func main() {
 	http.Handle("/requests", rateLimiter.Wrap("api", handler.SeeRequests))
 	http.Handle("/posts", rateLimiter.Wrap("api", handler.SeePosts))
 	http.Handle("/publish/", rateLimiter.Wrap("api", handler.Publish))
-	http.Handle("/reportPost/", rateLimiter.Wrap("api", handler.SeeReports))
+	http.Handle("/reportPost/", rateLimiter.Wrap("api", handler.ReportPost))
+	http.Handle("/seeReports", rateLimiter.Wrap("api", handler.SeeReports))
 
 	httpsServer := http.Server{
 		Addr: PORT,

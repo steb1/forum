@@ -30,10 +30,13 @@ CREATE TABLE IF NOT EXISTS "report" (
     id VARCHAR PRIMARY KEY,
     authorID VARCHAR,
     reportedID VARCHAR,
+    reportedName VARCHAR,
     cause VARCHAR,
     type VARCHAR,
     createDate DATE,
     modifiedDate DATE,
+    reported BOOLEAN,
+    imageURL VARCHAR,
     FOREIGN KEY (authorID) REFERENCES user(id),
     FOREIGN KEY (reportedID) REFERENCES user(id)
 );

@@ -163,10 +163,11 @@
 
     </script>
 </main>
+
 {{ if .Reported }}
 <p>This Post is already Reported to the admin</p>
     {{else}}
-    {{ if ne .CurrentUser.Role 2 }}
+    {{ if eq .CurrentUser.Role 1 }}
 <div class="reportButtons"> 
     <button id="ouvrirFormulaire" class="report">Report</button>
     <a href="/deletePost"><button class="Delete">Delete</button></a>
@@ -188,6 +189,13 @@
         <input type="submit" value="Report">
     </form>
 </div>
+{{end}}
+{{end}}
+{{if eq .CurrentUser.Role 0 }}
+<div>
+    <a href="/delete-Postt/{{ .Post.ID}}"><button class="Delete">Delete</button></a>
+</div>
+{{ end }}
 <style>
     select {
         width: 100px;
@@ -238,6 +246,5 @@
     });
 });
 </script>
-{{end}}
-{{end}}
+
 {{end}}

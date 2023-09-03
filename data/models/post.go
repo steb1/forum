@@ -61,8 +61,8 @@ func (pr *PostRepository) CreatePost(post *Post) error {
 // Get a post by ID from the database
 func (pr *PostRepository) GetPostByID(postID string) (*Post, error) {
 	var post Post
-	row := pr.db.QueryRow("SELECT id, title, slug, description, imageURL, authorID, isEdited, createDate, modifiedDate, validate FROM post WHERE id = ? AND validate = true", postID)
-	err := row.Scan(&post.ID, &post.Title, &post.Slug, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate, &post.Validate)
+	row := pr.db.QueryRow("SELECT id, title, slug, description, imageURL, authorID, isEdited, createDate, modifiedDate FROM post WHERE id = ?", postID)
+	err := row.Scan(&post.ID, &post.Title, &post.Slug, &post.Description, &post.ImageURL, &post.AuthorID, &post.IsEdited, &post.CreateDate, &post.ModifiedDate)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil // Post not found

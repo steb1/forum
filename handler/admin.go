@@ -49,7 +49,7 @@ func SeeRequests(res http.ResponseWriter, req *http.Request) {
 		log.Println("✅ Home111 page get with success")
 	}
 }
-func SeeReports(res http.ResponseWriter, req *http.Request) {
+func ReportPost(res http.ResponseWriter, req *http.Request) {
 	if lib.ValidateRequest(req, res, "/reportPost/*", http.MethodPost) {
 		base := "base"
 		PagePath := "post"
@@ -65,13 +65,7 @@ func SeeReports(res http.ResponseWriter, req *http.Request) {
 		pathPart := strings.Split(path, "/")
 		if len(pathPart) == 3 && pathPart[1] == "reportPost" && pathPart[2] != "" {
 			idPost := pathPart[2]
-			user, err := models.UserRepo.GetUserByPostID(idPost)
-			if user == nil {
-				res.WriteHeader(http.StatusNotFound)
-				lib.RenderPage("base", "", nil, res)
-				log.Println("404 ❌ - Page not found ", req.URL.Path)
-				return
-			}
+			
 			post, err := models.PostRepo.GetPostByID(idPost)
 			if post == nil {
 				res.WriteHeader(http.StatusNotFound)
@@ -79,11 +73,22 @@ func SeeReports(res http.ResponseWriter, req *http.Request) {
 				log.Println("404 ❌ - Page not found ", req.URL.Path)
 				return
 			}
+			if !post.Validate {
+				lib.RedirectToPreviousURL(res, req)
+				return
+			}
 			if err != nil {
 				log.Println("❌ error DB", err.Error())
 				return
 			}
-			if err != nil {
+			user, err := models.UserRepo.GetUserByPostID(idPost)
+			if err != nil  {
+				log.Fatal("Can't get user by postID")
+			}
+			if user == nil {
+				res.WriteHeader(http.StatusNotFound)
+				lib.RenderPage("base", "", nil, res)
+				log.Println("404 ❌ - Page not found ", req.URL.Path)
 				return
 			}
 
@@ -110,10 +115,21 @@ func SeeReports(res http.ResponseWriter, req *http.Request) {
 				ID:           IDreport.String(),
 				AuthorID:     user.ID,
 				ReportedID:   idPost,
+				ReportedName: post.Slug,
 				Cause:        cause,
 				Type:         typeReport,
 				CreateDate:   creationDate,
 				ModifiedDate: modificationDate,
+				Reported: true,
+				ImageURL: post.ImageURL,
+			}
+
+			_, err = models.ReportRepo.GetReportByIDPost(idPost)
+
+			if err != nil {
+				lib.RedirectToPreviousURL(res, req)
+				log.Fatal("❌ Report Already done")
+				return
 			}
 
 			err = models.ReportRepo.CreateReport(&report)
@@ -210,12 +226,73 @@ func SeeReports(res http.ResponseWriter, req *http.Request) {
 				AllNotifs:      notifications,
 				Reported: true,
 			}
+
+			UpdatePost := models.Post{
+				ID:           post.ID,
+				Title:        post.Title,
+				Slug:         post.Slug,
+				Description:  post.Description,
+				ImageURL:     post.ImageURL,
+				AuthorID:     post.AuthorID,
+				IsEdited:     post.IsEdited,
+				CreateDate:   post.CreateDate,
+				ModifiedDate: post.ModifiedDate,
+				Validate:     false,
+			}
+			err = models.PostRepo.UpdatePost(&UpdatePost)
+			if err != nil {
+				return
+			}
+
 			log.Println("Report Created")
 			lib.RenderPage(base, PagePath, PostPageData, res)
 			log.Println("✅ Post page get with success")
 		}
 	}
 }
+
+type ReportPageData struct {
+	IsLoggedIn  bool
+	CurrentUser models.User
+	Reports     []*models.Report
+	AllPosts    []*models.Post
+}
+
+func SeeReports(res http.ResponseWriter, req *http.Request) {
+	if lib.ValidateRequest(req, res, "/seeReports", http.MethodGet) {
+		base := "base"
+		PagePath := "admin/reports"
+		isSessionOpen := models.ValidSession(req)
+		currentuser := models.GetUserFromSession(req)
+		if !isSessionOpen || currentuser.Role != 0 {
+			res.WriteHeader(http.StatusNotFound)
+			lib.RenderPage("base", "", nil, res)
+			log.Println("404 ❌ - Page not found ", req.URL.Path)
+			return
+		}
+			AllReports, err := models.ReportRepo.GetAllReports()
+
+			if err != nil {
+				log.Fatal("No Reports")
+			}
+
+			allPosts, err := models.PostRepo.GetAllPosts("")
+			if err != nil {
+				log.Fatal("Cannot Get Posts")
+				return
+			}
+			ReportPageData := ReportPageData{
+				IsLoggedIn:  isSessionOpen,
+				CurrentUser: *currentuser,
+				Reports:    AllReports,
+				AllPosts:    allPosts,
+			}
+			lib.RenderPage(base, PagePath, ReportPageData, res)
+			log.Println("✅ Home111 page get with success")
+		}
+	}
+
+
 
 func Validate(res http.ResponseWriter, req *http.Request) {
 	if lib.ValidateRequest(req, res, "/validate/*", http.MethodGet) {
