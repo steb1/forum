@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"forum/data/models"
 	"forum/lib"
 	"log"
@@ -48,11 +49,12 @@ func SeeRequests(res http.ResponseWriter, req *http.Request) {
 		}
 
 		lib.RenderPage(basePath, pagePath, requestPageData, res)
-		log.Println("✅ Request page get with success")
+		log.Println("\t✅ Request page get with success")
 	}
 }
 func ReportPost(res http.ResponseWriter, req *http.Request) {
-	if lib.ValidateRequest(req, res, "/reportPost/*", http.MethodPost) {
+	fmt.Println(req.URL.Path)
+	if lib.ValidateRequest(req, res, "/reportpost/*", http.MethodPost) {
 		base := "base"
 		PagePath := "post"
 		isSessionOpen := models.ValidSession(req)
@@ -65,9 +67,8 @@ func ReportPost(res http.ResponseWriter, req *http.Request) {
 		}
 		path := req.URL.Path
 		pathPart := strings.Split(path, "/")
-		if len(pathPart) == 3 && pathPart[1] == "reportPost" && pathPart[2] != "" {
+		if len(pathPart) == 3 && pathPart[1] == "reportpost" && pathPart[2] != "" {
 			idPost := pathPart[2]
-
 			post, err := models.PostRepo.GetPostByID(idPost)
 			if post == nil {
 				res.WriteHeader(http.StatusNotFound)
@@ -75,10 +76,7 @@ func ReportPost(res http.ResponseWriter, req *http.Request) {
 				log.Println("404 ❌ - Page not found ", req.URL.Path)
 				return
 			}
-			if !post.Validate {
-				lib.RedirectToPreviousURL(res, req)
-				return
-			}
+
 			if err != nil {
 				log.Println("❌ error DB", err.Error())
 				return
@@ -291,7 +289,7 @@ func SeeReports(res http.ResponseWriter, req *http.Request) {
 			AllPosts:    allPosts,
 		}
 		lib.RenderPage(base, PagePath, ReportPageData, res)
-		log.Println("✅ Home111 page get with success")
+		log.Println("\t✅ Home111 page get with success")
 	}
 }
 

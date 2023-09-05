@@ -40,7 +40,7 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 		user.Password = _password
 
 		user.AvatarURL = models.DEFAULT_AVATAR
-		if user.Email == "lmalack@gmail.com" {
+		if user.Email == "ggueye294@gmail.com" {
 			user.Role = models.RoleAdmin
 		} else {
 			user.Role = models.RoleUser
