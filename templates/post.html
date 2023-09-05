@@ -166,12 +166,14 @@
 
 {{ if .Reported }}
 <p>This Post is already Reported to the admin</p>
-    {{else}}
+{{else}}
     {{ if eq .CurrentUser.Role 1 }}
+    {{if .Post.Validate}}
 <div class="reportButtons"> 
     <button id="ouvrirFormulaire" class="report">Report</button>
     <a href="/deletePost"><button class="Delete">Delete</button></a>
 </div>
+    {{end}}
 <div id="formulaireContainer" class="caché">
     <form method="post" action="/reportpost/{{.Post.ID}}">
         <!-- Vos champs de formulaire ici -->

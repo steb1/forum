@@ -303,7 +303,7 @@ func DeletePost(res http.ResponseWriter, req *http.Request) {
 }
 func DeletePostAdmin(res http.ResponseWriter, req *http.Request) {
 	if lib.ValidateRequest(req, res, "/delete-Postt/*", http.MethodGet) {
-		
+
 		isSessionOpen := models.ValidSession(req)
 		if isSessionOpen {
 			path := req.URL.Path
