@@ -18,8 +18,8 @@ type Report struct {
 	Type         string
 	CreateDate   string
 	ModifiedDate string
-	Reported bool
-	ImageURL 	 string
+	Reported     bool
+	ImageURL     string
 }
 
 type ReportRepository struct {
@@ -35,7 +35,7 @@ func NewReportRepository(db *sql.DB) *ReportRepository {
 func (rr *ReportRepository) GetAllReports() ([]Report, error) {
 	var reports []Report
 	rows, err := rr.db.Query("SELECT id, authorID, reportedID, ReportedName, cause, type, createDate, modifiedDate, reported, ImageURL FROM report")
-	
+
 	if err != nil {
 		return nil, err
 	}
@@ -82,15 +82,15 @@ func (rr *ReportRepository) GetReportByID(reportID string) (*Report, error) {
 	return &report, nil
 }
 
-func (rr *ReportRepository) GetReportByIDPost(idPost string)  (*Report, error) {
+func (rr *ReportRepository) GetReportByIDPost(idPost string) (*Report, error) {
 	var report Report
 	row := rr.db.QueryRow("SELECT id, authorID, reportedID, ReportedName, cause, type, createDate, modifiedDate, reported, ImageURL FROM report WHERE reportedID = ?", idPost)
 	err := row.Scan(&report.ID, &report.AuthorID, &report.ReportedID, &report.ReportedName, &report.Cause, &report.Type, &report.CreateDate, &report.ModifiedDate, &report.Reported, &report.ImageURL)
 	if err == nil {
 		if err != sql.ErrNoRows {
-			return &report ,errors.New("already reported")
+			return &report, errors.New("already reported")
 		}
-		return &report ,nil
+		return &report, nil
 	}
 	return &report, nil
 }
@@ -107,8 +107,6 @@ func (rr *ReportRepository) GetReportByIDPostExist(idPost string) (*Report, erro
 	}
 	return &report, nil
 }
-
-
 
 // Update a report in the database
 func (rr *ReportRepository) UpdateReport(report *Report) error {

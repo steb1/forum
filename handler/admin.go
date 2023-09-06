@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"forum/data/models"
 	"forum/lib"
 	"log"
@@ -49,11 +48,10 @@ func SeeRequests(res http.ResponseWriter, req *http.Request) {
 		}
 
 		lib.RenderPage(basePath, pagePath, requestPageData, res)
-		log.Println("\t✅ Request page get with success")
+		log.Println("✅ Request page get with success")
 	}
 }
 func ReportPost(res http.ResponseWriter, req *http.Request) {
-	fmt.Println(req.URL.Path)
 	if lib.ValidateRequest(req, res, "/reportpost/*", http.MethodPost) {
 		base := "base"
 		PagePath := "post"
@@ -289,7 +287,7 @@ func SeeReports(res http.ResponseWriter, req *http.Request) {
 			AllPosts:    allPosts,
 		}
 		lib.RenderPage(base, PagePath, ReportPageData, res)
-		log.Println("\t✅ Home111 page get with success")
+		log.Println("✅ Home page get with success")
 	}
 }
 

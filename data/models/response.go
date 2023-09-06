@@ -34,7 +34,7 @@ func (rr *ResponseRepository) CreateResponse(response *Response) error {
 		log.Fatalf("❌ Failed to generate UUID: %v", err)
 	}
 	response.ID = ID.String()
-	_, err = rr.db.Exec("INSERT INTO response (id, authorID, reportID, text, createDate, modifiedDate) VALUES (?, ?, ?, ?, ?, ?)",
+	_, err = rr.db.Exec("INSERT INTO response (id, authorID, reportID, content, createDate, modifiedDate) VALUES (?, ?, ?, ?, ?, ?)",
 		response.ID, response.AuthorID, response.ReportID, response.Text, response.CreateDate, response.ModifiedDate)
 	return err
 }
@@ -42,7 +42,7 @@ func (rr *ResponseRepository) CreateResponse(response *Response) error {
 // Get a response by ID from the database
 func (rr *ResponseRepository) GetResponseByID(responseID string) (*Response, error) {
 	var response Response
-	row := rr.db.QueryRow("SELECT id, authorID, reportID, text, createDate, modifiedDate FROM response WHERE id = ?", responseID)
+	row := rr.db.QueryRow("SELECT id, authorID, reportID, content, createDate, modifiedDate FROM response WHERE id = ?", responseID)
 	err := row.Scan(&response.ID, &response.AuthorID, &response.ReportID, &response.Text, &response.CreateDate, &response.ModifiedDate)
 	if err != nil {
 		if err == sql.ErrNoRows {

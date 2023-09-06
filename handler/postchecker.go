@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type RequestPostPageData struct {
@@ -95,6 +96,46 @@ func Publish(res http.ResponseWriter, req *http.Request) {
 			lib.RedirectToPreviousURL(res, req)
 		}
 		log.Println("✅ publish success")
+	} else {
+		res.WriteHeader(http.StatusNotFound)
+		lib.RenderPage("base", "", nil, res)
+		log.Println("404 ❌ - Page not found ", req.URL.Path)
+		return
+	}
+}
+
+func Response(res http.ResponseWriter, req *http.Request) {
+	if lib.ValidateRequest(req, res, "/response/*", http.MethodPost) {
+		isSessionOpen := models.ValidSession(req)
+		currentuser := models.GetUserFromSession(req)
+		if !isSessionOpen || currentuser.Role != 0 {
+			res.WriteHeader(http.StatusNotFound)
+			lib.RenderPage("base", "", nil, res)
+			log.Println("404 ❌ - Page not found ", req.URL.Path)
+			return
+		}
+		path := req.URL.Path
+		pathPart := strings.Split(path, "/")
+		if len(pathPart) == 3 && pathPart[1] == "response" && pathPart[2] != "" {
+			id := pathPart[2]
+			Response := models.Response{
+				AuthorID:     currentuser.ID,
+				ReportID:     id,
+				Text:         req.FormValue("text"),
+				CreateDate:   time.Now().Format("2006-01-02 15:04:05"),
+				ModifiedDate: time.Now().Format("2006-01-02 15:04:05"),
+			}
+			err := models.ResponseRepo.CreateResponse(&Response)
+			if err != nil {
+				return
+			}
+			err1 := models.ReportRepo.DeleteReport(id)
+			if err1 != nil {
+				return
+			}
+			lib.RedirectToPreviousURL(res, req)
+		}
+		log.Println("✅ response success")
 	} else {
 		res.WriteHeader(http.StatusNotFound)
 		lib.RenderPage("base", "", nil, res)
