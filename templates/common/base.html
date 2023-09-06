@@ -453,10 +453,17 @@
             {{range .AllNotifs}}
             {{if eq $.CurrentUser.ID .OwnerID}}
             {{if ne $.CurrentUser.ID .AuthorID}}
+            {{if ne .Notif_type "ResponseAdmin"}}
             <div id="notif">
-                {{.AuthorName}} {{.Notif_type}} : <a href="/posts/{{.Slug}}"> {{.Slug}} </a>
+               <span style="color: #000000;font-size: larger;font-weight: bold;margin-left: 5px;margin-right: 5px;"> {{.AuthorName}} </span> <span style="color: #db360d;font-size: larger;font-weight: bold;margin-left: 5px;margin-right: 5px;"> {{.Notif_type}} </span> : <a href="/posts/{{.Slug}}"> {{.Slug}} </a>
             </div>
             <p id="time"> {{.Time}}</p>
+            {{else}}
+            <div id="notif">
+               <span style="color: #17720c;font-size: larger;font-weight: bold;margin-left: 5px;margin-right: 5px;"> {{.Notif_type}} </span> : <a href="/posts/{{.Slug}}"> {{.Slug}} </a>
+             </div>
+             <p id="time"> {{.Time}}</p>
+             {{end}}
             {{end}}
             {{end}}
             {{end}}

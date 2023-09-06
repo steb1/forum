@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/gofrs/uuid"
 )
 
 type RequestPostPageData struct {
@@ -127,6 +129,42 @@ func Response(res http.ResponseWriter, req *http.Request) {
 			}
 			err := models.ResponseRepo.CreateResponse(&Response)
 			if err != nil {
+				return
+			}
+			
+			u, err := uuid.NewV4()
+			if err != nil {
+				log.Fatalf("❌ Failed to generate UUID: %v", err)
+			}
+			Report, err := models.ReportRepo.GetReportByID(id)
+			if err != nil {
+				return
+			}
+			user := models.GetUserFromSession(req)
+			post, err := models.PostRepo.GetPostByID(Report.ReportedID)
+			if err != nil {
+				return
+			}
+			postOwner, err := models.UserRepo.GetUserByPostID(post.ID)
+			if err != nil {
+				return
+			}
+			time := time.Now().Format("2006-01-02 15:04:05")
+			notif := models.Notification{
+				ID:         u.String(),
+				AuthorID:   user.ID,
+				AuthorName: user.Username,
+				PostID:     post.ID,
+				OwnerID:    postOwner.ID,
+				Notif_type: "ResponseAdmin",
+				Slug:       post.Slug,
+				Time:       lib.FormatDate(time),
+			}
+			
+			err = models.NotifRepo.CreateNotification(&notif)
+			if err != nil {
+				res.WriteHeader(http.StatusInternalServerError)
+				log.Println("❌ error Insert Notification")
 				return
 			}
 			err1 := models.ReportRepo.DeleteReport(id)

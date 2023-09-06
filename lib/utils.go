@@ -3,6 +3,8 @@ package lib
 import (
 	"bufio"
 	"fmt"
+	"unicode"
+
 	//"forum/data/models"
 	"io"
 	"log"
@@ -241,7 +243,15 @@ func FormatDate(DateAndTime string) string {
 	TheDate := fmt.Sprintf("%s, %sth, %s, at %s time", month, day, year, TimeFormatted)
 	return TheDate
 }
-
+func VerifyPassword(password string) bool {
+	var num int
+	for _,val:= range password{
+		if !unicode.IsSpace(val){
+			num++
+		}
+	}
+	return num >=8
+}
 // func FormatNotifications(Notifications []models.Notification) []string {
 // 	var FormatedNotif []string
 // 	for _, notification := range Notifications {

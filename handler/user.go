@@ -186,16 +186,18 @@ func EditUser(res http.ResponseWriter, req *http.Request) {
 
 		// Update user information
 		username := req.Form.Get("username")
+		username = strings.TrimSpace(username)
 		email := req.Form.Get("email")
+		email = strings.TrimSpace(email)
 		newPassword := req.Form.Get("new_password")
 		confirmPassword := req.Form.Get("confirm_password")
 		oldPassword := req.Form.Get("old_password")
 		
-		if username != "" && currentUser.Username != username {
+		if username != "" && strings.TrimSpace(currentUser.Username) != username {
 			currentUser.Username = username
 			log.Println("✅ Username changed successfully")
 		}
-		if email != "" && currentUser.Email != email {
+		if email != "" && strings.TrimSpace(currentUser.Email) != email {
 			currentUser.Email = email
 			log.Println("✅ Email changed successfully")
 		}
