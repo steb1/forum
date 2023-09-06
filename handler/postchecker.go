@@ -177,7 +177,35 @@ func Response(res http.ResponseWriter, req *http.Request) {
 	} else {
 		res.WriteHeader(http.StatusNotFound)
 		lib.RenderPage("base", "", nil, res)
-		log.Println("404 ❌ - Page not found ", req.URL.Path)
+		log.Println("404 ❌ - Page1 not found ", req.URL.Path)
+		return
+	}
+}
+
+func DeleteReport(res http.ResponseWriter, req *http.Request) {
+	if lib.ValidateRequest(req, res, "/delete-report/*", http.MethodGet) {
+		isSessionOpen := models.ValidSession(req)
+		currentuser := models.GetUserFromSession(req)
+		if !isSessionOpen || currentuser.Role != 0 {
+			res.WriteHeader(http.StatusNotFound)
+			lib.RenderPage("base", "", nil, res)
+			log.Println("404 ❌ - Page not found ", req.URL.Path)
+			return
+		}
+		path := req.URL.Path
+		pathPart := strings.Split(path, "/")
+		if len(pathPart) == 3 && pathPart[1] == "delete-report" && pathPart[2] != "" {
+			id := pathPart[2]
+			err1 := models.ReportRepo.DeleteReport(id)
+			if err1 != nil {
+				return
+			}
+			lib.RedirectToPreviousURL(res, req)
+		}
+	} else {
+		res.WriteHeader(http.StatusNotFound)
+		lib.RenderPage("base", "", nil, res)
+		log.Println("404 ❌ - Page1 not found ", req.URL.Path)
 		return
 	}
 }
