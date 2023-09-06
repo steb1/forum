@@ -1,0 +1,35 @@
+{{define "title"}} | Admin{{end}}
+
+{{define "content"}}
+<div class="AllResponse">
+{{range .AllResponse}}
+    <div class="Response">
+        <div>
+            <img src="" alt="image">
+        </div>
+        <div class="content">
+            {{.Text}}
+        </div>
+        <div class="time" >
+        </div>
+    </div>
+    {{end}}
+</div>
+    <style>
+        .AllResponse {
+            display: flex;
+            flex-direction: column ;
+        }
+        .Response {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin: 10px;
+            width: 500px;
+            height: 200px;
+            border: 1px solid rgb(180, 183, 185);
+            padding: 10px;
+        }
+    </style>
+
+{{end}}

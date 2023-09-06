@@ -39,6 +39,30 @@ func (rr *ResponseRepository) CreateResponse(response *Response) error {
 	return err
 }
 
+func (rr *ResponseRepository) GetAllResponse() ([]Response, error) {
+	var Responsetab []Response
+	rows, err := rr.db.Query("SELECT id, authorID, reportID, content, createDate, modifiedDate FROM response")
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var response Response
+		err := rows.Scan(&response.ID, &response.AuthorID, &response.ReportID, &response.Text, &response.CreateDate, &response.ModifiedDate)
+
+		if err != nil {
+			return nil, err
+		}
+
+		Responsetab = append(Responsetab, response)
+	}
+
+	return Responsetab, nil
+
+}
+
 // Get a response by ID from the database
 func (rr *ResponseRepository) GetResponseByID(responseID string) (*Response, error) {
 	var response Response

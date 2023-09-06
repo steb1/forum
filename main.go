@@ -71,6 +71,7 @@ func main() {
 	http.Handle("/publish/", rateLimiter.Wrap("api", handler.Publish))
 	http.Handle("/reportpost/", rateLimiter.Wrap("api", handler.ReportPost))
 	http.Handle("/seeReports", rateLimiter.Wrap("api", handler.SeeReports))
+	http.Handle("/seeReportsResponse", rateLimiter.Wrap("api", handler.SeeReportsResponse))
 	http.Handle("/response/", rateLimiter.Wrap("api", handler.Response))
 	http.Handle("/delete-report/", rateLimiter.Wrap("api", handler.DeleteReport))
 
