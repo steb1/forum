@@ -41,7 +41,7 @@ func (rr *ResponseRepository) CreateResponse(response *Response) error {
 
 func (rr *ResponseRepository) GetAllResponse() ([]Response, error) {
 	var Responsetab []Response
-	rows, err := rr.db.Query("SELECT id, authorID, reportID, content, createDate, modifiedDate FROM response")
+	rows, err := rr.db.Query("SELECT id, authorID, reportID, content, createDate, modifiedDate FROM response ORDER BY modifiedDate DESC")
 
 	if err != nil {
 		return nil, err
