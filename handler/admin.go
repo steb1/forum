@@ -111,7 +111,7 @@ func ReportPost(res http.ResponseWriter, req *http.Request) {
 
 			report := models.Report{
 				ID:           IDreport.String(),
-				AuthorID:     user.ID,
+				AuthorID:     currentuser.ID,
 				ReportedID:   idPost,
 				ReportedName: post.Slug,
 				Cause:        cause,

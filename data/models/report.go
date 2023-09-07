@@ -111,7 +111,7 @@ func (rr *ReportRepository) GetReportByIDPostExist(idPost string) (*Report, erro
 // Update a report in the database
 func (rr *ReportRepository) UpdateReport(report *Report) error {
 	_, err := rr.db.Exec("UPDATE report SET authorID = ?, reportedID = ?, ReportedName = ? , cause = ?, type = ?, createDate = ?, modifiedDate = ?, reported = ?, ImageURL = ? WHERE id = ?",
-		report.AuthorID, report.ReportedID, &report.ReportedName, report.Cause, report.Type, report.CreateDate, report.ModifiedDate, report.ID, report.Reported, report.ImageURL)
+		report.AuthorID, report.ReportedID, &report.ReportedName, report.Cause, report.Type, report.CreateDate, report.ModifiedDate, report.Reported, report.ImageURL, report.ID)
 	return err
 }
 

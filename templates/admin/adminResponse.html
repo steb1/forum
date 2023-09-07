@@ -3,17 +3,17 @@
 {{define "content"}}
 {{if .IsLoggedIn}}
 <div class="AllResponse">
-{{range .AllResponse}}
+{{ range $index, $value := .AllResponse }}
     <div class="Response">
         <div class="image">
-            <img src="https://c.pxhere.com/photos/65/09/photographer_hand_man_holding_len-32792.jpg!d" alt="image">
+            <img src="{{$.ImageUrl}}" alt="image">
         </div>
         <div class="content">
-            <div class="PostName">{{}} </div>
-            <div class="AdminResponse">{{.Text}} </div>
+            <div class="PostName">{{ index $.AllSlug $index }} </div>
+            <div class="AdminResponse">{{ $value.Text }} </div>
         </div>
         <div class="time" >
-            {{.ModifiedDate}}
+            {{ $value.ModifiedDate }}
         </div>
     </div>
     {{end}}
@@ -22,16 +22,15 @@
         .PostName {
             font-size: larger;
             font-weight: bold;
-            text-decoration: wavy;
             margin-bottom: 30px;
             color: rgb(3, 104, 145);
         }
         img {
-            width: 60px;
-            height: 60px;
-            border-radius: 30px;
-            margin-right: 10px;
-        }
+        width: 60px;
+        height: 60px;
+        border-radius: 30px;
+        margin-right: 10px;
+    }
         .AllResponse {
             display: flex;
             flex-direction: column ;
@@ -61,12 +60,7 @@
             border-radius: 10px;
         }
         .time {
-            display: flex;
-            flex-direction: column;
-            font-size: 13px;
             margin-left: 5px;
-            width: 30%;
-            color: grey;
         }
     </style>
 

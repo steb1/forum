@@ -145,17 +145,13 @@ func Response(res http.ResponseWriter, req *http.Request) {
 			if err != nil {
 				return
 			}
-			postOwner, err := models.UserRepo.GetUserByPostID(post.ID)
-			if err != nil {
-				return
-			}
 			time := time.Now().Format("2006-01-02 15:04:05")
 			notif := models.Notification{
 				ID:         u.String(),
-				AuthorID:   user.ID,
+				AuthorID:   currentuser.ID,
 				AuthorName: user.Username,
 				PostID:     post.ID,
-				OwnerID:    postOwner.ID,
+				OwnerID:    Report.AuthorID,
 				Notif_type: "ResponseAdmin",
 				Slug:       post.Slug,
 				Time:       lib.FormatDate(time),
