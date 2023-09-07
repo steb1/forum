@@ -451,6 +451,8 @@
             <span class="close-button" onclick="closeModal1()">&times;</span>
             <h2>Notification</h2> <br>
             {{range .AllNotifs}}
+            {{if eq $.CurrentUser.ID .OwnerID}}
+            {{if ne $.CurrentUser.ID .AuthorID}}
             {{if ne .Notif_type "ResponseAdmin"}}
             <div id="notif">
                {{.AuthorName}} {{.Notif_type}}&nbsp<a href="/posts/{{.Slug}}" style="font-size: small;"> {{.Slug}} </a>
@@ -461,6 +463,8 @@
               <a href="/seeReportsResponse" style="font-size: small; color: black;"> 📩 {{.Notif_type}} about&nbsp</a><a href="/posts/{{.Slug}}" style="font-size: small;"> {{.Slug}}</a>
              </div>
              <p id="time"> {{.Time}}</p>
+            {{end}}
+            {{end}}
             {{end}}
             {{end}}
         </div>
