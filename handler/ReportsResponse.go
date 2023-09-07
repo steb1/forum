@@ -6,7 +6,6 @@ import (
 	"forum/lib"
 	"log"
 	"net/http"
-	"strings"
 )
 
 type ResponseReportPage struct {

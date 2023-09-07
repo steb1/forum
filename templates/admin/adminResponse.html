@@ -5,7 +5,7 @@
 {{ range $index, $value := .AllResponse }}
     <div class="Response">
         <div class="image">
-            <img src="https://c.pxhere.com/photos/65/09/photographer_hand_man_holding_len-32792.jpg!d" alt="image">
+            <img src="{{$.ImageUrl}}" alt="image">
         </div>
         <div class="content">
             <div class="PostName">{{ index $.AllSlug $index }} </div>
