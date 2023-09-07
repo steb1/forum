@@ -43,7 +43,7 @@ func (nr *NotificationRepository) GetNotificationByID(NotificationID string) (*N
 
 func (nr *NotificationRepository) GetAllNotifs() ([]*Notification, error) {
 	var notifications []*Notification
-	rows, err := nr.db.Query("SELECT id, authorID,author_name, postID, ownerID, notif_type, slug, time, readed FROM notification")
+	rows, err := nr.db.Query("SELECT id, authorID,author_name, postID, ownerID, notif_type, slug, time, readed FROM notification ORDER BY time")
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil // Post not found
