@@ -34,7 +34,7 @@ func NewReportRepository(db *sql.DB) *ReportRepository {
 
 func (rr *ReportRepository) GetAllReports() ([]Report, error) {
 	var reports []Report
-	rows, err := rr.db.Query("SELECT id, authorID, reportedID, ReportedName, cause, type, createDate, modifiedDate, reported, ImageURL FROM report")
+	rows, err := rr.db.Query("SELECT id, authorID, reportedID, ReportedName, cause, type, createDate, modifiedDate, reported, ImageURL FROM report ORDER BY createDate")
 
 	if err != nil {
 		return nil, err

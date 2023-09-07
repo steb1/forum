@@ -5,14 +5,15 @@ import (
 	"forum/lib"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type ResponseReportPage struct {
 	IsLoggedIn  bool
 	CurrentUser models.User
 	AllResponse []models.Response
-	AllNotifs []*models.Notification
-	AllPosts []*models.Post
+	AllNotifs   []*models.Notification
+	AllPosts    []*models.Post
 }
 
 func SeeReportsResponse(res http.ResponseWriter, req *http.Request) {
@@ -38,12 +39,18 @@ func SeeReportsResponse(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 
+		for _, v := range AllResponse {
+			v.CreateDate = strings.ReplaceAll(v.CreateDate, "T", " ")
+			v.CreateDate = strings.ReplaceAll(v.CreateDate, "Z", "")
+			v.CreateDate = lib.TimeSinceCreation(v.CreateDate)
+		}
+
 		ResponseReportPage := ResponseReportPage{
 			IsLoggedIn:  isSessionOpen,
 			CurrentUser: *currentUser,
 			AllResponse: AllResponse,
-			AllNotifs: notifications,
-			AllPosts: allPosts,
+			AllNotifs:   notifications,
+			AllPosts:    allPosts,
 		}
 
 		log.Println("Response Page get with success")
