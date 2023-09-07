@@ -2,17 +2,17 @@
 
 {{define "content"}}
 <div class="AllResponse">
-{{range .AllResponse}}
+{{ range $index, $value := .AllResponse }}
     <div class="Response">
         <div class="image">
-            <img src="" alt="image">
+            <img src="{{$.ImageUrl}}" alt="image">
         </div>
         <div class="content">
-            <div class="PostName">Post Name </div>
-            <div class="AdminResponse">{{.Text}} </div>
+            <div class="PostName">{{ index $.AllSlug $index }} </div>
+            <div class="AdminResponse">{{ $value.Text }} </div>
         </div>
         <div class="time" >
-            00:02mn
+            {{ $value.ModifiedDate }}
         </div>
     </div>
     {{end}}

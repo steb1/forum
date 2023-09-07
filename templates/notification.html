@@ -6,3 +6,7 @@
     <p>{{.}}</p>
 {{ end }}
 {{end}}
+
+{{ range $index, $value := .UserAuthor }}
+    <p>{{ index $.UserAuthor $index }} A {{ index $.NotificationsType $index }} LE POST TITLE {{ index $.Posts $index }}</p>
+{{ end }}
