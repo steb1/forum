@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"forum/data/models"
 	"forum/lib"
 	"log"
@@ -14,6 +15,8 @@ type ResponseReportPage struct {
 	AllResponse []models.Response
 	AllNotifs   []*models.Notification
 	AllPosts    []*models.Post
+	ImageUrl    string
+	AllSlug     []string
 }
 
 func SeeReportsResponse(res http.ResponseWriter, req *http.Request) {
@@ -21,6 +24,8 @@ func SeeReportsResponse(res http.ResponseWriter, req *http.Request) {
 		isSessionOpen := models.ValidSession(req)
 		currentUser := models.GetUserFromSession(req)
 		AllResponse, err := models.ResponseRepo.GetAllResponse()
+		imageurl := ""
+		tabSlug := []string{}
 
 		if err != nil {
 			log.Println("1")
@@ -38,19 +43,39 @@ func SeeReportsResponse(res http.ResponseWriter, req *http.Request) {
 			log.Println("3")
 			return
 		}
-
-		for _, v := range AllResponse {
-			v.CreateDate = strings.ReplaceAll(v.CreateDate, "T", " ")
-			v.CreateDate = strings.ReplaceAll(v.CreateDate, "Z", "")
-			v.CreateDate = lib.TimeSinceCreation(v.CreateDate)
+		if len(AllResponse) > 0 {
+			report, err := models.ReportRepo.GetReportByID(AllResponse[0].ReportID)
+			if report == nil {
+				fmt.Println("here")
+				return
+			}
+			if err != nil {
+				fmt.Println("here")
+				return
+			}
+			adminUser, err := models.UserRepo.GetUserByPostID(report.ReportedID)
+			if err != nil {
+				return
+			}
+			imageurl = adminUser.AvatarURL
+			for i := 0; i < len(AllResponse); i++ {
+				reporti, _ := models.ReportRepo.GetReportByID(AllResponse[i].ReportID)
+				post, err := models.PostRepo.GetPostByID(reporti.ReportedID)
+				if err != nil {
+					return
+				}
+				tabSlug = append(tabSlug, post.Slug)
+				AllResponse[i].ModifiedDate = lib.FormatDateDB(AllResponse[i].ModifiedDate)
+			}
 		}
-
 		ResponseReportPage := ResponseReportPage{
 			IsLoggedIn:  isSessionOpen,
 			CurrentUser: *currentUser,
 			AllResponse: AllResponse,
 			AllNotifs:   notifications,
 			AllPosts:    allPosts,
+			ImageUrl:    imageurl,
+			AllSlug:     tabSlug,
 		}
 
 		log.Println("Response Page get with success")

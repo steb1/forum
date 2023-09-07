@@ -131,7 +131,7 @@ func Response(res http.ResponseWriter, req *http.Request) {
 			if err != nil {
 				return
 			}
-			
+
 			u, err := uuid.NewV4()
 			if err != nil {
 				log.Fatalf("❌ Failed to generate UUID: %v", err)
@@ -160,15 +160,31 @@ func Response(res http.ResponseWriter, req *http.Request) {
 				Slug:       post.Slug,
 				Time:       lib.FormatDate(time),
 			}
-			
+
 			err = models.NotifRepo.CreateNotification(&notif)
 			if err != nil {
 				res.WriteHeader(http.StatusInternalServerError)
 				log.Println("❌ error Insert Notification")
 				return
 			}
-			err1 := models.ReportRepo.DeleteReport(id)
+			report, err1 := models.ReportRepo.GetReportByID(id)
 			if err1 != nil {
+				return
+			}
+			UpdateReport := models.Report{
+				ID:           report.ID,
+				AuthorID:     report.AuthorID,
+				ReportedID:   report.ReportedID,
+				ReportedName: report.ReportedName,
+				Cause:        report.Cause,
+				Type:         report.Type,
+				CreateDate:   report.CreateDate,
+				ModifiedDate: report.ModifiedDate,
+				Reported:     false,
+				ImageURL:     report.ImageURL,
+			}
+			err2 := models.ReportRepo.UpdateReport(&UpdateReport)
+			if err2 != nil {
 				return
 			}
 			lib.RedirectToPreviousURL(res, req)
