@@ -1,6 +1,7 @@
 {{define "title"}} | Admin{{end}}
 
 {{define "content"}}
+{{if .IsLoggedIn}}
 <div class="AllResponse">
 {{ range $index, $value := .AllResponse }}
     <div class="Response">
@@ -63,4 +64,5 @@
         }
     </style>
 
+{{end}}
 {{end}}
