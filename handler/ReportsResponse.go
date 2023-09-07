@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"forum/data/models"
 	"forum/lib"
 	"log"
@@ -45,11 +44,9 @@ func SeeReportsResponse(res http.ResponseWriter, req *http.Request) {
 		if len(AllResponse) > 0 {
 			report, err := models.ReportRepo.GetReportByID(AllResponse[0].ReportID)
 			if report == nil {
-				fmt.Println("here")
 				return
 			}
 			if err != nil {
-				fmt.Println("here")
 				return
 			}
 			adminUser, err := models.UserRepo.GetUserByPostID(report.ReportedID)
