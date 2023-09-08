@@ -33,6 +33,8 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 		user.Email = strings.ToLower(req.FormValue("email"))
 		user.Username = strings.ToLower(req.FormValue("username"))
 
+		fmt.Println(user.Username)
+
 		_password, err := lib.HashPassword(req.FormValue("password"))
 		if err != nil {
 			log.Fatalf("❌ Failed to generate UUID: %v", err)
@@ -45,8 +47,9 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 		} else {
 			user.Role = models.RoleUser
 		}
+		
 
-		if _, exist := models.UserRepo.IsExisted(user.Email); !exist {
+		if _, exist := models.UserRepo.IsExisted(user.Email, user.Username); !exist {
 			err := models.UserRepo.CreateUser(&user)
 			if err != nil {
 				log.Fatalf("❌ Failed to created account %v", err)
@@ -120,7 +123,7 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 		email := req.FormValue("email")
 		password := req.FormValue("password")
 
-		if _user, exist := models.UserRepo.IsExisted(email); exist {
+		if _user, exist := models.UserRepo.IsExistedSignin(email); exist {
 			if !lib.IsPasswordsMatch(_user.Password, password) {
 				res.WriteHeader(http.StatusNotFound)
 				randomUsers, err := models.UserRepo.SelectRandomUsers(15)

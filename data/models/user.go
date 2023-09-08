@@ -219,10 +219,11 @@ func (ur *UserRepository) DeleteUser(userID string) error {
 }
 
 // Check if user exists
-func (ur *UserRepository) IsExisted(email string) (*User, bool) {
+func (ur *UserRepository) IsExisted(email, username string) (*User, bool) {
 	var user User
 	email = strings.ToLower(email)
-	row := ur.db.QueryRow("SELECT password FROM user WHERE email = ?", email)
+	username = strings.ToLower(username)
+	row := ur.db.QueryRow("SELECT password FROM user WHERE email = ? OR username = ?", email, username)
 	err := row.Scan(&user.Password)
 	if err != nil {
 		log.Println("❌ ", err)
@@ -233,6 +234,23 @@ func (ur *UserRepository) IsExisted(email string) (*User, bool) {
 	}
 	return &user, true
 }
+
+
+func (ur *UserRepository) IsExistedSignin(email string) (*User, bool) {
+	var user User
+	email = strings.ToLower(email)
+	row := ur.db.QueryRow("SELECT password FROM user WHERE email = ?", email)
+	err := row.Scan(&user.Password)
+	if err != nil {
+		log.Println("❌1 ", err)
+		if err == sql.ErrNoRows {
+			return nil, false
+		}
+		return nil, false
+	}
+	return &user, true
+}
+
 
 // Check if user exists
 func (ur *UserRepository) IsExistedByID(ID string) (*User, bool) {

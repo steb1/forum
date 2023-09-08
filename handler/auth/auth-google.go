@@ -98,7 +98,7 @@ func HandleCallback(w http.ResponseWriter, r *http.Request) {
 		user.Email = email
 	}
 
-	if _, exist := models.UserRepo.IsExisted(Data.ID); !exist {
+	if _, exist := models.UserRepo.IsExistedSignin(Data.Name); !exist {
 		err := models.UserRepo.CreateUser(&user)
 		if err != nil {
 			log.Fatalf("❌ Failed to created account %v", err)

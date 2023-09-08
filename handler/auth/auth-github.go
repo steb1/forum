@@ -161,7 +161,7 @@ func HandleGithubCallback(w http.ResponseWriter, r *http.Request) {
 	user.Email = userPrimaryEmail
 	user.Role = models.RoleUser
 
-	if _, exist := models.UserRepo.IsExisted(user.ID); !exist {
+	if _, exist := models.UserRepo.IsExistedSignin(user.Username); !exist {
 		err := models.UserRepo.CreateUser(&user)
 		if err != nil {
 			log.Fatalf("❌ Failed to created account %v", err)
