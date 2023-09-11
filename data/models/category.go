@@ -69,7 +69,7 @@ func (cr *CategoryRepository) GetCategoryByName(name string) (*Category, error) 
 func (pr *CategoryRepository) GetAllCategory() ([]*Category, error) {
 	var categories []*Category
 
-	rows, err := pr.db.Query("SELECT c.* FROM Category c JOIN post_category pc ON pc.categoryid = c.id JOIN post p ON p.id = pc.postid WHERE p.validate = true")
+	rows, err := pr.db.Query("SELECT * FROM Category")
 	if err != nil {
 		return nil, err
 	}
