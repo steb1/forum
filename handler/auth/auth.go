@@ -24,18 +24,26 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 		}
 		user := models.User{}
 
-		if req.FormValue("email") == "" || req.FormValue("username") == "" {
+		if strings.TrimSpace(req.FormValue("email")) == "" || strings.TrimSpace(req.FormValue("username")) == "" || strings.TrimSpace(req.FormValue("password")) == "" {
 			res.WriteHeader(http.StatusBadRequest)
-			lib.RenderPage("base", "sign-up", nil, res)
+			randomUsers, err := models.UserRepo.SelectRandomUsers(15)
+			if err != nil {
+				log.Println("❌ Can't get 15 random users in the database")
+			}
+
+			signPageData := SignPageData{
+				IsLoggedIn:  false,
+				RandomUsers: randomUsers,
+				Err:         "Email or password invalid",
+			}
+			lib.RenderPage("base", "sign-up", signPageData, res)
 			fmt.Println("❌ Bad Credentials")
 			return
 		}
 		user.Email = strings.ToLower(req.FormValue("email"))
 		user.Username = strings.ToLower(req.FormValue("username"))
-
-		fmt.Println(user.Username)
-
 		_password, err := lib.HashPassword(req.FormValue("password"))
+
 		if err != nil {
 			log.Fatalf("❌ Failed to generate UUID: %v", err)
 		}
