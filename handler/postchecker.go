@@ -210,6 +210,9 @@ func DeleteReport(res http.ResponseWriter, req *http.Request) {
 			id := pathPart[2]
 			err1 := models.ReportRepo.DeleteReport(id)
 			if err1 != nil {
+				res.WriteHeader(http.StatusNotFound)
+				lib.RenderPage("base", "404", nil, res)
+				log.Println("404 ❌ - Page not found ", req.URL.Path)
 				return
 			}
 			lib.RedirectToPreviousURL(res, req)

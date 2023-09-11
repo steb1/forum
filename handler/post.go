@@ -122,6 +122,12 @@ func EditPost(res http.ResponseWriter, req *http.Request) {
 		if len(pathPart) == 3 && pathPart[1] == "edit-post" && pathPart[2] != "" {
 			idPost := pathPart[2]
 			post, err := models.PostRepo.GetPostByID(idPost)
+			if post == nil {
+				res.WriteHeader(http.StatusNotFound)
+				lib.RenderPage("base", "404", nil, res)
+				log.Println("404 ❌ - Page not found ", req.URL.Path)
+				return
+			}
 			if err != nil {
 				res.WriteHeader(http.StatusInternalServerError)
 				log.Println("❌ error DB")
@@ -243,6 +249,9 @@ func EditPostPage(res http.ResponseWriter, req *http.Request) {
 			slug := pathPart[2]
 			post, err := models.PostRepo.GetPostBySlug(slug)
 			if post == nil {
+				res.WriteHeader(http.StatusNotFound)
+				lib.RenderPage("base", "404", nil, res)
+				log.Println("404 ❌ - Page not found ", req.URL.Path)
 				return
 			}
 			if err != nil {
@@ -293,7 +302,13 @@ func DeletePost(res http.ResponseWriter, req *http.Request) {
 			pathPart := strings.Split(path, "/")
 			if len(pathPart) == 3 && pathPart[1] == "delete-post" && pathPart[2] != "" {
 				id := pathPart[2]
-				models.PostRepo.DeletePost(id)
+				err := models.PostRepo.DeletePost(id)
+				if err != nil {
+					res.WriteHeader(http.StatusNotFound)
+					lib.RenderPage("base", "404", nil, res)
+					log.Println("404 ❌ - Page not found ", req.URL.Path)
+					return
+				}
 
 				log.Println("✅ Post created with success")
 				lib.RedirectToPreviousURL(res, req)
@@ -310,7 +325,13 @@ func DeletePostAdmin(res http.ResponseWriter, req *http.Request) {
 			pathPart := strings.Split(path, "/")
 			if len(pathPart) == 3 && pathPart[1] == "delete-Postt" && pathPart[2] != "" {
 				id := pathPart[2]
-				models.PostRepo.DeletePost(id)
+				err := models.PostRepo.DeletePost(id)
+				if err != nil {
+					res.WriteHeader(http.StatusNotFound)
+					lib.RenderPage("base", "404", nil, res)
+					log.Println("404 ❌ - Page not found ", req.URL.Path)
+					return
+				}
 
 				log.Println("✅ Post deleted with success")
 				http.Redirect(res, req, "/", http.StatusSeeOther)

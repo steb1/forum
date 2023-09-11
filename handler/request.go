@@ -16,6 +16,12 @@ func CreateRequest(res http.ResponseWriter, req *http.Request) {
 		if len(pathPart) == 3 && pathPart[1] == "request" && pathPart[2] != "" {
 			id := pathPart[2]
 			user, err := models.UserRepo.GetUserByID(id)
+			if user == nil {
+				res.WriteHeader(http.StatusNotFound)
+				lib.RenderPage("base", "404", nil, res)
+				log.Println("404 ❌ - Page not found ", req.URL.Path)
+				return
+			}
 			if err != nil {
 				return
 			}
@@ -31,5 +37,5 @@ func CreateRequest(res http.ResponseWriter, req *http.Request) {
 			lib.RedirectToPreviousURL(res, req)
 		}
 	}
-	
+
 }
