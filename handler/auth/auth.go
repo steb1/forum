@@ -24,7 +24,7 @@ func SignUp(res http.ResponseWriter, req *http.Request) {
 		}
 		user := models.User{}
 
-		if strings.TrimSpace(req.FormValue("email")) == "" || strings.TrimSpace(req.FormValue("username")) == "" || strings.TrimSpace(req.FormValue("password")) == "" {
+		if strings.TrimSpace(req.FormValue("email")) == "" || strings.TrimSpace(req.FormValue("username")) == "" || strings.TrimSpace(req.FormValue("password")) == "" || !strings.Contains(req.FormValue("email"), "@") || strings.Count(req.FormValue("email"), "@") != 1 {
 			res.WriteHeader(http.StatusBadRequest)
 			randomUsers, err := models.UserRepo.SelectRandomUsers(15)
 			if err != nil {
