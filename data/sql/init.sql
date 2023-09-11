@@ -1,5 +1,4 @@
 -- SQL schema for user-class-diagram
-
 -- Table for 'user'
 CREATE TABLE IF NOT EXISTS "user" (
     id VARCHAR PRIMARY KEY,
@@ -9,7 +8,6 @@ CREATE TABLE IF NOT EXISTS "user" (
     avatarURL VARCHAR,
     role VARCHAR
 );
-
 -- Table for 'post'
 CREATE TABLE IF NOT EXISTS "post" (
     id VARCHAR PRIMARY KEY,
@@ -24,7 +22,6 @@ CREATE TABLE IF NOT EXISTS "post" (
     validate BOOLEAN,
     FOREIGN KEY (authorID) REFERENCES user(id)
 );
-
 -- Table for 'report'
 CREATE TABLE IF NOT EXISTS "report" (
     id VARCHAR PRIMARY KEY,
@@ -40,7 +37,6 @@ CREATE TABLE IF NOT EXISTS "report" (
     FOREIGN KEY (authorID) REFERENCES user(id),
     FOREIGN KEY (reportedID) REFERENCES user(id)
 );
-
 -- Table for 'response'
 CREATE TABLE IF NOT EXISTS "response" (
     id VARCHAR PRIMARY KEY,
@@ -52,7 +48,6 @@ CREATE TABLE IF NOT EXISTS "response" (
     FOREIGN KEY (authorID) REFERENCES user(id),
     FOREIGN KEY (reportID) REFERENCES report(id)
 );
-
 -- Table for 'view'
 CREATE TABLE IF NOT EXISTS "view" (
     id VARCHAR PRIMARY KEY,
@@ -63,7 +58,6 @@ CREATE TABLE IF NOT EXISTS "view" (
     FOREIGN KEY (authorID) REFERENCES user(id),
     FOREIGN KEY (postID) REFERENCES post(id)
 );
-
 -- Table for 'comment_rate'
 CREATE TABLE IF NOT EXISTS "comment_rate" (
     id VARCHAR PRIMARY KEY,
@@ -73,7 +67,6 @@ CREATE TABLE IF NOT EXISTS "comment_rate" (
     FOREIGN KEY (authorID) REFERENCES user(id),
     FOREIGN KEY (commentID) REFERENCES comment(id)
 );
-
 -- Table for 'comment'
 CREATE TABLE IF NOT EXISTS "comment" (
     id VARCHAR PRIMARY KEY,
@@ -87,7 +80,6 @@ CREATE TABLE IF NOT EXISTS "comment" (
     FOREIGN KEY (postID) REFERENCES post(id),
     FOREIGN KEY (parentID) REFERENCES comment(id)
 );
-
 -- Table for 'post_category'
 CREATE TABLE IF NOT EXISTS "post_category" (
     id VARCHAR PRIMARY KEY,
@@ -96,7 +88,6 @@ CREATE TABLE IF NOT EXISTS "post_category" (
     FOREIGN KEY (categoryID) REFERENCES category(id),
     FOREIGN KEY (postID) REFERENCES post(id)
 );
-
 -- Table for 'category'
 CREATE TABLE IF NOT EXISTS "category" (
     id VARCHAR PRIMARY KEY,
@@ -104,6 +95,7 @@ CREATE TABLE IF NOT EXISTS "category" (
     createDate DATE,
     modifiedDate DATE
 );
+-- Table for 'notification'
 CREATE TABLE IF NOT EXISTS "notification" (
     id VARCHAR PRIMARY KEY,
     authorID VARCHAR,
@@ -116,6 +108,8 @@ CREATE TABLE IF NOT EXISTS "notification" (
     Readed BOOLEAN,
     FOREIGN KEY (postID) REFERENCES post(id)
 );
+-- Table for 'request'
+-- TODO: REMOVE DUPLICATED INFOS REQUEST
 CREATE TABLE IF NOT EXISTS "request"(
     id VARCHAR PRIMARY KEY,
     authorID VARCHAR,

@@ -130,7 +130,7 @@ func SignIn(res http.ResponseWriter, req *http.Request) {
 		email := req.FormValue("email")
 		password := req.FormValue("password")
 
-		if _user, exist := models.UserRepo.IsExistedSignin(email); exist {
+		if _user, exist := models.UserRepo.IsExistedSignIn(email); exist {
 			if !lib.IsPasswordsMatch(_user.Password, password) {
 				res.WriteHeader(http.StatusNotFound)
 				randomUsers, err := models.UserRepo.SelectRandomUsers(15)

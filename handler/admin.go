@@ -51,6 +51,7 @@ func SeeRequests(res http.ResponseWriter, req *http.Request) {
 		log.Println("✅ Request page get with success")
 	}
 }
+
 func ReportPost(res http.ResponseWriter, req *http.Request) {
 	if lib.ValidateRequest(req, res, "/reportpost/*", http.MethodPost) {
 		base := "base"

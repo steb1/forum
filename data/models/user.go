@@ -235,8 +235,7 @@ func (ur *UserRepository) IsExisted(email, username string) (*User, bool) {
 	return &user, true
 }
 
-
-func (ur *UserRepository) IsExistedSignin(email string) (*User, bool) {
+func (ur *UserRepository) IsExistedSignIn(email string) (*User, bool) {
 	var user User
 	email = strings.ToLower(email)
 	row := ur.db.QueryRow("SELECT password FROM user WHERE email = ?", email)
@@ -250,7 +249,6 @@ func (ur *UserRepository) IsExistedSignin(email string) (*User, bool) {
 	}
 	return &user, true
 }
-
 
 // Check if user exists
 func (ur *UserRepository) IsExistedByID(ID string) (*User, bool) {

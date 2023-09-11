@@ -72,7 +72,7 @@ func CreatePost(res http.ResponseWriter, req *http.Request) {
 				IsEdited:     false,
 				CreateDate:   creationDate,
 				ModifiedDate: modificationDate,
-				Validate:     false,
+				Validate:     true,
 			}
 
 			err = models.PostRepo.CreatePost(&post)
@@ -316,6 +316,7 @@ func DeletePost(res http.ResponseWriter, req *http.Request) {
 		}
 	}
 }
+
 func DeletePostAdmin(res http.ResponseWriter, req *http.Request) {
 	if lib.ValidateRequest(req, res, "/delete-Postt/*", http.MethodGet) {
 

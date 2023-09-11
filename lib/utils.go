@@ -178,10 +178,10 @@ func TimeSinceCreation(creationDate string) string {
 	elapsedTime := currentTime.Sub(creationTime)
 
 	if elapsedTime < time.Hour/60 {
-		seconds := int(elapsedTime.Hours()* 60 *60)
+		seconds := int(elapsedTime.Hours() * 60 * 60)
 		return fmt.Sprintf("%d second%s ago", seconds, pluralize(seconds))
-	}else if elapsedTime < time.Hour {
-		minutes := int(elapsedTime.Hours()* 60)
+	} else if elapsedTime < time.Hour {
+		minutes := int(elapsedTime.Hours() * 60)
 		return fmt.Sprintf("%d minute%s ago", minutes, pluralize(minutes))
 	} else if elapsedTime < 24*time.Hour {
 		hours := int(elapsedTime.Hours())
@@ -243,13 +243,13 @@ func FormatDate(DateAndTime string) string {
 	TheDate := fmt.Sprintf("%s, %sth, %s, at %s time", month, day, year, TimeFormatted)
 	return TheDate
 }
+
 func VerifyPassword(password string) bool {
 	var num int
-	for _,val:= range password{
-		if !unicode.IsSpace(val){
+	for _, val := range password {
+		if !unicode.IsSpace(val) {
 			num++
 		}
 	}
-	return num >=8
+	return num >= 8
 }
-

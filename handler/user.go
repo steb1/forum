@@ -20,7 +20,7 @@ type UserPageData struct {
 	AllPosts       []*models.Post
 	PostsCommented map[models.Post][]models.Comment
 	AllNotifs      []*models.Notification
-	Error string
+	Error          string
 }
 
 func ProfilePage(res http.ResponseWriter, req *http.Request) {
@@ -192,7 +192,7 @@ func EditUser(res http.ResponseWriter, req *http.Request) {
 		newPassword := req.Form.Get("new_password")
 		confirmPassword := req.Form.Get("confirm_password")
 		oldPassword := req.Form.Get("old_password")
-		
+
 		if username != "" && strings.TrimSpace(currentUser.Username) != username {
 			currentUser.Username = username
 			log.Println("✅ Username changed successfully")
@@ -224,7 +224,7 @@ func EditUser(res http.ResponseWriter, req *http.Request) {
 					return
 				}
 			} else {
-				
+
 				log.Println("❌ Password is wrong")
 				http.Redirect(res, req, "/edit-user-page", http.StatusSeeOther)
 				res.WriteHeader(http.StatusUnauthorized)
