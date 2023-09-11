@@ -193,10 +193,12 @@
 </div>
 {{end}}
 {{end}}
+{{if .IsLoggedIn}}
 {{if eq .CurrentUser.Role 0 }}
 <div>
     <a href="/delete-Postt/{{ .Post.ID}}"><button class="Delete">Delete</button></a>
 </div>
+{{ end }}
 {{ end }}
 <style>
     select {
