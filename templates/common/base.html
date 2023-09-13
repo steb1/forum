@@ -374,10 +374,14 @@
                 const maxFileSize = 20 * 1024 * 1024; // 20 MB in bytes
                 const errorContainer = document.getElementById('errorContainer');
                 errorContainer.textContent = '';
+                const extension = file.name.split('.').pop();
 
                 if (file.size > maxFileSize) {
-                    errorContainer.textContent = 'Erreur : Le fichier est trop volumineux (maximum 20 Mo).';
+                    errorContainer.textContent = 'Erreur : Le fichier est trop volumineux (maximum 20 Mo)';
                     return; // Do not proceed with displaying the file
+                } else if (extension!='gif' || extension!="png" || extension!="jpeg") {
+                    errorContainer.textContent = 'Erreur : File type NOt supported';
+                    return;
                 }
 
                 // Update icon with file name
