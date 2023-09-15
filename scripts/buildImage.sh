@@ -1,3 +1,5 @@
+cd ..
+
 sudo docker image build -f Dockerfile -t forum .
 
 sudo docker images

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd data/sql
+cd ../data/sql
 echo "init"
 sqlite3 forum.db < init.sql
 echo "insert"
